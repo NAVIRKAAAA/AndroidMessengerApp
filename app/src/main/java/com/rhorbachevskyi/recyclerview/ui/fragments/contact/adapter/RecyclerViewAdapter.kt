@@ -1,13 +1,12 @@
-package com.example.recyclerview.ui.contactAdapter
+package com.rhorbachevskyi.recyclerview.ui.fragments.contact.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.recyclerview.repository.UserItemClickListener
+import com.rhorbachevskyi.recyclerview.repository.UserItemClickListener
 import com.example.recyclerview.databinding.ItemUserBinding
-import com.example.recyclerview.domain.model.User
-import com.example.recyclerview.ui.activities.UserViewModel
-import com.example.recyclerview.utils.ext.loadImage
+import com.rhorbachevskyi.recyclerview.domain.model.User
+import com.rhorbachevskyi.recyclerview.utils.ext.loadImage
 
 
 class RecyclerViewAdapter :

@@ -137,7 +137,7 @@
         app:layout_constraintTop_toBottomOf="@id/textInputPassword"
         tools:ignore="Rtl,RtlSymmetry" />
 
-    <com.example.recyclerview.utils.CustomGoogleView
+    <com.rhorbachevskyi.recyclerview.utils.CustomGoogleView
         android:id="@+id/buttonGoogle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

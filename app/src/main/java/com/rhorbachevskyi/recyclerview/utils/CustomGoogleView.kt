@@ -1,4 +1,4 @@
-package com.example.recyclerview.utils
+package com.rhorbachevskyi.recyclerview.utils
 
 import android.content.Context
 import android.content.res.TypedArray

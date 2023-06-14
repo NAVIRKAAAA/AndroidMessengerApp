@@ -1,4 +1,4 @@
-package com.example.recyclerview.utils.ext
+package com.rhorbachevskyi.recyclerview.utils.ext
 
 
 import android.widget.ImageView

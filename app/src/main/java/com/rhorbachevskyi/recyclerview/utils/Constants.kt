@@ -1,4 +1,4 @@
-package com.example.recyclerview.utils
+package com.rhorbachevskyi.recyclerview.utils
 
 object Constants {
     const val DIALOG_POSITIVE_BUTTON = "Save"

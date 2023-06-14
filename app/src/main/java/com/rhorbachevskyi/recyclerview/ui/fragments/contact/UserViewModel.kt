@@ -1,9 +1,9 @@
-package com.example.recyclerview.ui.activities
+package com.rhorbachevskyi.recyclerview.ui.fragments.contact
 
 import androidx.lifecycle.ViewModel
 
-import com.example.recyclerview.domain.localuserdataset.LocalUserData
-import com.example.recyclerview.domain.model.User
+import com.rhorbachevskyi.recyclerview.domain.localuserdataset.LocalUserData
+import com.rhorbachevskyi.recyclerview.domain.model.User
 
 class UserViewModel : ViewModel() {
     private val users = ArrayList<User>()

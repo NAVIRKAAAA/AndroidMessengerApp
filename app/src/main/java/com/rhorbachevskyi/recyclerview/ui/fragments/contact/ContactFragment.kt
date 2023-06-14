@@ -1,42 +1,47 @@
-package com.example.recyclerview.ui.activities
+package com.rhorbachevskyi.recyclerview.ui.fragments.contact
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recyclerview.R
-import com.example.recyclerview.repository.UserItemClickListener
-import com.example.recyclerview.ui.fragments.DialogFragment
-import com.example.recyclerview.ui.contactAdapter.RecyclerViewAdapter
-import com.example.recyclerview.databinding.ActivityContactsBinding
-import com.example.recyclerview.domain.model.User
-import com.example.recyclerview.utils.Constants
-import com.example.recyclerview.utils.ext.animateVisibility
+import com.rhorbachevskyi.recyclerview.ui.fragments.contact.adapter.RecyclerViewAdapter
+import com.rhorbachevskyi.recyclerview.repository.UserItemClickListener
+import com.rhorbachevskyi.recyclerview.ui.fragments.dialog.DialogFragment
+import com.example.recyclerview.databinding.FragmentContactsBinding
+import com.rhorbachevskyi.recyclerview.domain.model.User
+import com.rhorbachevskyi.recyclerview.utils.Constants
+import com.rhorbachevskyi.recyclerview.utils.ext.animateVisibility
 import com.google.android.material.snackbar.Snackbar
 
-class ContactActivity : AppCompatActivity(), UserItemClickListener {
-    private val binding: ActivityContactsBinding by lazy {
-        ActivityContactsBinding.inflate(layoutInflater)
-    }
+class ContactFragment : Fragment(), UserItemClickListener {
+    private lateinit var binding: FragmentContactsBinding
     private val adapter: RecyclerViewAdapter by lazy {
         RecyclerViewAdapter()
     }
     private var userViewModel = UserViewModel()
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentContactsBinding.inflate(inflater, container, false)
+
         initialRecyclerview()
         setClickListener()
         setNavigationUpListeners()
+        return binding.root
     }
 
     private fun initialRecyclerview() {
         setTouchRecycleItemListener()
         userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
-        val layoutManager = LinearLayoutManager(this)
+        val layoutManager = LinearLayoutManager(context)
         adapter.setUserItemClickListener(this)
         binding.recyclerViewContacts.layoutManager = layoutManager
         binding.recyclerViewContacts.adapter = adapter
@@ -52,7 +57,7 @@ class ContactActivity : AppCompatActivity(), UserItemClickListener {
             val dialogFragment = DialogFragment()
             dialogFragment.setViewModel(userViewModel)
             dialogFragment.setAdapter(adapter)
-            dialogFragment.show(supportFragmentManager, Constants.DIALOG_TAG)
+            dialogFragment.show(parentFragmentManager, Constants.DIALOG_TAG)
         }
     }
 
@@ -98,6 +103,7 @@ class ContactActivity : AppCompatActivity(), UserItemClickListener {
             }
         }
     }
+
     override fun onUserDelete(user: User, position: Int) {
         deleteUserWithRestore(user, position)
     }

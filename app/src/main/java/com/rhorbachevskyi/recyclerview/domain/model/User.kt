@@ -1,4 +1,4 @@
-package com.example.recyclerview.domain.model
+package com.rhorbachevskyi.recyclerview.domain.model
 
 import java.util.UUID
 
