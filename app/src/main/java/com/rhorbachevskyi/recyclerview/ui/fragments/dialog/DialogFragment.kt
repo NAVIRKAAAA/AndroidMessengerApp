@@ -5,14 +5,15 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.example.recyclerview.R
+import com.example.recyclerview.databinding.FragmentAddUserBinding
 import com.rhorbachevskyi.recyclerview.ui.fragments.contact.adapter.RecyclerViewAdapter
 import com.rhorbachevskyi.recyclerview.domain.model.User
-import com.rhorbachevskyi.recyclerview.utils.Constants
 import com.rhorbachevskyi.recyclerview.ui.fragments.contact.UserViewModel
 import com.google.android.material.textfield.TextInputEditText
 
 
 class DialogFragment : AppCompatDialogFragment() {
+    private lateinit var binding: FragmentAddUserBinding
 
     private var userViewModel = UserViewModel()
     fun setViewModel(userViewModel: UserViewModel) {
@@ -25,21 +26,25 @@ class DialogFragment : AppCompatDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireActivity())
         val inflater = requireActivity().layoutInflater
-        val dialogView = inflater.inflate(R.layout.activity_add_user, null)
+        val dialogView = inflater.inflate(R.layout.fragment_add_user, null)
         builder.setView(dialogView)
-            .setPositiveButton(Constants.DIALOG_POSITIVE_BUTTON) { _, _ ->
-                userViewModel.addUser(
-                    User(
-                        dialogView.findViewById<TextInputEditText>(R.id.textInputEditTextFullName).text.toString(),
-                        dialogView.findViewById<TextInputEditText>(R.id.textInputEditTextCareer).text.toString(),
-                        ""
-                    ), userViewModel.getUserList().size
-                )
-                adapter.updateUsers(userViewModel.getUserList())
-                adapter.notifyItemInserted(userViewModel.getUserList().size - 1)
-            }.setNegativeButton(Constants.DIALOG_NEGATIVE_BUTTON) { _, _ ->
-                dismiss()
-            }
+        binding = FragmentAddUserBinding.bind(dialogView)
+
+        binding.buttonSave.setOnClickListener {
+            userViewModel.addUser(
+                User(
+                    dialogView.findViewById<TextInputEditText>(R.id.textInputEditTextFullName).text.toString(),
+                    dialogView.findViewById<TextInputEditText>(R.id.textInputEditTextCareer).text.toString(),
+                    ""
+                ), userViewModel.getUserList().size
+            )
+            adapter.updateUsers(userViewModel.getUserList())
+            adapter.notifyItemInserted(userViewModel.getUserList().size - 1)
+            dismiss()
+        }
+        binding.buttonCancel.setOnClickListener {
+            dismiss()
+        }
         return builder.create()
     }
 }

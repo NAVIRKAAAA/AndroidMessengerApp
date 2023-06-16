@@ -1,10 +1,13 @@
 package com.rhorbachevskyi.recyclerview.ui.fragments.contact
 
 import android.os.Bundle
+import android.text.TextUtils.replace
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,8 +21,10 @@ import com.rhorbachevskyi.recyclerview.domain.model.User
 import com.rhorbachevskyi.recyclerview.utils.Constants
 import com.rhorbachevskyi.recyclerview.utils.ext.animateVisibility
 import com.google.android.material.snackbar.Snackbar
+import com.rhorbachevskyi.recyclerview.ui.contract.navigator
+import com.rhorbachevskyi.recyclerview.ui.fragments.userProfile.ProfileFragment
 
-class ContactFragment : Fragment(), UserItemClickListener {
+class UserFragment : Fragment(), UserItemClickListener {
     private lateinit var binding: FragmentContactsBinding
     private val adapter: RecyclerViewAdapter by lazy {
         RecyclerViewAdapter()
@@ -31,11 +36,14 @@ class ContactFragment : Fragment(), UserItemClickListener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentContactsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initialRecyclerview()
         setClickListener()
         setNavigationUpListeners()
-        return binding.root
     }
 
     private fun initialRecyclerview() {
@@ -106,6 +114,10 @@ class ContactFragment : Fragment(), UserItemClickListener {
 
     override fun onUserDelete(user: User, position: Int) {
         deleteUserWithRestore(user, position)
+    }
+
+    override fun onOpenNewFragment(user: User) {
+        navigator().showContactsScreen(user)
     }
 
     fun deleteUserWithRestore(user: User, position: Int) {

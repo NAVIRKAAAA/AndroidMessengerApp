@@ -30,16 +30,17 @@ class RecyclerViewAdapter :
 
     override fun onBindViewHolder(holder: UsersViewHolder, position: Int) {
         val user = users[position]
-
-        holder.binding.imageViewDelete.setOnClickListener {
-            val positionUser = holder.bindingAdapterPosition
-            listener?.onUserDelete(user, positionUser)
-        }
-
         with(holder.binding) {
+            imageViewDelete.setOnClickListener {
+                listener?.onUserDelete(user, holder.bindingAdapterPosition)
+            }
+            itemUser.setOnClickListener {
+                listener?.onOpenNewFragment(user)
+            }
             textViewName.text = user.name
             textViewCareer.text = user.career
             imageViewUserPhoto.loadImage(user.photo)
+
         }
     }
 
