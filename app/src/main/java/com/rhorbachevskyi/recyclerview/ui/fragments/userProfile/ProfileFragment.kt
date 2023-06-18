@@ -5,13 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.recyclerview.databinding.FragmentDetailViewBinding
-import com.rhorbachevskyi.recyclerview.domain.model.User
-import com.rhorbachevskyi.recyclerview.repository.UserItemClickListener
-import com.rhorbachevskyi.recyclerview.ui.contract.navigator
-import com.rhorbachevskyi.recyclerview.utils.ext.loadImage
 
-class ProfileFragment(private val user: User) : Fragment() {
+class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentDetailViewBinding
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,11 +26,11 @@ class ProfileFragment(private val user: User) : Fragment() {
     }
 
     private fun setProfile() {
-        with(binding) {
-            imageViewContactProfilePhoto.loadImage(user.photo)
-            textViewName.text = user.name
-            textViewCareer.text = user.career
-        }
+//        with(binding) {
+//            imageViewContactProfilePhoto.loadImage(user.photo)
+//            textViewName.text = user.name
+//            textViewCareer.text = user.career
+//        }
     }
 
     private fun setListeners() {
@@ -42,7 +39,7 @@ class ProfileFragment(private val user: User) : Fragment() {
 
     private fun setNavigationBack() {
         binding.imageViewNavigationBack.setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
+            findNavController().navigateUp()
         }
     }
 }

@@ -3,22 +3,22 @@ package com.rhorbachevskyi.recyclerview.ui.fragments.contact.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.rhorbachevskyi.recyclerview.repository.UserItemClickListener
+import com.rhorbachevskyi.recyclerview.repository.ContactItemClickListener
 import com.example.recyclerview.databinding.ItemUserBinding
-import com.rhorbachevskyi.recyclerview.domain.model.User
+import com.rhorbachevskyi.recyclerview.domain.model.Contact
 import com.rhorbachevskyi.recyclerview.utils.ext.loadImage
 
 
 class RecyclerViewAdapter :
     RecyclerView.Adapter<RecyclerViewAdapter.UsersViewHolder>() {
 
-    private var listener: UserItemClickListener? = null
+    private var listener: ContactItemClickListener? = null
 
     class UsersViewHolder(val binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root)
 
-    private val users = ArrayList<User>()
+    private val users = ArrayList<Contact>()
 
-    fun setUserItemClickListener(listener: UserItemClickListener) {
+    fun setUserItemClickListener(listener: ContactItemClickListener) {
         this.listener = listener
     }
 
@@ -36,6 +36,7 @@ class RecyclerViewAdapter :
             }
             itemUser.setOnClickListener {
                 listener?.onOpenNewFragment(user)
+
             }
             textViewName.text = user.name
             textViewCareer.text = user.career
@@ -46,7 +47,7 @@ class RecyclerViewAdapter :
 
     override fun getItemCount(): Int = users.size
 
-    fun updateUsers(newUsers: ArrayList<User>) {
+    fun updateUsers(newUsers: ArrayList<Contact>) {
         users.clear()
         users.addAll(newUsers)
     }

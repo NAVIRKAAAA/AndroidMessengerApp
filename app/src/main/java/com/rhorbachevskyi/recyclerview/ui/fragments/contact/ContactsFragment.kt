@@ -1,35 +1,32 @@
 package com.rhorbachevskyi.recyclerview.ui.fragments.contact
 
 import android.os.Bundle
-import android.text.TextUtils.replace
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recyclerview.R
 import com.rhorbachevskyi.recyclerview.ui.fragments.contact.adapter.RecyclerViewAdapter
-import com.rhorbachevskyi.recyclerview.repository.UserItemClickListener
+import com.rhorbachevskyi.recyclerview.repository.ContactItemClickListener
 import com.rhorbachevskyi.recyclerview.ui.fragments.dialog.DialogFragment
 import com.example.recyclerview.databinding.FragmentContactsBinding
-import com.rhorbachevskyi.recyclerview.domain.model.User
+import com.rhorbachevskyi.recyclerview.domain.model.Contact
 import com.rhorbachevskyi.recyclerview.utils.Constants
 import com.rhorbachevskyi.recyclerview.utils.ext.animateVisibility
 import com.google.android.material.snackbar.Snackbar
-import com.rhorbachevskyi.recyclerview.ui.contract.navigator
-import com.rhorbachevskyi.recyclerview.ui.fragments.userProfile.ProfileFragment
 
-class UserFragment : Fragment(), UserItemClickListener {
+class ContactsFragment : Fragment(), ContactItemClickListener {
     private lateinit var binding: FragmentContactsBinding
+    private val navController by lazy { findNavController() }
     private val adapter: RecyclerViewAdapter by lazy {
         RecyclerViewAdapter()
     }
-    private var userViewModel = UserViewModel()
+    private var userViewModel = ContactsViewModel()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -48,7 +45,7 @@ class UserFragment : Fragment(), UserItemClickListener {
 
     private fun initialRecyclerview() {
         setTouchRecycleItemListener()
-        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+        userViewModel = ViewModelProvider(this)[ContactsViewModel::class.java]
         val layoutManager = LinearLayoutManager(context)
         adapter.setUserItemClickListener(this)
         binding.recyclerViewContacts.layoutManager = layoutManager
@@ -112,15 +109,16 @@ class UserFragment : Fragment(), UserItemClickListener {
         }
     }
 
-    override fun onUserDelete(user: User, position: Int) {
+    override fun onUserDelete(user: Contact, position: Int) {
         deleteUserWithRestore(user, position)
     }
 
-    override fun onOpenNewFragment(user: User) {
-        navigator().showContactsScreen(user)
+    override fun onOpenNewFragment(user: Contact) {
+        val direction = ContactsFragmentDirections.actionContactsFragmentToProfileFragment()
+        findNavController().navigate(direction)
     }
 
-    fun deleteUserWithRestore(user: User, position: Int) {
+    fun deleteUserWithRestore(user: Contact, position: Int) {
         if (userViewModel.deleteUser(user)) {
             adapter.notifyItemRemoved(position)
             adapter.updateUsers(userViewModel.getUserList())

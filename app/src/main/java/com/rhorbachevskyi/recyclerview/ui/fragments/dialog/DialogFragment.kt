@@ -7,16 +7,16 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import com.example.recyclerview.R
 import com.example.recyclerview.databinding.FragmentAddUserBinding
 import com.rhorbachevskyi.recyclerview.ui.fragments.contact.adapter.RecyclerViewAdapter
-import com.rhorbachevskyi.recyclerview.domain.model.User
-import com.rhorbachevskyi.recyclerview.ui.fragments.contact.UserViewModel
+import com.rhorbachevskyi.recyclerview.domain.model.Contact
+import com.rhorbachevskyi.recyclerview.ui.fragments.contact.ContactsViewModel
 import com.google.android.material.textfield.TextInputEditText
 
 
 class DialogFragment : AppCompatDialogFragment() {
     private lateinit var binding: FragmentAddUserBinding
 
-    private var userViewModel = UserViewModel()
-    fun setViewModel(userViewModel: UserViewModel) {
+    private var userViewModel = ContactsViewModel()
+    fun setViewModel(userViewModel: ContactsViewModel) {
         this.userViewModel = userViewModel
     }
     private var adapter = RecyclerViewAdapter()
@@ -32,7 +32,7 @@ class DialogFragment : AppCompatDialogFragment() {
 
         binding.buttonSave.setOnClickListener {
             userViewModel.addUser(
-                User(
+                Contact(
                     dialogView.findViewById<TextInputEditText>(R.id.textInputEditTextFullName).text.toString(),
                     dialogView.findViewById<TextInputEditText>(R.id.textInputEditTextCareer).text.toString(),
                     ""

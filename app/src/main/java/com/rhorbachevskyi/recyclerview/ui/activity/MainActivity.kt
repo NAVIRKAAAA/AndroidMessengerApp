@@ -2,34 +2,29 @@ package com.rhorbachevskyi.recyclerview.ui.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.NavDirections
+import androidx.navigation.fragment.NavHostFragment
 import com.example.recyclerview.R
 import com.example.recyclerview.databinding.ActivityMainBinding
-import com.rhorbachevskyi.recyclerview.domain.model.User
-import com.rhorbachevskyi.recyclerview.ui.contract.Navigator
-import com.rhorbachevskyi.recyclerview.ui.fragments.contact.UserFragment
-import com.rhorbachevskyi.recyclerview.ui.fragments.userProfile.ProfileFragment
 
-class MainActivity : AppCompatActivity(), Navigator {
+
+class MainActivity : AppCompatActivity() {
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        launchFragment(UserFragment())
+
+        val navHostName = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
+        navController = navHostName.navController
+
     }
 
-    private fun launchFragment(fragment: Fragment) {
-        supportFragmentManager
-            .beginTransaction()
-            .addToBackStack(null)
-            .replace(R.id.fragmentContainer, fragment)
-            .commit()
-    }
-
-    override fun showContactsScreen(user: User) {
-        launchFragment(ProfileFragment(user))
+    private fun launchFragment(direction: NavDirections) {
+       navController.navigate(direction)
     }
 }
