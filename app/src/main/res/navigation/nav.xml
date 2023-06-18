@@ -18,5 +18,8 @@
         android:id="@+id/profileFragment"
         android:name="com.rhorbachevskyi.recyclerview.ui.fragments.userProfile.ProfileFragment"
         android:label="ProfileFragment"
-        tools:layout="@layout/fragment_detail_view"/>
+        tools:layout="@layout/fragment_detail_view">
+        <argument android:name="Contact"
+            app:argType="com.rhorbachevskyi.recyclerview.domain.model.Contact"/>
+    </fragment>
 </navigation>

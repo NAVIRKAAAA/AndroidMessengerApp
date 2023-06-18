@@ -114,7 +114,7 @@ class ContactsFragment : Fragment(), ContactItemClickListener {
     }
 
     override fun onOpenNewFragment(user: Contact) {
-        val direction = ContactsFragmentDirections.actionContactsFragmentToProfileFragment()
+        val direction = ContactsFragmentDirections.actionContactsFragmentToProfileFragment(user)
         findNavController().navigate(direction)
     }
 
