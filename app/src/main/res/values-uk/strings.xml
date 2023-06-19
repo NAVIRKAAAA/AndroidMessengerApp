@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">RecyclerView</string>
     <string name="full_name">Повне ім\'я</string>
@@ -27,4 +26,9 @@
     <string name="logout">Вийти</string>
     <string name="s_has_been_removed">%s було видалено</string>
     <string name="restore">Відновити</string>
+    <string name="add_contact">Додати контакт</string>
+    <string name="save">Зберегти</string>
+    <string name="cancel">Скасувати</string>
+    <string name="profile">Профіль</string>
+    <string name="message">повідомлення</string>
 </resources>

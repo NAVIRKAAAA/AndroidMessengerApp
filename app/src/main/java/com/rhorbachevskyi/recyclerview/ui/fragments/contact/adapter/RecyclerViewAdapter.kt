@@ -1,11 +1,13 @@
 package com.rhorbachevskyi.recyclerview.ui.fragments.contact.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.rhorbachevskyi.recyclerview.repository.ContactItemClickListener
+import com.rhorbachevskyi.recyclerview.domain.repository.ContactItemClickListener
 import com.example.recyclerview.databinding.ItemUserBinding
 import com.rhorbachevskyi.recyclerview.domain.model.Contact
+import com.rhorbachevskyi.recyclerview.utils.Constants
 import com.rhorbachevskyi.recyclerview.utils.ext.loadImage
 
 
@@ -13,12 +15,11 @@ class RecyclerViewAdapter :
     RecyclerView.Adapter<RecyclerViewAdapter.UsersViewHolder>() {
 
     private var listener: ContactItemClickListener? = null
-
     class UsersViewHolder(val binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root)
 
-    private val users = ArrayList<Contact>()
+    private val contacts = ArrayList<Contact>()
 
-    fun setUserItemClickListener(listener: ContactItemClickListener) {
+    fun setContactItemClickListener(listener: ContactItemClickListener) {
         this.listener = listener
     }
 
@@ -29,26 +30,40 @@ class RecyclerViewAdapter :
     }
 
     override fun onBindViewHolder(holder: UsersViewHolder, position: Int) {
-        val user = users[position]
+        val contact = contacts[position]
         with(holder.binding) {
             imageViewDelete.setOnClickListener {
-                listener?.onUserDelete(user, holder.bindingAdapterPosition)
+                listener?.onUserDelete(contact, holder.bindingAdapterPosition)
             }
             itemUser.setOnClickListener {
-                listener?.onOpenNewFragment(user)
-
+                listener?.onOpenNewFragment(contact, arrayOf(
+                    setTransitionName(
+                        imageViewUserPhoto,
+                        Constants.TRANSITION_NAME_IMAGE +   contact.id
+                    ),
+                    setTransitionName(
+                        textViewName,
+                        Constants.TRANSITION_NAME_NAME + contact.id
+                    ),setTransitionName(
+                        textViewCareer,
+                        Constants.TRANSITION_NAME_CAREER + contact.id
+                    )
+                ))
             }
-            textViewName.text = user.name
-            textViewCareer.text = user.career
-            imageViewUserPhoto.loadImage(user.photo)
-
+            textViewName.text = contact.name
+            textViewCareer.text = contact.career
+            imageViewUserPhoto.loadImage(contact.photo)
         }
     }
 
-    override fun getItemCount(): Int = users.size
+    override fun getItemCount(): Int = contacts.size
 
-    fun updateUsers(newUsers: ArrayList<Contact>) {
-        users.clear()
-        users.addAll(newUsers)
+    fun updateContacts(newUsers: ArrayList<Contact>) {
+        contacts.clear()
+        contacts.addAll(newUsers)
+    }
+    private fun setTransitionName(view: View, name: String): Pair<View, String> {
+        view.transitionName = name
+        return view to name
     }
 }

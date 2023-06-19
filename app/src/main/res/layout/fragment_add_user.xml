@@ -10,15 +10,13 @@
         android:id="@+id/textViewAddContact"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/example3"
+        android:fontFamily="@font/example6"
         android:text="@string/add_contact"
         android:textColor="@color/gray"
         android:textSize="@dimen/text_normal_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textViewFullName"
@@ -34,7 +32,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputFullName"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/normal_margin"
         app:layout_constraintEnd_toEndOf="parent"
@@ -45,7 +43,7 @@
             android:id="@+id/textInputEditTextFullName"
             android:layout_width="match_parent"
             android:layout_height="@dimen/edit_text_height"
-            android:maxLength="30"
+            android:maxLength="20"
             android:textColor="@color/black"
             android:textSize="@dimen/edit_text_size" />
 
@@ -66,7 +64,7 @@
     <com.google.android.material.textfield.TextInputLayout
 
         android:id="@+id/textInputCareer"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/normal_margin"
         app:layout_constraintEnd_toEndOf="parent"
@@ -77,7 +75,7 @@
             android:id="@+id/textInputEditTextCareer"
             android:layout_width="match_parent"
             android:layout_height="@dimen/edit_text_height"
-            android:maxLength="30"
+            android:maxLength="20"
             android:textColor="@color/black"
             android:textSize="@dimen/edit_text_size" />
 
@@ -99,7 +97,7 @@
         android:id="@+id/buttonSave"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/bc_save"
+        android:background="@drawable/bc_view_my_contacts"
         android:fontFamily="@font/example6"
         android:text="@string/save"
         android:textColor="@color/white"

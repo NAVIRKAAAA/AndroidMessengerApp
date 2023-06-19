@@ -16,10 +16,10 @@ class DialogFragment : AppCompatDialogFragment() {
     private lateinit var binding: FragmentAddUserBinding
 
     private var userViewModel = ContactsViewModel()
+    private var adapter = RecyclerViewAdapter()
     fun setViewModel(userViewModel: ContactsViewModel) {
         this.userViewModel = userViewModel
     }
-    private var adapter = RecyclerViewAdapter()
     fun setAdapter(recyclerViewAdapter: RecyclerViewAdapter) {
         adapter = recyclerViewAdapter
     }
@@ -31,15 +31,15 @@ class DialogFragment : AppCompatDialogFragment() {
         binding = FragmentAddUserBinding.bind(dialogView)
 
         binding.buttonSave.setOnClickListener {
-            userViewModel.addUser(
+            userViewModel.addContact(
                 Contact(
                     dialogView.findViewById<TextInputEditText>(R.id.textInputEditTextFullName).text.toString(),
                     dialogView.findViewById<TextInputEditText>(R.id.textInputEditTextCareer).text.toString(),
                     ""
-                ), userViewModel.getUserList().size
+                ), userViewModel.getContactsList().size
             )
-            adapter.updateUsers(userViewModel.getUserList())
-            adapter.notifyItemInserted(userViewModel.getUserList().size - 1)
+            adapter.updateContacts(userViewModel.getContactsList())
+            adapter.notifyItemInserted(userViewModel.getContactsList().size - 1)
             dismiss()
         }
         binding.buttonCancel.setOnClickListener {

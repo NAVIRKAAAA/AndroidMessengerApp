@@ -2,28 +2,28 @@ package com.rhorbachevskyi.recyclerview.ui.fragments.contact
 
 import androidx.lifecycle.ViewModel
 
-import com.rhorbachevskyi.recyclerview.domain.localuserdataset.LocalContactData
+import com.rhorbachevskyi.recyclerview.domain.localcontactdataset.LocalContactData
 import com.rhorbachevskyi.recyclerview.domain.model.Contact
 
 class ContactsViewModel : ViewModel() {
-    private val users = ArrayList<Contact>()
+    private val contacts = ArrayList<Contact>()
 
     init {
-        users.addAll(LocalContactData().getLocalContactsList())
+        contacts.addAll(LocalContactData().getLocalContactsList())
 
     }
-    fun getUserList(): ArrayList<Contact> = users
+    fun getContactsList(): ArrayList<Contact> = contacts
 
-    fun deleteUser(user: Contact) : Boolean {
-        if(users.contains(user)) {
-            users.remove(user)
+    fun deleteContact(contact: Contact) : Boolean {
+        if(contacts.contains(contact)) {
+            contacts.remove(contact)
             return true
         }
         return false
     }
-    fun addUser(user: Contact, position: Int) : Boolean {
-        if(!users.contains(user)) {
-            users.add(position, user)
+    fun addContact(contact: Contact, position: Int) : Boolean {
+        if(!contacts.contains(contact)) {
+            contacts.add(position, contact)
             return true
         }
         return false
