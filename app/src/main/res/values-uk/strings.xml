@@ -19,8 +19,8 @@
     <string name="home_address">Домашня адреса</string>
     <string name="view_my_contacts">ПЕРЕГЛЯНУТИ МОЇ КОНТАКТИ</string>
     <string name="edit_profile">Редагувати профіль</string>
-    <string name="invalid_email">Невірний електронний адрес</string>
-    <string name="invalid_password">Невірний пароль</string>
+    <string name="invalid_email">Некоректний електронний адрес</string>
+    <string name="invalid_password">Некоректний пароль</string>
     <string name="logout">Вийти</string>
     <string name="profession">Професія</string>
     <string name="contacts">Контакти</string>

@@ -18,7 +18,10 @@ import com.rhorbachevskyi.viewpager.domain.model.Contact
 import com.google.android.material.snackbar.Snackbar
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.databinding.FragmentContactsBinding
+import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragment
+import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragmentDirections
 import com.rhorbachevskyi.viewpager.utils.Constants
+import com.rhorbachevskyi.viewpager.utils.ext.log
 
 class ContactsFragment : Fragment(), ContactItemClickListener {
     private lateinit var binding: FragmentContactsBinding
@@ -38,7 +41,12 @@ class ContactsFragment : Fragment(), ContactItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initialRecyclerview()
+        initialViewPager()
         setClickListener()
+    }
+
+    private fun initialViewPager() {
+
     }
 
     private fun initialRecyclerview() {
@@ -100,10 +108,19 @@ class ContactsFragment : Fragment(), ContactItemClickListener {
     }
 
     override fun onOpenNewFragment(contact: Contact, transitionPairs: Array<Pair<View, String>>){
-        val direction = ContactsFragmentDirections.actionContactsFragmentToContactProfile(contact)
+        val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToContactProfile(contact)
         val extras = FragmentNavigatorExtras(*transitionPairs)
         findNavController().navigate(direction, extras)
     }
+
+    override fun showImageDeleteBin() {
+        binding.imageViewDeleteSelectMode.visibility = View.VISIBLE
+    }
+
+    override fun hideImageDeleteBin() {
+        binding.imageViewDeleteSelectMode.visibility = View.GONE
+    }
+
 
     fun deleteUserWithRestore(user: Contact, position: Int) {
         if (userViewModel.deleteContact(user)) {

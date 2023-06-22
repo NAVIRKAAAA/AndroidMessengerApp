@@ -1,0 +1,11 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Фоновий колір -->
+    <item android:drawable="@android:color/white" />
+
+    <!-- Біла лінія внизу -->
+    <item
+        android:bottom="1dp"
+        android:drawable="@android:color/black" />
+
+</layer-list>

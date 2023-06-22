@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.rhorbachevskyi.viewpager.databinding.FragmentProfileBinding
+import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragment
+import com.rhorbachevskyi.viewpager.utils.ext.log
 
 class UserProfile : Fragment() {
     private lateinit var binding: FragmentProfileBinding
@@ -24,13 +26,20 @@ class UserProfile : Fragment() {
     }
 
     private fun setListeners() {
-        setViewContact()
+        viewContact()
+        logout()
+
     }
 
-    private fun setViewContact() {
+    private fun logout() {
+        binding.textViewLogout.setOnClickListener {
+            findNavController().navigateUp()
+        }
+    }
+
+    private fun viewContact() {
         binding.buttonViewContacts.setOnClickListener {
-            val direction = UserProfileDirections.actionUserProfileToContactsFragment2()
-            findNavController().navigate(direction)
+            (parentFragment as? ViewPagerFragment)?.openFragment(1)
         }
     }
 

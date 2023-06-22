@@ -42,10 +42,9 @@ class AuthFragment : Fragment() {
                     isValidPassword(textInputEditTextPassword.text.toString())
                 ) {
                     if (checkboxRemember.isChecked) saveData()
-                    val direction = AuthFragmentDirections.actionAuthFragmentToUserProfile(
-                        textInputEditTextEmail.text.toString()
-                    )
+                    val direction = AuthFragmentDirections.actionAuthFragmentToViewPagerFragment(textInputEditTextEmail.text.toString())
                     findNavController().navigate(direction)
+
                 }
             }
         }
