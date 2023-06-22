@@ -13,12 +13,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recyclerview.R
 import com.rhorbachevskyi.recyclerview.ui.fragments.contact.adapter.RecyclerViewAdapter
-import com.rhorbachevskyi.recyclerview.domain.repository.ContactItemClickListener
 import com.rhorbachevskyi.recyclerview.ui.fragments.dialog.DialogFragment
 import com.example.recyclerview.databinding.FragmentContactsBinding
 import com.rhorbachevskyi.recyclerview.domain.model.Contact
 import com.rhorbachevskyi.recyclerview.utils.Constants
 import com.google.android.material.snackbar.Snackbar
+import com.rhorbachevskyi.recyclerview.ui.fragments.contact.contract.ContactItemClickListener
 
 class ContactsFragment : Fragment(), ContactItemClickListener {
     private lateinit var binding: FragmentContactsBinding
@@ -51,6 +51,11 @@ class ContactsFragment : Fragment(), ContactItemClickListener {
         adapter.updateContacts(userViewModel.getContactsList())
     }
 
+    private fun setTouchRecycleItemListener() {
+        val itemTouchCallback = setTouchCallBackListener()
+        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(binding.recyclerViewContacts)
+    }
+
     private fun setClickListener() {
         showAddContactsDialog()
     }
@@ -62,11 +67,6 @@ class ContactsFragment : Fragment(), ContactItemClickListener {
             dialogFragment.setAdapter(adapter)
             dialogFragment.show(parentFragmentManager, Constants.DIALOG_TAG)
         }
-    }
-
-    private fun setTouchRecycleItemListener() {
-        val itemTouchCallback = setTouchCallBackListener()
-        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(binding.recyclerViewContacts)
     }
 
     private fun setTouchCallBackListener(): ItemTouchHelper.Callback {
@@ -88,16 +88,6 @@ class ContactsFragment : Fragment(), ContactItemClickListener {
         }
     }
 
-    override fun onUserDelete(contact: Contact, position: Int) {
-        deleteUserWithRestore(contact, position)
-    }
-
-    override fun onOpenNewFragment(contact: Contact, transitionPairs: Array<Pair<View, String>>){
-        val direction = ContactsFragmentDirections.actionContactsFragmentToProfileFragment(contact)
-        val extras = FragmentNavigatorExtras(*transitionPairs)
-        findNavController().navigate(direction, extras)
-    }
-
     fun deleteUserWithRestore(user: Contact, position: Int) {
         if (userViewModel.deleteContact(user)) {
             adapter.notifyItemRemoved(position)
@@ -114,5 +104,15 @@ class ContactsFragment : Fragment(), ContactItemClickListener {
                     }
                 }.show()
         }
+    }
+
+    override fun onUserDelete(contact: Contact, position: Int) {
+        deleteUserWithRestore(contact, position)
+    }
+
+    override fun onOpenNewFragment(contact: Contact, transitionPairs: Array<Pair<View, String>>) {
+        val direction = ContactsFragmentDirections.actionContactsFragmentToProfileFragment(contact)
+        val extras = FragmentNavigatorExtras(*transitionPairs)
+        findNavController().navigate(direction, extras)
     }
 }

@@ -32,7 +32,13 @@ class ProfileFragment : Fragment() {
         setListeners()
         return binding.root
     }
-
+    private fun setProfile(contact: Contact) {
+        with(binding) {
+            imageViewContactProfilePhoto.loadImage(contact.photo)
+            textViewName.text = contact.name
+            textViewCareer.text = contact.career
+        }
+    }
     private fun setSharedElementsTransition(contact: Contact) {
         with(binding) {
             imageViewContactProfilePhoto.transitionName =
@@ -41,19 +47,12 @@ class ProfileFragment : Fragment() {
             textViewCareer.transitionName = Constants.TRANSITION_NAME_CAREER + contact.id
         }
         val animation = TransitionInflater.from(context).inflateTransition(
-            android.R.transition.move
+            R.transition.custom_move
         )
         sharedElementEnterTransition = animation
         sharedElementReturnTransition = animation
     }
 
-    private fun setProfile(contact: Contact) {
-        with(binding) {
-            imageViewContactProfilePhoto.loadImage(contact.photo)
-            textViewName.text = contact.name
-            textViewCareer.text = contact.career
-        }
-    }
 
     private fun setListeners() {
         setNavigationBack()
@@ -64,4 +63,5 @@ class ProfileFragment : Fragment() {
             findNavController().navigateUp()
         }
     }
+
 }

@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.rhorbachevskyi.recyclerview.domain.repository.ContactItemClickListener
+import com.rhorbachevskyi.recyclerview.ui.fragments.contact.contract.ContactItemClickListener
 import com.example.recyclerview.databinding.ItemUserBinding
 import com.rhorbachevskyi.recyclerview.domain.model.Contact
 import com.rhorbachevskyi.recyclerview.utils.Constants
@@ -15,9 +15,9 @@ class RecyclerViewAdapter :
     RecyclerView.Adapter<RecyclerViewAdapter.UsersViewHolder>() {
 
     private var listener: ContactItemClickListener? = null
-    class UsersViewHolder(val binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root)
-
     private val contacts = ArrayList<Contact>()
+
+    class UsersViewHolder(val binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root)
 
     fun setContactItemClickListener(listener: ContactItemClickListener) {
         this.listener = listener
@@ -36,19 +36,21 @@ class RecyclerViewAdapter :
                 listener?.onUserDelete(contact, holder.bindingAdapterPosition)
             }
             itemUser.setOnClickListener {
-                listener?.onOpenNewFragment(contact, arrayOf(
-                    setTransitionName(
-                        imageViewUserPhoto,
-                        Constants.TRANSITION_NAME_IMAGE +   contact.id
-                    ),
-                    setTransitionName(
-                        textViewName,
-                        Constants.TRANSITION_NAME_NAME + contact.id
-                    ),setTransitionName(
-                        textViewCareer,
-                        Constants.TRANSITION_NAME_CAREER + contact.id
+                listener?.onOpenNewFragment(
+                    contact, arrayOf(
+                        setTransitionName(
+                            imageViewUserPhoto,
+                            Constants.TRANSITION_NAME_IMAGE + contact.id
+                        ),
+                        setTransitionName(
+                            textViewName,
+                            Constants.TRANSITION_NAME_NAME + contact.id
+                        ), setTransitionName(
+                            textViewCareer,
+                            Constants.TRANSITION_NAME_CAREER + contact.id
+                        )
                     )
-                ))
+                )
             }
             textViewName.text = contact.name
             textViewCareer.text = contact.career
@@ -62,6 +64,7 @@ class RecyclerViewAdapter :
         contacts.clear()
         contacts.addAll(newUsers)
     }
+
     private fun setTransitionName(view: View, name: String): Pair<View, String> {
         view.transitionName = name
         return view to name

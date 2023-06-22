@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.recyclerview.domain.repository
+package com.rhorbachevskyi.recyclerview.ui.fragments.contact.contract
 
 import android.view.View
 import com.rhorbachevskyi.recyclerview.domain.model.Contact
