@@ -2,47 +2,47 @@ package com.rhorbachevskyi.viewpager.ui.fragments.auth
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.rhorbachevskyi.viewpager.databinding.FragmentSignUpBinding
 import com.rhorbachevskyi.viewpager.utils.Constants
+import com.rhorbachevskyi.viewpager.utils.DataStoreManager
+import com.rhorbachevskyi.viewpager.utils.Validation
 import com.rhorbachevskyi.viewpager.utils.ext.invisible
+import com.rhorbachevskyi.viewpager.utils.ext.log
 import com.rhorbachevskyi.viewpager.utils.ext.visibleIf
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AuthFragment : Fragment() {
     private lateinit var binding: FragmentSignUpBinding
-    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentSignUpBinding.inflate(inflater,container,false)
+        binding = FragmentSignUpBinding.inflate(inflater, container, false)
         setListeners()
         dataValidation()
         return binding.root
     }
 
-    private fun isRememberMe() {
-        if (sharedPreferences.getString(Constants.KEY_REMEMBER_ME, "") != "") {
-
-        }
-    }
-
     private fun setListeners() {
         with(binding) {
             buttonRegister.setOnClickListener {
-                if (isValidEmail(textInputEditTextEmail.text.toString()) &&
-                    isValidPassword(textInputEditTextPassword.text.toString())
+                if (Validation().isValidEmail(textInputEditTextEmail.text.toString()) &&
+                    Validation().isValidPassword(textInputEditTextPassword.text.toString())
                 ) {
                     if (checkboxRemember.isChecked) saveData()
-                    val direction = AuthFragmentDirections.actionAuthFragmentToViewPagerFragment(textInputEditTextEmail.text.toString())
+                    val direction = AuthFragmentDirections.actionAuthFragmentToViewPagerFragment(
+                        textInputEditTextEmail.text.toString()
+                    )
                     findNavController().navigate(direction)
 
                 }
@@ -50,32 +50,35 @@ class AuthFragment : Fragment() {
         }
     }
 
-    private fun isValidEmail(email: String): Boolean =
-        Patterns.EMAIL_ADDRESS.matcher(email).matches()
-
-
-    private fun isValidPassword(password: String): Boolean =
-        password.length >= 7 && password.contains(Regex("[A-Z]")) &&
-                password.contains(Regex("[a-z]")) &&
-                password.contains(Regex("\\d")) && !password.contains(' ')
-
     private fun saveData() {
-        val editor = sharedPreferences.edit()
-        editor.putString(Constants.KEY_REMEMBER_ME, binding.textInputEditTextEmail.text.toString())
-        editor.apply()
+        lifecycleScope.launch(Dispatchers.IO) {
+            DataStoreManager.writeDataToDataStore(
+                requireContext(),
+                Constants.KEY_EMAIL,
+                binding.textInputEditTextEmail.text.toString()
+            )
+            DataStoreManager.writeDataToDataStore(
+                requireContext(),
+                Constants.KEY_REMEMBER_ME,
+                Constants.KEY_REMEMBER_ME
+            )
+            val isRememberMe =
+                DataStoreManager.readDataFromDataStore(requireContext(), Constants.KEY_REMEMBER_ME)
+            log(isRememberMe.toString())
+        }
     }
 
     private fun dataValidation() {
         with(binding) {
             textInputEditTextEmail.doOnTextChanged { text, _, _, _ ->
                 textViewInvalidEmail.visibleIf(
-                    !isValidEmail(text.toString()) && !text.isNullOrEmpty()
+                    !Validation().isValidEmail(text.toString()) && !text.isNullOrEmpty()
                 )
             }
             textInputEditTextPassword.doOnTextChanged { text, _, _, _ ->
                 if (!text.isNullOrEmpty()) {
                     textViewInvalidPassword.visibility =
-                        if (isValidPassword(text.toString())) View.INVISIBLE else View.VISIBLE
+                        if (Validation().isValidPassword(text.toString())) View.INVISIBLE else View.VISIBLE
                 } else {
                     textViewInvalidPassword.invisible()
                 }

@@ -20,31 +20,46 @@ class DialogFragment : AppCompatDialogFragment() {
     fun setViewModel(userViewModel: ContactsViewModel) {
         this.userViewModel = userViewModel
     }
+
     fun setAdapter(recyclerViewAdapter: RecyclerViewAdapter) {
         adapter = recyclerViewAdapter
     }
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireActivity())
         val inflater = requireActivity().layoutInflater
         val dialogView = inflater.inflate(R.layout.fragment_add_user, null)
         builder.setView(dialogView)
         binding = FragmentAddUserBinding.bind(dialogView)
+        setListeners()
+        return builder.create()
+    }
 
-        binding.buttonSave.setOnClickListener {
-            userViewModel.addContact(
-                Contact(
-                    dialogView.findViewById<TextInputEditText>(R.id.textInputEditTextFullName).text.toString(),
-                    dialogView.findViewById<TextInputEditText>(R.id.textInputEditTextCareer).text.toString(),
-                    ""
-                ), userViewModel.getContactsList().size
-            )
-            adapter.updateContacts(userViewModel.getContactsList())
-            adapter.notifyItemInserted(userViewModel.getContactsList().size - 1)
-            dismiss()
+    private fun setListeners() {
+        positiveClick()
+        negativeClick()
+    }
+
+    private fun positiveClick() {
+        with(binding) {
+            buttonSave.setOnClickListener {
+                userViewModel.addContact(
+                    Contact(
+                        textInputEditTextFullName.text.toString(),
+                        textInputEditTextCareer.text.toString(),
+                        ""
+                    ), userViewModel.getContactsList().size
+                )
+                adapter.updateContacts(userViewModel.getContactsList())
+                adapter.notifyItemInserted(userViewModel.getContactsList().size - 1)
+                dismiss()
+            }
         }
+    }
+
+    private fun negativeClick() {
         binding.buttonCancel.setOnClickListener {
             dismiss()
         }
-        return builder.create()
     }
 }

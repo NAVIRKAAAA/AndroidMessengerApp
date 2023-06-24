@@ -131,7 +131,7 @@
         android:id="@+id/checkboxRemember"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:button="@drawable/check_box"
+        android:button="@drawable/ic_check_box"
         android:text="@string/remember_me"
         android:paddingStart="@dimen/small_margin"
         app:layout_constraintStart_toStartOf="@id/buttonGoogle"

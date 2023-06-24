@@ -8,12 +8,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.domain.model.Contact
 import com.rhorbachevskyi.viewpager.databinding.FragmentDetailViewBinding
 import com.rhorbachevskyi.viewpager.utils.Constants
 import com.rhorbachevskyi.viewpager.utils.ext.loadImage
 
-class ContactProfile: Fragment() {
+class ContactProfile : Fragment() {
     private lateinit var binding: FragmentDetailViewBinding
 
     private val args: ContactProfileArgs by navArgs()
@@ -38,7 +39,7 @@ class ContactProfile: Fragment() {
             textViewCareer.transitionName = Constants.TRANSITION_NAME_CAREER + contact.id
         }
         val animation = TransitionInflater.from(context).inflateTransition(
-            android.R.transition.move
+            R.transition.custom_move
         )
         sharedElementEnterTransition = animation
         sharedElementReturnTransition = animation
