@@ -13,6 +13,7 @@ import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragment
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragmentDirections
 import com.rhorbachevskyi.viewpager.utils.Constants
 import com.rhorbachevskyi.viewpager.utils.DataStoreManager
+import com.rhorbachevskyi.viewpager.utils.ext.loadImage
 import com.rhorbachevskyi.viewpager.utils.ext.log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,7 +54,12 @@ class UserProfile : Fragment() {
     }
 
     private fun setUserProfile() {
+        setUserPhoto()
         setUsername(args.email)
+    }
+
+    private fun setUserPhoto() {
+        binding.imageViewProfileImage?.loadImage()
     }
 
     private fun setUsername(email: String) {

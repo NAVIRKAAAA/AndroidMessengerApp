@@ -79,23 +79,12 @@ class ContactsFragment : Fragment(), ContactItemClickListener {
         binding.imageViewDeleteSelectMode.setOnClickListener {
             for (i in contactsViewModel.getSelectedContactsList().size - 1 downTo 0) {
                 val contact = contactsViewModel.getSelectedContactsList()[i]
-                val position = getDeletePosition(contact)
                 contactsViewModel.deleteSelectContact(contact)
                 contactsViewModel.deleteContact(contact)
-                adapter.notifyItemRemoved(position)
                 adapter.updateContacts(contactsViewModel.getContactsList())
             }
             adapter.deactivateMultiselect()
         }
-    }
-
-    private fun getDeletePosition(current: Contact): Int {
-        var position = -1;
-        for (contact in contactsViewModel.getContactsList()) {
-            position++
-            if(contact.id == current.id) return position
-        }
-        return -1
     }
 
     private fun showAddContactsDialog() {
@@ -138,7 +127,6 @@ class ContactsFragment : Fragment(), ContactItemClickListener {
 
     fun deleteUserWithRestore(contact: Contact, position: Int) {
         if (contactsViewModel.deleteContact(contact)) {
-            adapter.notifyItemRemoved(position)
             adapter.updateContacts(contactsViewModel.getContactsList())
             Snackbar.make(
                 binding.recyclerViewContacts,
@@ -147,11 +135,11 @@ class ContactsFragment : Fragment(), ContactItemClickListener {
             )
                 .setAction(getString(R.string.restore)) {
                     if (contactsViewModel.addContact(contact, position)) {
-                        adapter.notifyItemInserted(position)
                         adapter.updateContacts(contactsViewModel.getContactsList())
                     }
                 }.show()
         }
+
     }
 
     override fun onUserDelete(contact: Contact, position: Int) {

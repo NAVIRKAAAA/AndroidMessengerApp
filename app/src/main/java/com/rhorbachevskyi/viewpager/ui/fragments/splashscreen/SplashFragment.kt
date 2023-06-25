@@ -26,7 +26,6 @@ class SplashFragment: Fragment() {
         lifecycleScope.launch {
             val isRememberMe =
                 DataStoreManager.readDataFromDataStore(requireContext(), Constants.KEY_REMEMBER_ME)
-            log(isRememberMe.toString())
             if(isRememberMe != null) {
                 val email = DataStoreManager.readDataFromDataStore(requireContext(), Constants.KEY_EMAIL)
                 val direction = SplashFragmentDirections.actionSplashFragment2ToViewPagerFragment(email)

@@ -62,9 +62,6 @@ class AuthFragment : Fragment() {
                 Constants.KEY_REMEMBER_ME,
                 Constants.KEY_REMEMBER_ME
             )
-            val isRememberMe =
-                DataStoreManager.readDataFromDataStore(requireContext(), Constants.KEY_REMEMBER_ME)
-            log(isRememberMe.toString())
         }
     }
 

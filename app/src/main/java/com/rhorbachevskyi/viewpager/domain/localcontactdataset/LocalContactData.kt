@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.recyclerview.domain.localcontactdataset
+package com.rhorbachevskyi.viewpager.domain.localcontactdataset
 
 import com.rhorbachevskyi.viewpager.domain.model.Contact
 
