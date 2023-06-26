@@ -10,11 +10,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.rhorbachevskyi.viewpager.databinding.FragmentProfileBinding
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragment
-import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragmentDirections
 import com.rhorbachevskyi.viewpager.utils.Constants
 import com.rhorbachevskyi.viewpager.utils.DataStoreManager
 import com.rhorbachevskyi.viewpager.utils.ext.loadImage
-import com.rhorbachevskyi.viewpager.utils.ext.log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

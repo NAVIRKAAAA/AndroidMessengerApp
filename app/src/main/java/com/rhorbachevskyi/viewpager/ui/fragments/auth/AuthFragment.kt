@@ -1,6 +1,5 @@
 package com.rhorbachevskyi.viewpager.ui.fragments.auth
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +13,6 @@ import com.rhorbachevskyi.viewpager.utils.Constants
 import com.rhorbachevskyi.viewpager.utils.DataStoreManager
 import com.rhorbachevskyi.viewpager.utils.Validation
 import com.rhorbachevskyi.viewpager.utils.ext.invisible
-import com.rhorbachevskyi.viewpager.utils.ext.log
 import com.rhorbachevskyi.viewpager.utils.ext.visibleIf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,12 +50,12 @@ class AuthFragment : Fragment() {
 
     private fun saveData() {
         lifecycleScope.launch(Dispatchers.IO) {
-            DataStoreManager.writeDataToDataStore(
+            DataStoreManager.putData(
                 requireContext(),
                 Constants.KEY_EMAIL,
                 binding.textInputEditTextEmail.text.toString()
             )
-            DataStoreManager.writeDataToDataStore(
+            DataStoreManager.putData(
                 requireContext(),
                 Constants.KEY_REMEMBER_ME,
                 Constants.KEY_REMEMBER_ME

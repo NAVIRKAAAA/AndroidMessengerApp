@@ -55,13 +55,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/normal_margin"
-        android:layout_marginBottom="@dimen/large_margin"
         android:fontFamily="@font/example9"
         android:text="@string/add_contacts"
         android:textColor="@color/white"
         android:textSize="@dimen/text_normal_size"
+        app:layout_constraintTop_toBottomOf="@id/imageViewNavigationBack"
         app:layout_constraintBottom_toBottomOf="@id/guidelineBackground"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="0.75"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_contacts"
@@ -71,7 +72,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/guidelineBackground"
-        app:layout_constraintBottom_toTopOf="@id/imageViewDeleteSelectMode"/>
+        app:layout_constraintBottom_toTopOf="@id/imageViewDeleteSelectMode"
+        tools:listitem="@layout/item_user"/>
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageViewDeleteSelectMode"

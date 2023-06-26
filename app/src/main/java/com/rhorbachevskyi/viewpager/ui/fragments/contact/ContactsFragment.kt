@@ -22,7 +22,6 @@ import com.rhorbachevskyi.viewpager.databinding.FragmentContactsBinding
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragment
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragmentDirections
 import com.rhorbachevskyi.viewpager.utils.Constants
-import com.rhorbachevskyi.viewpager.utils.ext.log
 
 class ContactsFragment : Fragment(), ContactItemClickListener {
     private lateinit var binding: FragmentContactsBinding
@@ -36,20 +35,61 @@ class ContactsFragment : Fragment(), ContactItemClickListener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentContactsBinding.inflate(inflater, container, false)
+        initialRecyclerview()
+        setClickListener()
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initialRecyclerview()
-        setClickListener()
+    override fun showDeleteSelectItems() {
+        binding.imageViewDeleteSelectMode.visibility = View.VISIBLE
     }
 
+
+    override fun onUserDelete(contact: Contact, position: Int) {
+        deleteUserWithRestore(contact, position)
+    }
+
+    override fun onOpenNewFragment(contact: Contact, transitionPairs: Array<Pair<View, String>>) {
+        val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToContactProfile(contact)
+        val extras = FragmentNavigatorExtras(*transitionPairs)
+        findNavController().navigate(direction, extras)
+    }
+
+    override fun hideImageDeleteBin() {
+        binding.imageViewDeleteSelectMode.visibility = View.GONE
+    }
+
+    override fun showNotSelectModeText() {
+        binding.textViewAddContacts.visibility = View.VISIBLE
+    }
+
+    override fun hideNotSelectModeText() {
+        binding.textViewAddContacts.visibility = View.GONE
+    }
+
+    override fun getSelectList() : ArrayList<Contact> {
+        return contactsViewModel.getSelectedContactsList()
+    }
+    override fun actionWithSelectContact(
+        contact: Contact,
+        checked: Boolean
+    ) {
+        if (checked && !contactsViewModel.getSelectedContactsList().contains(contact)) {
+            contactsViewModel.addSelectContact(contact)
+        }
+        if (!checked && contactsViewModel.getSelectedContactsList().contains(contact)) {
+            contactsViewModel.deleteSelectContact(contact)
+        }
+        if (contactsViewModel.getSelectedContactsList().size == 0) {
+            adapter.deactivateMultiselect()
+        }
+    }
 
     private fun initialRecyclerview() {
         contactsViewModel = ViewModelProvider(this)[ContactsViewModel::class.java]
         val layoutManager = LinearLayoutManager(context)
         adapter.setContactItemClickListener(this)
+        if(contactsViewModel.getSelectedContactsList().size != 0) adapter.setModeAfterTurnScreen()
         binding.recyclerViewContacts.layoutManager = layoutManager
         binding.recyclerViewContacts.adapter = adapter
         adapter.setContext(requireContext())
@@ -77,6 +117,7 @@ class ContactsFragment : Fragment(), ContactItemClickListener {
 
     private fun deleteSelectedContacts() {
         binding.imageViewDeleteSelectMode.setOnClickListener {
+            val size = contactsViewModel.getSelectedContactsList().size
             for (i in contactsViewModel.getSelectedContactsList().size - 1 downTo 0) {
                 val contact = contactsViewModel.getSelectedContactsList()[i]
                 contactsViewModel.deleteSelectContact(contact)
@@ -84,7 +125,13 @@ class ContactsFragment : Fragment(), ContactItemClickListener {
                 adapter.updateContacts(contactsViewModel.getContactsList())
             }
             adapter.deactivateMultiselect()
+            Snackbar.make(
+                binding.recyclerViewContacts,
+                if(size > 1) getString(R.string.contacts_removed) else getString(R.string.contact_removed),
+                Snackbar.LENGTH_LONG
+            ).show()
         }
+
     }
 
     private fun showAddContactsDialog() {
@@ -110,21 +157,22 @@ class ContactsFragment : Fragment(), ContactItemClickListener {
             ): Boolean {
                 return false
             }
+
             override fun getSwipeDirs(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder
             ): Int {
-                return if(!adapter.getContactStatus()) ItemTouchHelper.LEFT else 0
+                return if (!adapter.getContactStatus()) ItemTouchHelper.LEFT else 0
             }
+
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 deleteUserWithRestore(
-                    contactsViewModel.getContactsList()[viewHolder.adapterPosition],
-                    viewHolder.adapterPosition
+                    contactsViewModel.getContactsList()[viewHolder.bindingAdapterPosition],
+                    viewHolder.bindingAdapterPosition
                 )
             }
         }
     }
-
     fun deleteUserWithRestore(contact: Contact, position: Int) {
         if (contactsViewModel.deleteContact(contact)) {
             adapter.updateContacts(contactsViewModel.getContactsList())
@@ -140,46 +188,5 @@ class ContactsFragment : Fragment(), ContactItemClickListener {
                 }.show()
         }
 
-    }
-
-    override fun onUserDelete(contact: Contact, position: Int) {
-        deleteUserWithRestore(contact, position)
-    }
-
-    override fun onOpenNewFragment(contact: Contact, transitionPairs: Array<Pair<View, String>>) {
-        val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToContactProfile(contact)
-        val extras = FragmentNavigatorExtras(*transitionPairs)
-        findNavController().navigate(direction, extras)
-    }
-
-    override fun hideImageDeleteBin() {
-        binding.imageViewDeleteSelectMode.visibility = View.GONE
-    }
-
-    override fun showNotSelectModeText() {
-        binding.textViewAddContacts.visibility = View.VISIBLE
-    }
-
-    override fun hideNotSelectModeText() {
-        binding.textViewAddContacts.visibility = View.GONE
-    }
-
-    override fun actionWithSelectContact(
-        contact: Contact,
-        checked: Boolean
-    ) {
-        if (checked && !contactsViewModel.getSelectedContactsList().contains(contact)) {
-            contactsViewModel.addSelectContact(contact)
-        }
-        if (!checked && contactsViewModel.getSelectedContactsList().contains(contact)) {
-            contactsViewModel.deleteSelectContact(contact)
-        }
-        if (contactsViewModel.getSelectedContactsList().size == 0) {
-            adapter.deactivateMultiselect()
-        }
-    }
-
-    override fun showDeleteSelectItems() {
-        binding.imageViewDeleteSelectMode.visibility = View.VISIBLE
     }
 }

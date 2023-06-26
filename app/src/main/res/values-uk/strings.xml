@@ -29,6 +29,8 @@
     <string name="restore">Відновити</string>
     <string name="add_contacts">Додати контакти</string>
     <string name="contacts">Контакти</string>
+    <string name="contacts_removed">Контакти було видалено</string>
+    <string name="contact_removed">Контакт було видалено</string>
 
     <!-- fragment detail view -->
     <string name="home_address">Домашня адреса</string>

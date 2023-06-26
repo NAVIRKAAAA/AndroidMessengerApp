@@ -14,7 +14,7 @@ object DataStoreManager {
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = Constants.REGISTER_DATA_STORE)
 
-    suspend fun readDataFromDataStore(context: Context, key: String): String? {
+    suspend fun getDataFromKey(context: Context, key: String): String? {
         val dataStoreKey = stringPreferencesKey(key)
         val preferences = context.dataStore.data.first()
         return if (preferences.contains(dataStoreKey)) {
@@ -24,7 +24,7 @@ object DataStoreManager {
         }
     }
 
-    suspend fun writeDataToDataStore(context: Context, key: String, value: String) {
+    suspend fun putData(context: Context, key: String, value: String) {
         val dataStoreKey = stringPreferencesKey(key)
         context.dataStore.edit { settings ->
             settings[dataStoreKey] = value

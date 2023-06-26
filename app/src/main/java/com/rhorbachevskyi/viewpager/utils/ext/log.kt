@@ -1,7 +1,8 @@
 package com.rhorbachevskyi.viewpager.utils.ext
 
+import android.util.Log
 import com.rhorbachevskyi.viewpager.utils.Constants
 
 fun log(str : String) {
-    android.util.Log.d(Constants.LOG_TAG, str)
+    Log.d(Constants.LOG_TAG, str)
 }

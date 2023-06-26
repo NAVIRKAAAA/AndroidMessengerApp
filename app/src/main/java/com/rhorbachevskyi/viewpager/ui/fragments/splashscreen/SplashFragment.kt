@@ -9,7 +9,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.rhorbachevskyi.viewpager.utils.Constants
 import com.rhorbachevskyi.viewpager.utils.DataStoreManager
-import com.rhorbachevskyi.viewpager.utils.ext.log
 import kotlinx.coroutines.launch
 
 class SplashFragment: Fragment() {
@@ -25,9 +24,9 @@ class SplashFragment: Fragment() {
     private fun isAutologin() {
         lifecycleScope.launch {
             val isRememberMe =
-                DataStoreManager.readDataFromDataStore(requireContext(), Constants.KEY_REMEMBER_ME)
+                DataStoreManager.getDataFromKey(requireContext(), Constants.KEY_REMEMBER_ME)
             if(isRememberMe != null) {
-                val email = DataStoreManager.readDataFromDataStore(requireContext(), Constants.KEY_EMAIL)
+                val email = DataStoreManager.getDataFromKey(requireContext(), Constants.KEY_EMAIL)
                 val direction = SplashFragmentDirections.actionSplashFragment2ToViewPagerFragment(email)
                 findNavController().navigate(direction)
             } else {

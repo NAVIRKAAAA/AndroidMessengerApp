@@ -51,7 +51,6 @@ class DialogFragment : AppCompatDialogFragment() {
                     ), userViewModel.getContactsList().size
                 )
                 adapter.updateContacts(userViewModel.getContactsList())
-                adapter.notifyItemInserted(userViewModel.getContactsList().size - 1)
                 dismiss()
             }
         }

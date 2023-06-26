@@ -10,11 +10,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.databinding.ItemUserBinding
 import com.rhorbachevskyi.viewpager.domain.model.Contact
+import com.rhorbachevskyi.viewpager.ui.fragments.contact.ContactsViewModel
 import com.rhorbachevskyi.viewpager.ui.fragments.contact.adapter.diff.ContactDiffCallback
 import com.rhorbachevskyi.viewpager.ui.fragments.contact.contract.ContactItemClickListener
 import com.rhorbachevskyi.viewpager.utils.Constants
 import com.rhorbachevskyi.viewpager.utils.ext.loadImage
-import com.rhorbachevskyi.viewpager.utils.ext.log
 
 class RecyclerViewAdapter :
     RecyclerView.Adapter<RecyclerViewAdapter.UsersViewHolder>() {
@@ -24,7 +24,7 @@ class RecyclerViewAdapter :
     private lateinit var context: Context
     private var isSelectMode = false
     private var selectItemIndex = -1
-    private val selectIndexList = ArrayList<Int>()
+
     class UsersViewHolder(val binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root)
 
     fun setContactItemClickListener(listener: ContactItemClickListener) {
@@ -34,6 +34,14 @@ class RecyclerViewAdapter :
     fun setContext(context: Context) {
         this.context = context
     }
+
+    fun setModeAfterTurnScreen() {
+        isSelectMode = true
+        listener?.showDeleteSelectItems()
+        listener?.hideNotSelectModeText()
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UsersViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ItemUserBinding.inflate(inflater, parent, false)
@@ -43,9 +51,6 @@ class RecyclerViewAdapter :
     override fun onBindViewHolder(holder: UsersViewHolder, position: Int) {
         val contact = contacts[position]
         with(holder.binding) {
-            imageViewDelete.setOnClickListener {
-                listener?.onUserDelete(contact, holder.bindingAdapterPosition)
-            }
             textViewName.text = contact.name
             textViewCareer.text = contact.career
             imageViewUserPhoto.loadImage(contact.photo)
@@ -54,7 +59,7 @@ class RecyclerViewAdapter :
     }
 
     override fun getItemCount(): Int = contacts.size
-    fun getContactStatus(): Boolean = isSelectMode
+
     private fun setListeners(
         holder: UsersViewHolder,
         contact: Contact
@@ -63,10 +68,17 @@ class RecyclerViewAdapter :
             setContactSelection(holder, contact)
             setSelectList(holder)
         } else {
+            deleteBin(holder, contact)
             unSelectList(holder)
             detailView(holder, contact)
         }
         itemLongClick(holder, contact)
+    }
+
+    private fun deleteBin(holder: UsersViewHolder, contact: Contact) {
+        holder.binding.imageViewDelete.setOnClickListener {
+            listener?.onUserDelete(contact, holder.bindingAdapterPosition)
+        }
     }
 
     private fun setContactSelection(holder: UsersViewHolder, contact: Contact) {
@@ -82,11 +94,13 @@ class RecyclerViewAdapter :
     }
 
     private fun setSelectList(holder: UsersViewHolder) {
-        if (selectItemIndex != -1) {
+        if (selectItemIndex != -1 || listener?.getSelectList()?.size != 0) {
             with(holder.binding) {
                 checkboxSelectMode.visibility = View.VISIBLE
                 imageViewDelete.visibility = View.GONE
-                checkboxSelectMode.isChecked = selectItemIndex == holder.bindingAdapterPosition
+                checkboxSelectMode.isChecked =
+                    selectItemIndex == holder.bindingAdapterPosition || listener?.getSelectList()
+                        ?.contains(contacts[holder.bindingAdapterPosition]) == true
                 viewBorder.background = ContextCompat.getDrawable(
                     context,
                     R.drawable.bc_user_select_mode
@@ -139,6 +153,11 @@ class RecyclerViewAdapter :
         }
     }
 
+    private fun setTransitionName(view: View, name: String): Pair<View, String> {
+        view.transitionName = name
+        return view to name
+    }
+
     private fun activateMultiselect(holder: UsersViewHolder, contact: Contact) {
         isSelectMode = true
         listener?.showDeleteSelectItems()
@@ -153,7 +172,8 @@ class RecyclerViewAdapter :
         listener?.hideImageDeleteBin()
         listener?.showNotSelectModeText()
         selectItemIndex = -1
-        notifyItemRangeChanged( 0, contacts.size)
+        listener?.getSelectList()?.clear()
+        notifyItemRangeChanged(0, contacts.size)
     }
 
     fun updateContacts(newUsers: ArrayList<Contact>) {
@@ -163,8 +183,5 @@ class RecyclerViewAdapter :
         diffResult.dispatchUpdatesTo(this)
     }
 
-    private fun setTransitionName(view: View, name: String): Pair<View, String> {
-        view.transitionName = name
-        return view to name
-    }
+    fun getContactStatus(): Boolean = isSelectMode
 }

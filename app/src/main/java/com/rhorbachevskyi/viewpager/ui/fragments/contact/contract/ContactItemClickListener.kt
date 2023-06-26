@@ -12,5 +12,5 @@ interface ContactItemClickListener {
     fun showNotSelectModeText()
     fun hideNotSelectModeText()
     fun actionWithSelectContact(contact: Contact, checked: Boolean)
-
+    fun getSelectList(): ArrayList<Contact>
 }
