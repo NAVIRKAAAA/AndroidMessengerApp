@@ -6,9 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.rhorbachevskyi.viewpager.databinding.FragmentSignUpBinding
+import com.rhorbachevskyi.viewpager.domain.model.UserRequest
+import com.rhorbachevskyi.viewpager.ui.fragments.contact.ContactsViewModel
 import com.rhorbachevskyi.viewpager.utils.Constants
 import com.rhorbachevskyi.viewpager.utils.DataStoreManager
 import com.rhorbachevskyi.viewpager.utils.Validation
@@ -19,7 +23,7 @@ import kotlinx.coroutines.launch
 
 class AuthFragment : Fragment() {
     private lateinit var binding: FragmentSignUpBinding
-
+    private lateinit var viewModel: AuthViewModel
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -27,17 +31,25 @@ class AuthFragment : Fragment() {
     ): View {
         binding = FragmentSignUpBinding.inflate(inflater, container, false)
         setListeners()
+        setObservers()
         dataValidation()
         return binding.root
     }
 
     private fun setListeners() {
+        viewModel = ViewModelProvider(this)[AuthViewModel::class.java]
         with(binding) {
             buttonRegister.setOnClickListener {
                 if (Validation().isValidEmail(textInputEditTextEmail.text.toString()) &&
                     Validation().isValidPassword(textInputEditTextPassword.text.toString())
                 ) {
                     if (checkboxRemember.isChecked) saveData()
+                    viewModel.registerUser(
+                        UserRequest(
+                            textInputEditTextEmail.text.toString(),
+                            textInputEditTextPassword.text.toString()
+                        )
+                    )
                     val direction = AuthFragmentDirections.actionAuthFragmentToViewPagerFragment(
                         textInputEditTextEmail.text.toString()
                     )
@@ -45,6 +57,12 @@ class AuthFragment : Fragment() {
 
                 }
             }
+        }
+    }
+
+    private fun setObservers() {
+        lifecycleScope.launch {
+
         }
     }
 
