@@ -8,79 +8,46 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.rhorbachevskyi.viewpager.databinding.FragmentSignUpBinding
 import com.rhorbachevskyi.viewpager.domain.model.UserRequest
-import com.rhorbachevskyi.viewpager.ui.fragments.contact.ContactsViewModel
+import com.rhorbachevskyi.viewpager.ui.BaseFragment
+import com.rhorbachevskyi.viewpager.utils.Validation
 import com.rhorbachevskyi.viewpager.utils.Constants
 import com.rhorbachevskyi.viewpager.utils.DataStoreManager
-import com.rhorbachevskyi.viewpager.utils.Validation
 import com.rhorbachevskyi.viewpager.utils.ext.invisible
+import com.rhorbachevskyi.viewpager.utils.ext.log
+import com.rhorbachevskyi.viewpager.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.utils.ext.visibleIf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class AuthFragment : Fragment() {
-    private lateinit var binding: FragmentSignUpBinding
-    private lateinit var viewModel: AuthViewModel
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentSignUpBinding.inflate(inflater, container, false)
+class AuthFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding::inflate) {
+    
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setListeners()
-        setObservers()
         dataValidation()
-        return binding.root
     }
-
     private fun setListeners() {
-        viewModel = ViewModelProvider(this)[AuthViewModel::class.java]
         with(binding) {
             buttonRegister.setOnClickListener {
                 if (Validation().isValidEmail(textInputEditTextEmail.text.toString()) &&
                     Validation().isValidPassword(textInputEditTextPassword.text.toString())
                 ) {
-                    if (checkboxRemember.isChecked) saveData()
-                    viewModel.registerUser(
-                        UserRequest(
+                    val direction =
+                        AuthFragmentDirections.actionAuthFragmentToSignUpExtendedFragment(
                             textInputEditTextEmail.text.toString(),
-                            textInputEditTextPassword.text.toString()
+                            textInputEditTextPassword.text.toString(),
+                            checkboxRemember.isChecked
                         )
-                    )
-                    val direction = AuthFragmentDirections.actionAuthFragmentToViewPagerFragment(
-                        textInputEditTextEmail.text.toString()
-                    )
-                    findNavController().navigate(direction)
-
+                    navController.navigate(direction)
                 }
             }
         }
     }
-
-    private fun setObservers() {
-        lifecycleScope.launch {
-
-        }
-    }
-
-    private fun saveData() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            DataStoreManager.putData(
-                requireContext(),
-                Constants.KEY_EMAIL,
-                binding.textInputEditTextEmail.text.toString()
-            )
-            DataStoreManager.putData(
-                requireContext(),
-                Constants.KEY_REMEMBER_ME,
-                Constants.KEY_REMEMBER_ME
-            )
-        }
-    }
-
     private fun dataValidation() {
         with(binding) {
             textInputEditTextEmail.doOnTextChanged { text, _, _, _ ->

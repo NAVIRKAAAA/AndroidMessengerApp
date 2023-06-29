@@ -18,6 +18,15 @@
     <string name="or">or</string>
     <string name="invalid_email">invalid email</string>
     <string name="invalid_password">invalid password</string>
+    <string name="register_error_user_exist">User already exists</string>
+    <string name="invalid_request">Invalid request</string>
+
+    <!-- fragment sign up extended -->
+    <string name="your_profile_data">Your profile data</string>
+    <string name="fill_out_the_profile_and_go_to_the_application">Fill out the profile and go to the application!</string>
+    <string name="user_name">User name</string>
+    <string name="mobile_phone">Mobile phone</string>
+    <string name="forward">forward</string>
 
     <!-- fragment dialog -->
     <string name="add_contact">Add contact</string>

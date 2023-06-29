@@ -9,25 +9,23 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.rhorbachevskyi.viewpager.databinding.FragmentProfileBinding
+import com.rhorbachevskyi.viewpager.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragment
+import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragmentDirections
 import com.rhorbachevskyi.viewpager.utils.Constants
 import com.rhorbachevskyi.viewpager.utils.DataStoreManager
 import com.rhorbachevskyi.viewpager.utils.ext.loadImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class UserProfile : Fragment() {
-    private lateinit var binding: FragmentProfileBinding
+class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding::inflate) {
+
     private val args: UserProfileArgs by navArgs()
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentProfileBinding.inflate(inflater, container, false)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setUserProfile()
         setListeners()
-        return binding.root
     }
 
     private fun setListeners() {
@@ -41,7 +39,8 @@ class UserProfile : Fragment() {
                 DataStoreManager.deleteDataFromDataStore(requireContext(), Constants.KEY_EMAIL)
                 DataStoreManager.deleteDataFromDataStore(requireContext(), Constants.KEY_REMEMBER_ME)
             }
-            findNavController().navigateUp()
+            val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToAuthFragment()
+            navController.navigate(direction)
         }
     }
 
@@ -53,19 +52,14 @@ class UserProfile : Fragment() {
 
     private fun setUserProfile() {
         setUserPhoto()
-        setUsername(args.email)
+        setUsername()
     }
 
     private fun setUserPhoto() {
         binding.imageViewProfileImage?.loadImage()
     }
 
-    private fun setUsername(email: String) {
-        val elements = email.split("@")[0].replace(".", " ").split(" ")
-        binding.textViewName.text = if (elements.size >= 2) {
-            "${elements[0].replaceFirstChar { it.uppercase() }} ${elements[1].replaceFirstChar { it.titlecase() }}"
-        } else {
-            elements[0]
-        }
+    private fun setUsername() {
+        binding.textViewName.text = args.username
     }
 }

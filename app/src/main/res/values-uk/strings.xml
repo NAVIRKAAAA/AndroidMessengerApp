@@ -18,6 +18,16 @@
     <string name="or">або</string>
     <string name="invalid_email">недійсна електронна пошта</string>
     <string name="invalid_password">недійсний пароль</string>
+    <string name="register_error_user_exist">Користувач вже існує</string>
+    <string name="invalid_request">Невірний запит</string>
+
+    <!-- fragment sign up extended -->
+    <string name="your_profile_data">Ваші дані профілю</string>
+    <string name="fill_out_the_profile_and_go_to_the_application">Заповніть профіль і перейдіть до додатка!</string>
+    <string name="user_name">Ім\'я користувача</string>
+    <string name="mobile_phone">Мобільний телефон</string>
+    <string name="forward">Вперед</string>
+
 
     <!-- fragment dialog -->
     <string name="add_contact">Додати контакт</string>
@@ -46,4 +56,6 @@
     <!-- most often used -->
     <string name="username">Повне ім\'я</string>
     <string name="career">Кар\'єра</string>
+
+
 </resources>

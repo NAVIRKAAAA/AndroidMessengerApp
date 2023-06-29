@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageViewSignUpExtendedPhoto"
+        android:layout_width="@dimen/photo_size"
+        android:layout_height="@dimen/photo_size"
+        android:src="@drawable/bc_photo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.1" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageViewSignUpExtendedMockup"
+        android:layout_width="@dimen/mockup_size"
+        android:layout_height="@dimen/mockup_size"
+        android:src="@drawable/ic_photo_mockup"
+        app:layout_constraintBottom_toBottomOf="@id/imageViewSignUpExtendedPhoto"
+        app:layout_constraintEnd_toEndOf="@id/imageViewSignUpExtendedPhoto"
+        app:layout_constraintStart_toStartOf="@id/imageViewSignUpExtendedPhoto"
+        app:layout_constraintTop_toTopOf="@id/imageViewSignUpExtendedPhoto" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageViewAddPhotoSignUpExtended"
+        android:layout_width="@dimen/mockup_size"
+        android:layout_height="@dimen/mockup_size"
+        android:layout_marginStart="@dimen/normal_margin"
+        android:src="@drawable/ic_add_photo"
+        app:layout_constraintBottom_toBottomOf="@id/imageViewSignUpExtendedPhoto"
+        app:layout_constraintStart_toEndOf="@id/imageViewSignUpExtendedPhoto"
+        app:layout_constraintTop_toTopOf="@id/imageViewSignUpExtendedPhoto" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewProfileData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/normal_margin"
+        android:fontFamily="@font/example6"
+        android:text="@string/your_profile_data"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_largest_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imageViewSignUpExtendedPhoto" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewFillOutExtended"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/fill_out_the_profile_and_go_to_the_application"
+        android:textColor="@color/gray"
+        android:fontFamily="@font/example5"
+        android:textSize="@dimen/text_normal_size"
+        android:layout_marginTop="@dimen/small_margin"
+        app:layout_constraintTop_toBottomOf="@id/textViewProfileData"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/small_margin"
+        android:text="@string/user_name"
+        android:textColor="@color/gray"
+        android:layout_marginTop="@dimen/largest_margin"
+        app:layout_constraintStart_toStartOf="@id/textInputUserName"
+        app:layout_constraintTop_toBottomOf="@id/textViewFillOutExtended" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputUserName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        app:boxBackgroundMode="none"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewUserName">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/textInputEditTextUserName"
+            android:layout_width="match_parent"
+            android:maxLength="30"
+            android:layout_height="@dimen/edit_text_height"
+            android:textColor="@color/white"
+            android:textSize="@dimen/edit_text_size" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewMobilePhone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/small_margin"
+        android:layout_marginTop="@dimen/small_margin"
+        android:text="@string/mobile_phone"
+        android:textColor="@color/gray"
+        app:layout_constraintStart_toStartOf="@id/textInputUserName"
+        app:layout_constraintTop_toBottomOf="@id/textInputUserName" />
+
+    <com.google.android.material.textfield.TextInputLayout
+
+        android:id="@+id/textInputPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        app:boxBackgroundMode="none"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewMobilePhone">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/textInputEditTextMobilePhone"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/edit_text_height"
+            android:maxLength="20"
+            android:textColor="@color/white"
+            android:textSize="@dimen/edit_text_size" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/buttonCancel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        android:layout_marginBottom="@dimen/normal_margin"
+        android:background="@drawable/bc_cancel"
+        android:text="@string/cancel"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_normal_size"
+        app:layout_constraintBottom_toTopOf="@id/buttonForward"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/buttonForward"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/view_contacts_height"
+        android:layout_marginHorizontal="@dimen/normal_margin"
+        android:layout_marginBottom="@dimen/normal_margin"
+        android:background="@drawable/bc_view_my_contacts"
+        android:letterSpacing="0.1"
+        android:text="@string/forward"
+        android:textColor="@color/white"
+        android:textSize="@dimen/forward_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

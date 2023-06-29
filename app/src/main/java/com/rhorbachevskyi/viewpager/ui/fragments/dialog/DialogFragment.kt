@@ -4,12 +4,12 @@ import android.app.Dialog
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
-import com.rhorbachevskyi.viewpager.ui.fragments.contact.adapter.RecyclerViewAdapter
 import com.rhorbachevskyi.viewpager.domain.model.Contact
-import com.rhorbachevskyi.viewpager.ui.fragments.contact.ContactsViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.databinding.FragmentAddUserBinding
+import com.rhorbachevskyi.viewpager.ui.fragments.contact.ContactsViewModel
+import com.rhorbachevskyi.viewpager.ui.fragments.contact.adapter.RecyclerViewAdapter
 
 
 class DialogFragment : AppCompatDialogFragment() {

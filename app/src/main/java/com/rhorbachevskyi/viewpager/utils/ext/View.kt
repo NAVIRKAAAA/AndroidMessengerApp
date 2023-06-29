@@ -1,6 +1,9 @@
 package com.rhorbachevskyi.viewpager.utils.ext
 
+import android.content.Context
 import android.view.View
+import com.google.android.material.snackbar.Snackbar
+
 fun View.visible() {
     visibility = View.VISIBLE
 }
@@ -10,4 +13,12 @@ fun View.invisible() {
 }
 fun View.visibleIf(condition: Boolean) {
     if(condition) visible() else invisible()
+}
+fun View.showErrorSnackBar(context : Context, error: Int){
+    val errorString = context.getString(error)
+    Snackbar.make(
+        this,
+        errorString,
+        Snackbar.LENGTH_SHORT
+    ).show()
 }

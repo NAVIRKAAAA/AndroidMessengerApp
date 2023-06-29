@@ -11,6 +11,8 @@ object Constants {
     const val REGISTER_DATA_STORE = "data store"
     const val KEY_EMAIL = "email"
     const val KEY_REMEMBER_ME = "remember me"
-    // ext log
+    // ext log tag
     const val LOG_TAG = "LOG_TAG"
+    // api base url
+    const val BASE_URL = "http://178.63.9.114:7777/api/"
 }

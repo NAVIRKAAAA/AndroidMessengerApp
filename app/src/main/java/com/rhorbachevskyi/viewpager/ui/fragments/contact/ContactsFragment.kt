@@ -19,27 +19,23 @@ import com.rhorbachevskyi.viewpager.domain.model.Contact
 import com.google.android.material.snackbar.Snackbar
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.databinding.FragmentContactsBinding
+import com.rhorbachevskyi.viewpager.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragment
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragmentDirections
 import com.rhorbachevskyi.viewpager.utils.Constants
 
-class ContactsFragment : Fragment(), ContactItemClickListener {
-    private lateinit var binding: FragmentContactsBinding
+class ContactsFragment :BaseFragment<FragmentContactsBinding>(FragmentContactsBinding::inflate), ContactItemClickListener {
+
     private val adapter: RecyclerViewAdapter by lazy {
         RecyclerViewAdapter()
     }
     private var contactsViewModel = ContactsViewModel()
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentContactsBinding.inflate(inflater, container, false)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initialRecyclerview()
         setClickListener()
-        return binding.root
     }
-
     override fun showDeleteSelectItems() {
         binding.imageViewDeleteSelectMode.visibility = View.VISIBLE
     }
@@ -52,7 +48,7 @@ class ContactsFragment : Fragment(), ContactItemClickListener {
     override fun onOpenNewFragment(contact: Contact, transitionPairs: Array<Pair<View, String>>) {
         val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToContactProfile(contact)
         val extras = FragmentNavigatorExtras(*transitionPairs)
-        findNavController().navigate(direction, extras)
+        navController.navigate(direction, extras)
     }
 
     override fun hideImageDeleteBin() {

@@ -25,4 +25,6 @@
     <dimen name="recycler_view_padding">170dp</dimen>
     <dimen name="item_user_height">66dp</dimen>
     <dimen name="user_career_size">12sp</dimen>
+    <dimen name="mockup_size">50dp</dimen>
+    <dimen name="forward_size">18sp</dimen>
 </resources>

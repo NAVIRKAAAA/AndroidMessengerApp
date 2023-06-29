@@ -53,7 +53,7 @@ class RecyclerViewAdapter :
         with(holder.binding) {
             textViewName.text = contact.name
             textViewCareer.text = contact.career
-            imageViewUserPhoto.loadImage(contact.photo)
+            imageViewUserPhoto.loadImage(contact.image)
         }
         setListeners(holder, contact)
     }
