@@ -2,19 +2,14 @@ package com.rhorbachevskyi.viewpager.ui.fragments.contactprofile
 
 import android.os.Bundle
 import android.transition.TransitionInflater
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.rhorbachevskyi.viewpager.R
-import com.rhorbachevskyi.viewpager.domain.model.Contact
+import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.databinding.FragmentDetailViewBinding
 import com.rhorbachevskyi.viewpager.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.utils.Constants
 import com.rhorbachevskyi.viewpager.utils.ext.loadImage
-import com.rhorbachevskyi.viewpager.ui.fragments.contactprofile.ContactProfileArgs
 
 class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailViewBinding::inflate) {
 

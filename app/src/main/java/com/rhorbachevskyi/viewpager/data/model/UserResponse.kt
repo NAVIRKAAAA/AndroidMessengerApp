@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.viewpager.domain.model
+package com.rhorbachevskyi.viewpager.data.model
 
 import android.service.autofill.UserData
 import com.google.gson.annotations.SerializedName

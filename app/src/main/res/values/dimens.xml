@@ -27,4 +27,5 @@
     <dimen name="user_career_size">12sp</dimen>
     <dimen name="mockup_size">50dp</dimen>
     <dimen name="forward_size">18sp</dimen>
+    <dimen name="view_pager_height">40dp</dimen>
 </resources>

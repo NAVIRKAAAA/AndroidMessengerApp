@@ -1,21 +1,17 @@
 package com.rhorbachevskyi.viewpager.ui.fragments.contact
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.FragmentNavigatorExtras
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rhorbachevskyi.viewpager.ui.fragments.contact.adapter.RecyclerViewAdapter
 import com.rhorbachevskyi.viewpager.ui.fragments.contact.contract.ContactItemClickListener
 import com.rhorbachevskyi.viewpager.ui.fragments.dialog.DialogFragment
-import com.rhorbachevskyi.viewpager.domain.model.Contact
+import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.google.android.material.snackbar.Snackbar
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.databinding.FragmentContactsBinding

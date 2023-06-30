@@ -9,8 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.databinding.ItemUserBinding
-import com.rhorbachevskyi.viewpager.domain.model.Contact
-import com.rhorbachevskyi.viewpager.ui.fragments.contact.ContactsViewModel
+import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.ui.fragments.contact.adapter.diff.ContactDiffCallback
 import com.rhorbachevskyi.viewpager.ui.fragments.contact.contract.ContactItemClickListener
 import com.rhorbachevskyi.viewpager.utils.Constants

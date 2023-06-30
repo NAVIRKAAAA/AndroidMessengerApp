@@ -27,6 +27,8 @@
     <string name="user_name">User name</string>
     <string name="mobile_phone">Mobile phone</string>
     <string name="forward">forward</string>
+    <string name="invalid_username">Invalid user name</string>
+    <string name="invalid_mobile_phone">Invalid mobile phone</string>
 
     <!-- fragment dialog -->
     <string name="add_contact">Add contact</string>

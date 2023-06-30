@@ -16,4 +16,7 @@ class Validation {
         password.length >= 7 && password.contains(Regex(BIG_LETTER_REGEX)) &&
                 password.contains(Regex(SMALL_LETTER_REGEX)) &&
                 password.contains(Regex(IS_HAVE_NUMBER_REGEX)) && !password.contains(IS_SPACE)
+
+    fun isValidUserName(username: String): Boolean = username.length >= 2
+    fun isValidMobilePhone(phone: String):Boolean = phone.length >= 10
 }

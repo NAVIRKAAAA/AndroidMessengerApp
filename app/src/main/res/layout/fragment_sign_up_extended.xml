@@ -122,6 +122,7 @@
             android:layout_height="@dimen/edit_text_height"
             android:maxLength="20"
             android:textColor="@color/white"
+            android:inputType="number"
             android:textSize="@dimen/edit_text_size" />
 
     </com.google.android.material.textfield.TextInputLayout>

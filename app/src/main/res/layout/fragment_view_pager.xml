@@ -18,7 +18,7 @@
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/view_pager_height"
         android:background="@color/background"
 
         app:tabIndicatorColor="@color/white"

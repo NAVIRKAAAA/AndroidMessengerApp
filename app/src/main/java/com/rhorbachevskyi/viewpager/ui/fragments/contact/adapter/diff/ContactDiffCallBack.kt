@@ -1,7 +1,7 @@
 package com.rhorbachevskyi.viewpager.ui.fragments.contact.adapter.diff
 
 import androidx.recyclerview.widget.DiffUtil
-import com.rhorbachevskyi.viewpager.domain.model.Contact
+import com.rhorbachevskyi.viewpager.data.model.Contact
 
 class ContactDiffCallback(
     private val oldList: List<Contact>,

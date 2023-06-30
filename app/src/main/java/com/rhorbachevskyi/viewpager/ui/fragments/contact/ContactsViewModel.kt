@@ -2,12 +2,8 @@ package com.rhorbachevskyi.viewpager.ui.fragments.contact
 
 import androidx.lifecycle.ViewModel
 
-import com.rhorbachevskyi.viewpager.domain.localcontactdataset.LocalContactData
-import com.rhorbachevskyi.viewpager.domain.model.Contact
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import com.rhorbachevskyi.viewpager.data.localcontactdataset.LocalContactData
+import com.rhorbachevskyi.viewpager.data.model.Contact
 
 class ContactsViewModel : ViewModel() {
     private val contacts = ArrayList<Contact>()

@@ -15,4 +15,6 @@ object Constants {
     const val LOG_TAG = "LOG_TAG"
     // api base url
     const val BASE_URL = "http://178.63.9.114:7777/api/"
+    // country mobile code
+    const val MOBILE_CODE = "US"
 }

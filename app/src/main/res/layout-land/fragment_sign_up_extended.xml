@@ -70,7 +70,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/small_margin"
-        android:layout_marginTop="@dimen/large_margin"
+
         android:text="@string/user_name"
         android:textColor="@color/gray"
         app:layout_constraintStart_toStartOf="@id/textInputUserName"
@@ -123,7 +123,7 @@
             android:id="@+id/textInputEditTextMobilePhone"
             android:layout_width="match_parent"
             android:layout_height="@dimen/edit_text_height"
-            android:inputType="textPassword"
+            android:inputType="number"
             android:maxLength="20"
             android:textColor="@color/white"
             android:textSize="@dimen/edit_text_size" />
@@ -133,7 +133,7 @@
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonCancel"
         android:layout_width="0dp"
-        android:layout_height="@dimen/view_contacts_height"
+        android:layout_height="@dimen/register_height_land"
         android:layout_marginBottom="@dimen/normal_margin"
         android:background="@drawable/bc_cancel"
         android:text="@string/cancel"
@@ -149,7 +149,7 @@
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonForward"
         android:layout_width="0dp"
-        android:layout_height="@dimen/view_contacts_height"
+        android:layout_height="@dimen/register_height_land"
         android:layout_marginBottom="@dimen/normal_margin"
         android:background="@drawable/bc_view_my_contacts"
         android:letterSpacing="0.1"

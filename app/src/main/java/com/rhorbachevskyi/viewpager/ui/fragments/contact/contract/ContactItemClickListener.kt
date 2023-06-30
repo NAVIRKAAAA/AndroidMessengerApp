@@ -1,8 +1,7 @@
 package com.rhorbachevskyi.viewpager.ui.fragments.contact.contract
 
 import android.view.View
-import com.rhorbachevskyi.viewpager.domain.model.Contact
-import com.rhorbachevskyi.viewpager.ui.fragments.contact.adapter.RecyclerViewAdapter
+import com.rhorbachevskyi.viewpager.data.model.Contact
 
 interface ContactItemClickListener {
     fun onUserDelete(contact: Contact, position: Int)

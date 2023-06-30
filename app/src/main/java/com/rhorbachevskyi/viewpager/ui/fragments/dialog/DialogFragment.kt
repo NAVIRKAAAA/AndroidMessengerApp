@@ -4,8 +4,7 @@ import android.app.Dialog
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
-import com.rhorbachevskyi.viewpager.domain.model.Contact
-import com.google.android.material.textfield.TextInputEditText
+import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.databinding.FragmentAddUserBinding
 import com.rhorbachevskyi.viewpager.ui.fragments.contact.ContactsViewModel
@@ -45,9 +44,8 @@ class DialogFragment : AppCompatDialogFragment() {
             buttonSave.setOnClickListener {
                 userViewModel.addContact(
                     Contact(
-                        textInputEditTextFullName.text.toString(),
-                        textInputEditTextCareer.text.toString(),
-                        ""
+                        name = textInputEditTextFullName.text.toString(),
+                        career = textInputEditTextCareer.text.toString(),
                     ), userViewModel.getContactsList().size
                 )
                 adapter.updateContacts(userViewModel.getContactsList())

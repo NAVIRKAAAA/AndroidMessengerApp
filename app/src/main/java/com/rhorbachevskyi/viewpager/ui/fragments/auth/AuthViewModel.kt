@@ -5,8 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.domain.di.network.ApiService
-import com.rhorbachevskyi.viewpager.domain.model.UserRequest
+import com.rhorbachevskyi.viewpager.data.model.UserRequest
 import com.rhorbachevskyi.viewpager.utils.Constants
+import com.rhorbachevskyi.viewpager.utils.ext.log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.Exception
 
 class AuthViewModel :
-    ViewModel() { // todo: register exception
+    ViewModel() { // TODO: register exception
     private val _registerStateFlow = MutableStateFlow<RegisterState>(RegisterState.Loading)
     val registerState: StateFlow<RegisterState> = _registerStateFlow
     fun isLogout() {

@@ -1,8 +1,8 @@
 package com.rhorbachevskyi.viewpager.domain.di.network
 
-import com.rhorbachevskyi.viewpager.domain.model.EditUser
-import com.rhorbachevskyi.viewpager.domain.model.UserRequest
-import com.rhorbachevskyi.viewpager.domain.model.UserResponse
+import com.rhorbachevskyi.viewpager.data.model.EditUser
+import com.rhorbachevskyi.viewpager.data.model.UserRequest
+import com.rhorbachevskyi.viewpager.data.model.UserResponse
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST

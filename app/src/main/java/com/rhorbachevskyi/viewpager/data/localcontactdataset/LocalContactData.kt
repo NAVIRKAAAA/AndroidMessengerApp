@@ -1,6 +1,6 @@
-package com.rhorbachevskyi.viewpager.domain.localcontactdataset
+package com.rhorbachevskyi.viewpager.data.localcontactdataset
 
-import com.rhorbachevskyi.viewpager.domain.model.Contact
+import com.rhorbachevskyi.viewpager.data.model.Contact
 
 class LocalContactData {
 

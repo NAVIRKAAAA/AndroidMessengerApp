@@ -27,6 +27,8 @@
     <string name="user_name">Ім\'я користувача</string>
     <string name="mobile_phone">Мобільний телефон</string>
     <string name="forward">Вперед</string>
+    <string name="invalid_username">Недійсне ім\'я</string>
+    <string name="invalid_mobile_phone">Недійсний мобільний телефон</string>
 
 
     <!-- fragment dialog -->
