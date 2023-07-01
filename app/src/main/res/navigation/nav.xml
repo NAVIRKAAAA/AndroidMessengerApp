@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav"
+    app:startDestination="@id/splashFragment2">
+    <fragment
+        android:id="@+id/splashFragment2"
+        android:name="com.rhorbachevskyi.viewpager.ui.fragments.splashscreen.SplashFragment"
+        android:label="SplashFragment"
+        tools:layout="@layout/fragment_splash_screen">
+        <action
+            android:id="@+id/action_splashFragment2_to_authFragment"
+            app:destination="@id/authFragment" />
+        <action
+            android:id="@+id/action_splashFragment2_to_viewPagerFragment"
+            app:destination="@id/viewPagerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/authFragment"
+        android:name="com.rhorbachevskyi.viewpager.ui.fragments.auth.AuthFragment"
+        android:label="AuthFragment"
+        tools:layout="@layout/fragment_sign_up">
+        <action
+            android:id="@+id/action_authFragment_to_viewPagerFragment"
+            app:destination="@id/viewPagerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userProfile"
+        android:name="com.rhorbachevskyi.viewpager.ui.fragments.userprofile.UserProfile"
+        android:label="UserProfile"
+        tools:layout="@layout/fragment_profile">
+        <argument
+            android:name="email"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/contactsFragment"
+        android:name="com.rhorbachevskyi.viewpager.ui.fragments.contact.ContactsFragment"
+        android:label="ContactsFragment"
+        tools:layout="@layout/fragment_contacts">
+        <argument
+            android:name="email"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/viewPagerFragment"
+        android:name="com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragment"
+        android:label="ViewPagerFragment">
+        <argument
+            android:name="email"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_viewPagerFragment_to_contactProfile"
+            app:destination="@id/contactProfile" />
+    </fragment>
+    <fragment
+        android:id="@+id/contactProfile"
+        android:name="com.rhorbachevskyi.viewpager.ui.fragments.contactprofile.ContactProfile"
+        android:label="ContactProfile"
+        tools:layout="@layout/fragment_detail_view">
+        <argument
+            android:name="Contact"
+            app:argType="com.rhorbachevskyi.viewpager.domain.model.Contact" />
+    </fragment>
+
+</navigation>

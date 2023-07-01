@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- app name -->
+    <string name="app_name">View pager</string>
+
+    <!-- fragment sign up -->
+    <string name="acquainted">Давайте познайомимося</string>
+    <string name="fillOut">Заповніть профіль та перейдіть до програми!</string>
+    <string name="email">Електронна пошта</string>
+    <string name="password">Пароль</string>
+    <string name="e_mail">Електронна пошта</string>
+    <string name="remember_me">Запам\'ятати мене</string>
+    <string name="google">GOOGLE</string>
+    <string name="already_have_account">Вже маєте обліковий запис?</string>
+    <string name="sign_in">Увійти</string>
+    <string name="register">ЗАРЕЄСТРУВАТИСЬ</string>
+    <string name="by_clicking">Натискаючи "Зареєструватись", ви погоджуєтеся з нашими Умовами та Політикою конфіденційності</string>
+    <string name="or">або</string>
+    <string name="invalid_email">недійсна електронна пошта</string>
+    <string name="invalid_password">недійсний пароль</string>
+
+    <!-- fragment dialog -->
+    <string name="add_contact">Додати контакт</string>
+    <string name="save">Зберегти</string>
+    <string name="cancel">Скасувати</string>
+
+    <!-- fragment contacts -->
+    <string name="s_has_been_removed">%s було видалено</string>
+    <string name="restore">Відновити</string>
+    <string name="add_contacts">Додати контакти</string>
+    <string name="contacts">Контакти</string>
+    <string name="contacts_removed">Контакти було видалено</string>
+    <string name="contact_removed">Контакт було видалено</string>
+
+    <!-- fragment detail view -->
+    <string name="home_address">Домашня адреса</string>
+    <string name="profile">Профіль</string>
+    <string name="message">повідомлення</string>
+
+    <!-- fragment profile -->
+    <string name="settings">Налаштування</string>
+    <string name="view_my_contacts">ПЕРЕГЛЯНУТИ МОЇ КОНТАКТИ</string>
+    <string name="edit_profile">Редагувати профіль</string>
+    <string name="logout">Вийти</string>
+
+    <!-- most often used -->
+    <string name="username">Повне ім\'я</string>
+    <string name="career">Кар\'єра</string>
+</resources>
