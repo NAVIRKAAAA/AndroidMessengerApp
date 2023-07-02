@@ -23,6 +23,9 @@
     <string name="add_contact">Додати контакт</string>
     <string name="save">Зберегти</string>
     <string name="cancel">Скасувати</string>
+    <string name="phone">Телефон</string>
+    <string name="address">Адреса</string>
+    <string name="date_of_birth">Дата народження</string>
 
     <!-- fragment contacts -->
     <string name="s_has_been_removed">%s було видалено</string>

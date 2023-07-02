@@ -20,9 +20,12 @@
     <dimen name="register_height_land">40dp</dimen>
     <dimen name="view_contacts_height">60dp</dimen>
     <dimen name="photo_size">140dp</dimen>
+    <dimen name="photo_size_dialog">120dp</dimen>
     <dimen name="edit_text_size">18sp</dimen>
     <dimen name="custom_padding">120dp</dimen>
     <dimen name="recycler_view_padding">170dp</dimen>
     <dimen name="item_user_height">66dp</dimen>
     <dimen name="user_career_size">12sp</dimen>
+    <dimen name="mockup_size">50dp</dimen>
+    <dimen name="input_dialog_height">40dp</dimen>
 </resources>

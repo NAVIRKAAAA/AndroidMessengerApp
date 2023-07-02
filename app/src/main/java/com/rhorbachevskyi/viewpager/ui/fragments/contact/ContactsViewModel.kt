@@ -3,10 +3,8 @@ package com.rhorbachevskyi.viewpager.ui.fragments.contact
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-
 import com.rhorbachevskyi.viewpager.domain.localcontactdataset.LocalContactData
 import com.rhorbachevskyi.viewpager.domain.model.Contact
-import com.rhorbachevskyi.viewpager.utils.ext.log
 
 class ContactsViewModel : ViewModel() {
     private val _contactList = MutableLiveData(listOf<Contact>())
@@ -21,7 +19,7 @@ class ContactsViewModel : ViewModel() {
         _contactList.value = LocalContactData().getLocalContactsList().toMutableList()
     }
 
-    fun addContact(contact: Contact, position: Int): Boolean {
+    fun addContact(contact: Contact, position: Int = _contactList.value?.size ?: 0): Boolean {
         val contactList = _contactList.value?.toMutableList() ?: mutableListOf()
 
         if (!contactList.contains(contact)) {

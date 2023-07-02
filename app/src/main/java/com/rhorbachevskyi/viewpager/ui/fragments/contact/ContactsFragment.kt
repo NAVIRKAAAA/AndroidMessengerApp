@@ -5,7 +5,6 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.FragmentNavigatorExtras
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,9 +15,10 @@ import com.google.android.material.snackbar.Snackbar
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.databinding.FragmentContactsBinding
 import com.rhorbachevskyi.viewpager.ui.fragments.BaseFragment
+import com.rhorbachevskyi.viewpager.ui.fragments.dialog.DialogFragment
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragment
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragmentDirections
-import com.rhorbachevskyi.viewpager.utils.ext.log
+import com.rhorbachevskyi.viewpager.utils.Constants
 import com.rhorbachevskyi.viewpager.utils.ext.showErrorSnackBar
 
 class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsBinding::inflate) {
@@ -91,7 +91,6 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
         viewModel.isMultiselect.observe(viewLifecycleOwner) {
             binding.recyclerViewContacts.adapter = adapter
             adapter.isMultiselectMode = it
-            //if(it) activationMultiSelect()
             binding.textViewAddContacts.visibility = if (it) View.GONE else View.VISIBLE
             binding.imageViewDeleteSelectMode.visibility = if (it) View.VISIBLE else View.GONE
         }
@@ -99,7 +98,6 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
 
     private fun initialRecyclerview() {
         val layoutManager = LinearLayoutManager(context)
-        // if(viewModel.getSelectedContactsList().size != 0) adapter.setModeAfterTurnScreen()
         binding.recyclerViewContacts.layoutManager = layoutManager
         binding.recyclerViewContacts.adapter = adapter
         ItemTouchHelper(setTouchCallBackListener()).attachToRecyclerView(binding.recyclerViewContacts)
@@ -126,7 +124,6 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
     private fun deleteSelectedContacts() {
         binding.imageViewDeleteSelectMode.setOnClickListener {
             val size = viewModel.selectContacts.value?.size
-            log(viewModel.selectContacts.value?.size.toString())
             viewModel.deleteSelectList()
             binding.root.showErrorSnackBar(requireContext(), if(size!! > 1) R.string.contacts_removed else R.string.contact_removed)
             viewModel.changeMultiselectMode()
@@ -135,10 +132,9 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
 
     private fun showAddContactsDialog() {
         binding.textViewAddContacts.setOnClickListener {
-//            val dialogFragment = DialogFragment()
-//            dialogFragment.setViewModel(contactsViewModel)
-//            dialogFragment.setAdapter(adapter)
-//            dialogFragment.show(parentFragmentManager, Constants.DIALOG_TAG)
+            val dialogFragment = DialogFragment()
+            dialogFragment.setViewModel(viewModel)
+            dialogFragment.show(parentFragmentManager, Constants.DIALOG_TAG)
         }
     }
 

@@ -23,6 +23,9 @@
     <string name="add_contact">Add contact</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
+    <string name="phone">Phone</string>
+    <string name="address">Address</string>
+    <string name="date_of_birth">Date of birth</string>
 
     <!-- fragment contacts -->
     <string name="s_has_been_removed">%s has been removed</string>

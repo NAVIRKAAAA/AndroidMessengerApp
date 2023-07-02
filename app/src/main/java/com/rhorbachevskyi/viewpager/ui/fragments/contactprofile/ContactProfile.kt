@@ -3,7 +3,6 @@ package com.rhorbachevskyi.viewpager.ui.fragments.contactprofile
 import android.os.Bundle
 import android.transition.TransitionInflater
 import android.view.View
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.domain.model.Contact
@@ -43,6 +42,7 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
             imageViewContactProfilePhoto.loadImage(contact.photo)
             textViewName.text = contact.name
             textViewCareer.text = contact.career
+            textViewHomeAddress.text = contact.address
         }
     }
 
