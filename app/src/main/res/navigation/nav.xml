@@ -17,6 +17,15 @@
             app:destination="@id/viewPagerFragment" />
     </fragment>
     <fragment
+        android:id="@+id/signInFragment"
+        android:name="com.rhorbachevskyi.viewpager.ui.fragments.signin.SignInFragment"
+        android:label="SignInFragment"
+        tools:layout="@layout/fragment_sign_in">
+        <action
+            android:id="@+id/action_signInFragment_to_viewPagerFragment"
+            app:destination="@id/viewPagerFragment" />
+    </fragment>
+    <fragment
         android:id="@+id/authFragment"
         android:name="com.rhorbachevskyi.viewpager.ui.fragments.auth.AuthFragment"
         android:label="AuthFragment"
@@ -25,24 +34,28 @@
             android:id="@+id/action_authFragment_to_signUpExtendedFragment"
             app:destination="@id/signUpExtendedFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_authFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
     </fragment>
+
     <fragment
-        android:id="@+id/userProfile"
-        android:name="com.rhorbachevskyi.viewpager.ui.fragments.userprofile.UserProfile"
-        android:label="UserProfile"
-        tools:layout="@layout/fragment_profile">
-        <argument
-            android:name="username"
-            app:argType="string" />
-    </fragment>
-    <fragment
-        android:id="@+id/contactsFragment"
-        android:name="com.rhorbachevskyi.viewpager.ui.fragments.contact.ContactsFragment"
-        android:label="ContactsFragment"
-        tools:layout="@layout/fragment_contacts">
+        android:id="@+id/signUpExtendedFragment"
+        android:name="com.rhorbachevskyi.viewpager.ui.fragments.auth.signupextended.SignUpExtendedFragment"
+        android:label="SignUpExtendedFragment"
+        tools:layout="@layout/fragment_sign_up_extended">
         <argument
             android:name="email"
             app:argType="string" />
+        <argument
+            android:name="password"
+            app:argType="string" />
+        <argument
+            android:name="rememberMe"
+            app:argType="boolean" />
+        <action
+            android:id="@+id/action_signUpExtendedFragment_to_viewPagerFragment"
+            app:destination="@id/viewPagerFragment" />
     </fragment>
     <fragment
         android:id="@+id/viewPagerFragment"
@@ -69,21 +82,21 @@
             app:argType="com.rhorbachevskyi.viewpager.data.model.Contact" />
     </fragment>
     <fragment
-        android:id="@+id/signUpExtendedFragment"
-        android:name="com.rhorbachevskyi.viewpager.ui.fragments.auth.signupextended.SignUpExtendedFragment"
-        android:label="SignUpExtendedFragment"
-        tools:layout="@layout/fragment_sign_up_extended">
+        android:id="@+id/userProfile"
+        android:name="com.rhorbachevskyi.viewpager.ui.fragments.userprofile.UserProfile"
+        android:label="UserProfile"
+        tools:layout="@layout/fragment_profile">
+        <argument
+            android:name="username"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/contactsFragment"
+        android:name="com.rhorbachevskyi.viewpager.ui.fragments.contact.ContactsFragment"
+        android:label="ContactsFragment"
+        tools:layout="@layout/fragment_contacts">
         <argument
             android:name="email"
             app:argType="string" />
-        <argument
-            android:name="password"
-            app:argType="string" />
-        <argument
-            android:name="rememberMe"
-            app:argType="boolean" />
-        <action
-            android:id="@+id/action_signUpExtendedFragment_to_viewPagerFragment"
-            app:destination="@id/viewPagerFragment" />
     </fragment>
 </navigation>

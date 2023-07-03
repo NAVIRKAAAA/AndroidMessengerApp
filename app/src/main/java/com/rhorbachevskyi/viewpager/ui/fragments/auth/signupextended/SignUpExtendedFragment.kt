@@ -10,8 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
-import com.bumptech.glide.Glide
-import com.bumptech.glide.signature.ObjectKey
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.databinding.FragmentSignUpExtendedBinding
 import com.rhorbachevskyi.viewpager.data.model.UserRequest
@@ -57,9 +55,9 @@ class SignUpExtendedFragment :
         with(binding) {
             buttonForward.setOnClickListener {
                 if(!Validation().isValidUserName(textInputEditTextUserName.text.toString())) {
-                    binding.root.showErrorSnackBar(requireContext(), R.string.invalid_username)
+                    root.showErrorSnackBar(requireContext(), R.string.invalid_username)
                 } else if(!Validation().isValidMobilePhone(textInputEditTextMobilePhone.text.toString())) {
-                    binding.root.showErrorSnackBar(requireContext(), R.string.invalid_mobile_phone)
+                    root.showErrorSnackBar(requireContext(), R.string.invalid_mobile_phone)
                 } else {
                     viewModel.registerUser(
                         UserRequest(

@@ -11,14 +11,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/example2"
-        android:gravity="center"
         android:text="@string/acquainted"
-        android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="@dimen/text_largest_size"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/guideLineHorizontal02" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.2" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textViewFillOut"
@@ -28,7 +28,7 @@
         android:gravity="center"
         android:text="@string/fillOut"
         android:textAllCaps="false"
-        android:textColor="@color/white"
+        android:textColor="@color/gray"
         android:textSize="@dimen/text_normal_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,11 +39,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/small_margin"
-
+        android:layout_marginTop="@dimen/large_margin"
         android:text="@string/e_mail"
         android:textColor="@color/gray"
         app:layout_constraintStart_toStartOf="@id/textInputEmail"
-        app:layout_constraintTop_toTopOf="@id/guideLineHorizontal035" />
+        app:layout_constraintTop_toBottomOf="@id/textViewFillOut" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputEmail"
@@ -58,9 +58,9 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/textInputEditTextEmail"
             android:layout_width="match_parent"
-            android:maxLength="30"
             android:layout_height="@dimen/edit_text_height"
             android:inputType="textEmailAddress"
+            android:maxLength="30"
             android:textColor="@color/white"
             android:textSize="@dimen/edit_text_size" />
 
@@ -106,8 +106,8 @@
             android:id="@+id/textInputEditTextPassword"
             android:layout_width="match_parent"
             android:layout_height="@dimen/edit_text_height"
-            android:maxLength="20"
             android:inputType="textPassword"
+            android:maxLength="20"
             android:textColor="@color/white"
             android:textSize="@dimen/edit_text_size" />
 
@@ -175,12 +175,12 @@
         android:text="@string/or"
         android:textColor="@color/white"
         android:textSize="@dimen/text_normal_size"
-        app:layout_constraintBottom_toTopOf="@id/buttonRegister"
+        app:layout_constraintBottom_toTopOf="@id/button_register"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/buttonRegister"
+        android:id="@+id/button_register"
         android:layout_width="0dp"
         android:layout_height="@dimen/register_height"
         android:layout_marginHorizontal="@dimen/normal_margin"
@@ -201,22 +201,22 @@
         android:text="@string/by_clicking"
         android:textColor="@color/white"
         android:textSize="@dimen/text_normal_size"
-        app:layout_constraintBottom_toTopOf="@id/textViewHaveAccount"
+        app:layout_constraintBottom_toTopOf="@id/textViewDoNotHaveAccount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/textViewSignUp"
+        android:id="@+id/textViewSignIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/normal_margin"
         android:text="@string/sign_in"
         android:textColor="@color/white"
-        app:layout_constraintStart_toEndOf="@id/textViewHaveAccount"
-        app:layout_constraintTop_toTopOf="@id/textViewHaveAccount" />
+        app:layout_constraintStart_toEndOf="@id/textViewDoNotHaveAccount"
+        app:layout_constraintTop_toTopOf="@id/textViewDoNotHaveAccount" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/textViewHaveAccount"
+        android:id="@+id/textViewDoNotHaveAccount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/large_margin"
@@ -227,17 +227,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideLineHorizontal02"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.2" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideLineHorizontal035"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.35" />
 </androidx.constraintlayout.widget.ConstraintLayout>

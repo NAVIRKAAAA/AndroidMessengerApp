@@ -14,6 +14,7 @@
 
     <!-- something specific -->
     <dimen name="edit_text_height">57dp</dimen>
+    <dimen name="edit_text_height_land">47dp</dimen>
     <dimen name="google_text_start">36dp</dimen>
     <dimen name="register_height">55dp</dimen>
     <dimen name="google_text_height_land">35dp</dimen>
@@ -28,4 +29,6 @@
     <dimen name="mockup_size">50dp</dimen>
     <dimen name="forward_size">18sp</dimen>
     <dimen name="view_pager_height">40dp</dimen>
+    <dimen name="photo_size_dialog">120dp</dimen>
+    <dimen name="input_dialog_height">40dp</dimen>
 </resources>

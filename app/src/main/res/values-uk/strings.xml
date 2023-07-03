@@ -30,11 +30,21 @@
     <string name="invalid_username">Недійсне ім\'я</string>
     <string name="invalid_mobile_phone">Недійсний мобільний телефон</string>
 
+    <!-- fragment sign in -->
+    <string name="hello">Привіт!</string>
+    <string name="enter_your_email_and_password_below">Введіть свою електронну пошту та пароль нижче</string>
+    <string name="forgot_your_password">Забули пароль?</string>
+    <string name="sign_up">Зареєструватися</string>
+    <string name="don_t_have_account">Не маєте облікового запису?</string>
+    <string name="login">УВІЙТИ</string>
 
     <!-- fragment dialog -->
     <string name="add_contact">Додати контакт</string>
     <string name="save">Зберегти</string>
     <string name="cancel">Скасувати</string>
+    <string name="phone">Телефон</string>
+    <string name="address">Адреса</string>
+    <string name="date_of_birth">Дата народження</string>
 
     <!-- fragment contacts -->
     <string name="s_has_been_removed">%s було видалено</string>
@@ -58,6 +68,5 @@
     <!-- most often used -->
     <string name="username">Повне ім\'я</string>
     <string name="career">Кар\'єра</string>
-
 
 </resources>

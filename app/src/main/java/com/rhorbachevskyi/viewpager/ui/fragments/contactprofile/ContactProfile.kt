@@ -26,7 +26,7 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
         with(binding) {
             imageViewContactProfilePhoto.transitionName =
                 Constants.TRANSITION_NAME_IMAGE + contact.id
-            textViewName.transitionName = Constants.TRANSITION_NAME_NAME + contact.id
+            textViewName.transitionName = Constants.TRANSITION_NAME_CONTACT_NAME + contact.id
             textViewCareer.transitionName = Constants.TRANSITION_NAME_CAREER + contact.id
         }
         val animation = TransitionInflater.from(context).inflateTransition(
@@ -38,7 +38,7 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
 
     private fun setProfile(contact: Contact) {
         with(binding) {
-            imageViewContactProfilePhoto.loadImage(contact.image)
+            imageViewContactProfilePhoto.loadImage(contact.photo)
             textViewName.text = contact.name
             textViewCareer.text = contact.career
         }

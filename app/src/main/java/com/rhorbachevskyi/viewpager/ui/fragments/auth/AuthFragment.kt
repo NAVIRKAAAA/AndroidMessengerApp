@@ -17,6 +17,18 @@ class AuthFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding::
         dataValidation()
     }
     private fun setListeners() {
+        register()
+        signIn()
+    }
+
+    private fun signIn() {
+        binding.textViewSignIn.setOnClickListener {
+            val direction = AuthFragmentDirections.actionAuthFragmentToSignInFragment()
+            navController.navigate(direction)
+        }
+    }
+
+    private fun register() {
         with(binding) {
             buttonRegister.setOnClickListener {
                 if (Validation().isValidEmail(textInputEditTextEmail.text.toString()) &&
@@ -33,6 +45,7 @@ class AuthFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding::
             }
         }
     }
+
     private fun dataValidation() {
         with(binding) {
             textInputEditTextEmail.doOnTextChanged { text, _, _, _ ->
