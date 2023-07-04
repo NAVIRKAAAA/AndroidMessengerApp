@@ -10,7 +10,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.first
 
 
-object DataStoreManager {
+object DataStore {
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = Constants.REGISTER_DATA_STORE)
 
@@ -38,8 +38,9 @@ object DataStoreManager {
         }
     }
 
-    suspend fun saveData(requireContext: Context, email: String) {
+    suspend fun saveData(requireContext: Context, email: String, password: String) {
         putData(requireContext, Constants.KEY_EMAIL, email)
+        putData(requireContext, Constants.KEY_PASSWORD, password)
         putData(requireContext, Constants.KEY_REMEMBER_ME, Constants.KEY_REMEMBER_ME)
     }
 }

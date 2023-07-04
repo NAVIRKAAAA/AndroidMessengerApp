@@ -4,32 +4,42 @@ import android.net.Uri
 import android.os.Bundle
 import android.telephony.PhoneNumberFormattingTextWatcher
 import android.view.View
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.rhorbachevskyi.viewpager.R
-import com.rhorbachevskyi.viewpager.databinding.FragmentSignUpExtendedBinding
 import com.rhorbachevskyi.viewpager.data.model.UserRequest
+import com.rhorbachevskyi.viewpager.databinding.FragmentSignUpExtendedBinding
 import com.rhorbachevskyi.viewpager.domain.utils.ApiState
 import com.rhorbachevskyi.viewpager.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.ui.fragments.auth.AuthViewModel
 import com.rhorbachevskyi.viewpager.utils.Constants
-import com.rhorbachevskyi.viewpager.utils.DataStoreManager.saveData
+import com.rhorbachevskyi.viewpager.utils.DataStore.saveData
 import com.rhorbachevskyi.viewpager.utils.Validation
-import com.rhorbachevskyi.viewpager.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.utils.ext.loadImage
 import com.rhorbachevskyi.viewpager.utils.ext.log
 import com.rhorbachevskyi.viewpager.utils.ext.showErrorSnackBar
+import com.rhorbachevskyi.viewpager.utils.ext.showProgressBar
 import kotlinx.coroutines.launch
+
 
 class SignUpExtendedFragment :
     BaseFragment<FragmentSignUpExtendedBinding>(FragmentSignUpExtendedBinding::inflate) {
     private val viewModel: AuthViewModel by viewModels()
     private val args: SignUpExtendedFragmentArgs by navArgs()
-    private lateinit var userName: String
+
+    private var photoUri: Uri? = null
+    private val requestImageLauncher =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            uri?.let {
+                photoUri = it
+                binding.imageViewSignUpExtendedPhoto.loadImage(it.toString())
+                binding.imageViewSignUpExtendedMockup.visibility = View.GONE
+            }
+        }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -43,7 +53,6 @@ class SignUpExtendedFragment :
         cancel()
         forward()
         setPhoto()
-        inputUserName()
         inputMobilePhone()
     }
 
@@ -74,20 +83,8 @@ class SignUpExtendedFragment :
 
     private fun setPhoto() {
         binding.imageViewAddPhotoSignUpExtended.setOnClickListener {
-            registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-                if (uri != null) {
-                    binding.imageViewSignUpExtendedMockup.invisible()
-                    binding.imageViewSignUpExtendedPhoto.loadImage(uri.toString())
-                }
-            }.launch("image/*")
-        }
-    }
-
-    private fun inputUserName() {
-        with(binding) {
-            textInputEditTextUserName.doOnTextChanged { text, _, _, _ ->
-                userName = text.toString()
-            }
+            val request = PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            requestImageLauncher.launch(request)
         }
     }
 
@@ -100,8 +97,7 @@ class SignUpExtendedFragment :
     }
 
     private fun setSignUpExtended() {
-        userName = parsingEmail(args.email)
-        binding.textInputEditTextUserName.setText(userName)
+        binding.textInputEditTextUserName.setText(parsingEmail(args.email))
     }
 
 
@@ -121,18 +117,22 @@ class SignUpExtendedFragment :
                 when (it) {
                     is ApiState.Success -> {
 
-                        if (args.rememberMe) saveData(requireContext(), parsingEmail(args.email))
+                        if (args.rememberMe) saveData(requireContext(), args.email, args.password)
                         viewModel.isLogout()
                         log(it.userData.user.toString())
                         val direction =
-                            SignUpExtendedFragmentDirections.actionSignUpExtendedFragmentToViewPagerFragment(it.userData.user)
+                            SignUpExtendedFragmentDirections.actionSignUpExtendedFragmentToViewPagerFragment(
+                                it.userData.user
+                            )
                         navController.navigate(direction)
                     }
 
                     is ApiState.Loading -> {
+                        binding.progressBar.showProgressBar()
+                    }
+                    is ApiState.Initial -> {
 
                     }
-
                     is ApiState.Error -> {
                         binding.root.showErrorSnackBar(requireContext(), it.error)
                         viewModel.isLogout()

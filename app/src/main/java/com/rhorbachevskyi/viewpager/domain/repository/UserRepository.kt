@@ -12,4 +12,7 @@ class UserRepository constructor(private val service: ApiService) {
     suspend fun authorizeUser(@Body body: UserRequest): UserResponse {
         return service.authorizeUser(body)
     }
+    suspend fun getAllUsers(accessToken: String): UserResponse {
+        return service.getAllUsers(accessToken)
+    }
 }

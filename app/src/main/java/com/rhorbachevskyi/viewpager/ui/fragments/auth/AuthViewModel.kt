@@ -14,14 +14,15 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class AuthViewModel : ViewModel() { // TODO: register exception
-    private val _registerStateFlow = MutableStateFlow<ApiState>(ApiState.Loading)
+    private val _registerStateFlow = MutableStateFlow<ApiState>(ApiState.Initial)
     val registerState: StateFlow<ApiState> = _registerStateFlow
     fun isLogout() {
         _registerStateFlow.value = ApiState.Loading
     }
     fun registerUser(body: UserRequest) = viewModelScope.launch(Dispatchers.IO) {
-
+        _registerStateFlow.value = ApiState.Loading
         val apiService = ApiServiceFactory.createApiService()
+
         try {
             val response = UserRepository(apiService).registerUser(body)
             _registerStateFlow.value =
@@ -32,4 +33,5 @@ class AuthViewModel : ViewModel() { // TODO: register exception
             )
         }
     }
+
 }

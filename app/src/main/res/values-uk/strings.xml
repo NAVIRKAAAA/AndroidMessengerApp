@@ -18,8 +18,6 @@
     <string name="or">або</string>
     <string name="invalid_email">недійсна електронна пошта</string>
     <string name="invalid_password">недійсний пароль</string>
-    <string name="register_error_user_exist">Користувач вже існує</string>
-    <string name="invalid_request">Невірний запит</string>
 
     <!-- fragment sign up extended -->
     <string name="your_profile_data">Ваші дані профілю</string>
@@ -27,8 +25,6 @@
     <string name="user_name">Ім\'я користувача</string>
     <string name="mobile_phone">Мобільний телефон</string>
     <string name="forward">Вперед</string>
-    <string name="invalid_username">Недійсне ім\'я</string>
-    <string name="invalid_mobile_phone">Недійсний мобільний телефон</string>
 
     <!-- fragment sign in -->
     <string name="hello">Привіт!</string>
@@ -68,6 +64,12 @@
     <!-- most often used -->
     <string name="username">Повне ім\'я</string>
     <string name="career">Кар\'єра</string>
-    <string name="not_correct_input">Невірна адреса електронної пошти або пароль</string>
 
+    <!-- errors -->
+    <string name="not_correct_input">Невірна адреса електронної пошти або пароль</string>
+    <string name="automatic_login_error">Помилка автоматичного входу</string>
+    <string name="register_error_user_exist">Користувач вже існує</string>
+    <string name="invalid_request">Невірний запит</string>
+    <string name="invalid_username">Недійсне ім\'я</string>
+    <string name="invalid_mobile_phone">Недійсний мобільний телефон</string>
 </resources>

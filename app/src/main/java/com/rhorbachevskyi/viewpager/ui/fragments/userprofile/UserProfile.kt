@@ -9,7 +9,7 @@ import com.rhorbachevskyi.viewpager.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragment
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragmentDirections
 import com.rhorbachevskyi.viewpager.utils.Constants
-import com.rhorbachevskyi.viewpager.utils.DataStoreManager
+import com.rhorbachevskyi.viewpager.utils.DataStore
 import com.rhorbachevskyi.viewpager.utils.ext.loadImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,8 +32,9 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
     private fun logout() {
         binding.textViewLogout.setOnClickListener {
             lifecycleScope.launch(Dispatchers.IO) {
-                DataStoreManager.deleteDataFromDataStore(requireContext(), Constants.KEY_EMAIL)
-                DataStoreManager.deleteDataFromDataStore(requireContext(), Constants.KEY_REMEMBER_ME)
+                DataStore.deleteDataFromDataStore(requireContext(), Constants.KEY_EMAIL)
+                DataStore.deleteDataFromDataStore(requireContext(), Constants.KEY_PASSWORD)
+                DataStore.deleteDataFromDataStore(requireContext(), Constants.KEY_REMEMBER_ME)
             }
             val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToAuthFragment()
             navController.navigate(direction)
@@ -47,15 +48,9 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
     }
 
     private fun setUserProfile() {
-        setUserPhoto()
-        setUsername()
-    }
-
-    private fun setUserPhoto() {
         binding.imageViewProfileImage?.loadImage()
-    }
-
-    private fun setUsername() {
         binding.textViewName.text = args.user.name.toString()
+        binding.textViewCareer.text = args.user.career?: ""
+        binding.textViewHomeAddress.text = args.user.address ?: ""
     }
 }

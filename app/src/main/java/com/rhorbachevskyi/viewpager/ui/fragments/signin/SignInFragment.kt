@@ -5,13 +5,13 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.UserRequest
 import com.rhorbachevskyi.viewpager.databinding.FragmentSignInBinding
 import com.rhorbachevskyi.viewpager.domain.utils.ApiState
 import com.rhorbachevskyi.viewpager.ui.BaseFragment
-import com.rhorbachevskyi.viewpager.utils.DataStoreManager.saveData
+import com.rhorbachevskyi.viewpager.utils.DataStore.saveData
 import com.rhorbachevskyi.viewpager.utils.ext.showErrorSnackBar
+import com.rhorbachevskyi.viewpager.utils.ext.showProgressBar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -57,7 +57,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(FragmentSignInBinding
                             lifecycleScope.launch(Dispatchers.IO) {
                                 saveData(
                                     requireContext(),
-                                    binding.textInputEditTextEmail.text.toString()
+                                    binding.textInputEditTextEmail.text.toString(), binding.textInputEditTextPassword.text.toString()
                                 )
                             }
                         }
@@ -65,12 +65,15 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(FragmentSignInBinding
                             SignInFragmentDirections.actionSignInFragmentToViewPagerFragment(it.userData.user)
                         navController.navigate(direction)
                     }
+                    is ApiState.Initial -> {
 
+                    }
                     is ApiState.Loading -> {
+                        binding.progressBar.showProgressBar()
                     }
 
                     is ApiState.Error -> {
-                        binding.root.showErrorSnackBar(requireContext(), R.string.not_correct_input)
+                        binding.root.showErrorSnackBar(requireContext(), it.error)
                     }
                 }
             }

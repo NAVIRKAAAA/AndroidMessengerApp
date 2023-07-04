@@ -76,7 +76,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputUserName"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/normal_margin"
         app:boxBackgroundMode="none"
@@ -90,6 +90,7 @@
             android:maxLength="32"
             android:layout_height="@dimen/edit_text_height"
             android:textColor="@color/white"
+            android:textCursorDrawable="@null"
             android:textSize="@dimen/edit_text_size" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -108,7 +109,7 @@
     <com.google.android.material.textfield.TextInputLayout
 
         android:id="@+id/textInputPassword"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/normal_margin"
         app:boxBackgroundMode="none"
@@ -122,6 +123,7 @@
             android:layout_height="@dimen/edit_text_height"
             android:maxLength="15"
             android:textColor="@color/white"
+            android:textCursorDrawable="@null"
             android:inputType="number"
             android:textSize="@dimen/edit_text_size" />
 
@@ -156,5 +158,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
