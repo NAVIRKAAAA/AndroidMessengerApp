@@ -91,7 +91,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/edit_text_height"
             android:inputType="textEmailAddress"
-            android:maxLength="30"
+            android:maxLength="32"
             android:textColor="@color/white"
             android:textSize="@dimen/edit_text_size" />
 
@@ -124,7 +124,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/edit_text_height"
             android:inputType="number"
-            android:maxLength="20"
+            android:maxLength="15"
             android:textColor="@color/white"
             android:textSize="@dimen/edit_text_size" />
 

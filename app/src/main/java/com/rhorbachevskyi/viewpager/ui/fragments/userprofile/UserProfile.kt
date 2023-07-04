@@ -1,12 +1,8 @@
 package com.rhorbachevskyi.viewpager.ui.fragments.userprofile
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.rhorbachevskyi.viewpager.databinding.FragmentProfileBinding
 import com.rhorbachevskyi.viewpager.ui.BaseFragment
@@ -60,6 +56,6 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
     }
 
     private fun setUsername() {
-        binding.textViewName.text = args.username
+        binding.textViewName.text = args.user.name.toString()
     }
 }

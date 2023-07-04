@@ -62,9 +62,8 @@
         android:name="com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragment"
         android:label="ViewPagerFragment">
         <argument
-            android:name="username"
-            app:argType="string"
-            app:nullable="true" />
+            android:name="user"
+            app:argType="com.rhorbachevskyi.viewpager.data.model.UserData" />
         <action
             android:id="@+id/action_viewPagerFragment_to_contactProfile"
             app:destination="@id/contactProfile" />
@@ -87,8 +86,8 @@
         android:label="UserProfile"
         tools:layout="@layout/fragment_profile">
         <argument
-            android:name="username"
-            app:argType="string" />
+            android:name="user"
+            app:argType="com.rhorbachevskyi.viewpager.data.model.UserData" />
     </fragment>
     <fragment
         android:id="@+id/contactsFragment"

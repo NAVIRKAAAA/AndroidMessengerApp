@@ -141,21 +141,22 @@
         android:id="@+id/textViewDoNotHaveAccount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/large_margin"
+        android:layout_marginEnd="@dimen/small_margin"
         android:layout_marginBottom="@dimen/normal_margin"
         android:text="@string/don_t_have_account"
         android:textColor="@color/gray"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/textViewSignUp"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textViewSignUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/small_margin"
         android:text="@string/sign_up"
         android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/textViewDoNotHaveAccount"
         app:layout_constraintTop_toTopOf="@id/textViewDoNotHaveAccount" />
 

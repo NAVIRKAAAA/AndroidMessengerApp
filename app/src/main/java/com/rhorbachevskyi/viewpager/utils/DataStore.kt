@@ -24,16 +24,22 @@ object DataStoreManager {
         }
     }
 
-    suspend fun putData(context: Context, key: String, value: String) {
+    private suspend fun putData(context: Context, key: String, value: String) {
         val dataStoreKey = stringPreferencesKey(key)
         context.dataStore.edit { settings ->
             settings[dataStoreKey] = value
         }
     }
+
     suspend fun deleteDataFromDataStore(context: Context, key: String) {
         val dataStoreKey = stringPreferencesKey(key)
         context.dataStore.edit { settings ->
             settings.remove(dataStoreKey)
         }
+    }
+
+    suspend fun saveData(requireContext: Context, email: String) {
+        putData(requireContext, Constants.KEY_EMAIL, email)
+        putData(requireContext, Constants.KEY_REMEMBER_ME, Constants.KEY_REMEMBER_ME)
     }
 }

@@ -31,8 +31,8 @@ class AuthFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding::
     private fun register() {
         with(binding) {
             buttonRegister.setOnClickListener {
-                if (Validation().isValidEmail(textInputEditTextEmail.text.toString()) &&
-                    Validation().isValidPassword(textInputEditTextPassword.text.toString())
+                if (Validation.isValidEmail(textInputEditTextEmail.text.toString()) &&
+                    Validation.isValidPassword(textInputEditTextPassword.text.toString())
                 ) {
                     val direction =
                         AuthFragmentDirections.actionAuthFragmentToSignUpExtendedFragment(
@@ -50,13 +50,13 @@ class AuthFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding::
         with(binding) {
             textInputEditTextEmail.doOnTextChanged { text, _, _, _ ->
                 textViewInvalidEmail.visibleIf(
-                    !Validation().isValidEmail(text.toString()) && !text.isNullOrEmpty()
+                    !Validation.isValidEmail(text.toString()) && !text.isNullOrEmpty()
                 )
             }
             textInputEditTextPassword.doOnTextChanged { text, _, _, _ ->
                 if (!text.isNullOrEmpty()) {
                     textViewInvalidPassword.visibility =
-                        if (Validation().isValidPassword(text.toString())) View.INVISIBLE else View.VISIBLE
+                        if (Validation.isValidPassword(text.toString())) View.INVISIBLE else View.VISIBLE
                 } else {
                     textViewInvalidPassword.invisible()
                 }

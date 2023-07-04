@@ -1,29 +1,31 @@
 package com.rhorbachevskyi.viewpager.ui.fragments.viewpager.adapter
 
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.lifecycle.Lifecycle
 import com.rhorbachevskyi.viewpager.ui.fragments.contact.ContactsFragment
 import com.rhorbachevskyi.viewpager.ui.fragments.userprofile.UserProfile
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragmentArgs
+import com.rhorbachevskyi.viewpager.utils.Constants
 
 class ViewPagerAdapter(
-    fragmentManager: FragmentManager,
-    lifecycle: Lifecycle,
+    fragment: Fragment,
     private val args: ViewPagerFragmentArgs
 ) :
-    FragmentStateAdapter(fragmentManager, lifecycle) {
-    override fun getItemCount(): Int = 2
+    FragmentStateAdapter(fragment) {
+    override fun getItemCount(): Int = Constants.FRAGMENT_COUNT
 
     override fun createFragment(position: Int): Fragment {
-        return when(position) {
-            0 -> {
+        return when (Fragments.values()[position]) {
+            Fragments.USER_PROFILE -> {
                 val userProfileFragment = UserProfile()
                 userProfileFragment.arguments = args.toBundle()
                 userProfileFragment
             }
-            else -> ContactsFragment()
+            Fragments.CONTACTS -> ContactsFragment()
         }
+    }
+    enum class Fragments {
+        USER_PROFILE,
+        CONTACTS
     }
 }

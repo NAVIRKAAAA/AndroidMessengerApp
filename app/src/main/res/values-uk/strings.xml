@@ -68,5 +68,6 @@
     <!-- most often used -->
     <string name="username">Повне ім\'я</string>
     <string name="career">Кар\'єра</string>
+    <string name="not_correct_input">Невірна адреса електронної пошти або пароль</string>
 
 </resources>

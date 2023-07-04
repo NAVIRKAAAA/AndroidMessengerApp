@@ -6,27 +6,28 @@ import android.telephony.PhoneNumberFormattingTextWatcher
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.databinding.FragmentSignUpExtendedBinding
 import com.rhorbachevskyi.viewpager.data.model.UserRequest
+import com.rhorbachevskyi.viewpager.domain.utils.ApiState
 import com.rhorbachevskyi.viewpager.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.ui.fragments.auth.AuthViewModel
 import com.rhorbachevskyi.viewpager.utils.Constants
-import com.rhorbachevskyi.viewpager.utils.DataStoreManager
+import com.rhorbachevskyi.viewpager.utils.DataStoreManager.saveData
 import com.rhorbachevskyi.viewpager.utils.Validation
 import com.rhorbachevskyi.viewpager.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.utils.ext.loadImage
+import com.rhorbachevskyi.viewpager.utils.ext.log
 import com.rhorbachevskyi.viewpager.utils.ext.showErrorSnackBar
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class SignUpExtendedFragment :
     BaseFragment<FragmentSignUpExtendedBinding>(FragmentSignUpExtendedBinding::inflate) {
-    private lateinit var viewModel: AuthViewModel
+    private val viewModel: AuthViewModel by viewModels()
     private val args: SignUpExtendedFragmentArgs by navArgs()
     private lateinit var userName: String
 
@@ -51,18 +52,19 @@ class SignUpExtendedFragment :
     }
 
     private fun forward() {
-        viewModel = ViewModelProvider(this)[AuthViewModel::class.java]
         with(binding) {
             buttonForward.setOnClickListener {
-                if(!Validation().isValidUserName(textInputEditTextUserName.text.toString())) {
+                if (!Validation.isValidUserName(textInputEditTextUserName.text.toString())) {
                     root.showErrorSnackBar(requireContext(), R.string.invalid_username)
-                } else if(!Validation().isValidMobilePhone(textInputEditTextMobilePhone.text.toString())) {
+                } else if (!Validation.isValidMobilePhone(textInputEditTextMobilePhone.text.toString())) {
                     root.showErrorSnackBar(requireContext(), R.string.invalid_mobile_phone)
                 } else {
                     viewModel.registerUser(
                         UserRequest(
                             args.email,
-                            args.password
+                            args.password,
+                            textInputEditTextUserName.text.toString(),
+                            textInputEditTextMobilePhone.text.toString()
                         )
                     )
                 }
@@ -98,13 +100,13 @@ class SignUpExtendedFragment :
     }
 
     private fun setSignUpExtended() {
-        userName = parsingEmail()
+        userName = parsingEmail(args.email)
         binding.textInputEditTextUserName.setText(userName)
     }
 
 
-    private fun parsingEmail(): String {
-        val elements = args.email.split("@")[0].replace(".", " ").split(" ")
+    private fun parsingEmail(email: String): String {
+        val elements = email.split("@")[0].replace(".", " ").split(" ")
         return if (elements.size >= 2) {
             "${elements[0].replaceFirstChar { it.uppercase() }} ${elements[1].replaceFirstChar { it.titlecase() }}"
         } else {
@@ -117,21 +119,21 @@ class SignUpExtendedFragment :
         lifecycleScope.launch {
             viewModel.registerState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                 when (it) {
-                    is AuthViewModel.RegisterState.Success -> {
-                        if (args.rememberMe) saveData()
+                    is ApiState.Success -> {
+
+                        if (args.rememberMe) saveData(requireContext(), parsingEmail(args.email))
                         viewModel.isLogout()
+                        log(it.userData.user.toString())
                         val direction =
-                            SignUpExtendedFragmentDirections.actionSignUpExtendedFragmentToViewPagerFragment(
-                                userName
-                            )
+                            SignUpExtendedFragmentDirections.actionSignUpExtendedFragmentToViewPagerFragment(it.userData.user)
                         navController.navigate(direction)
                     }
 
-                    is AuthViewModel.RegisterState.Loading -> {
+                    is ApiState.Loading -> {
 
                     }
 
-                    is AuthViewModel.RegisterState.Error -> {
+                    is ApiState.Error -> {
                         binding.root.showErrorSnackBar(requireContext(), it.error)
                         viewModel.isLogout()
                     }
@@ -140,18 +142,4 @@ class SignUpExtendedFragment :
         }
     }
 
-    private fun saveData() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            DataStoreManager.putData(
-                requireContext(),
-                Constants.KEY_EMAIL,
-                userName
-            )
-            DataStoreManager.putData(
-                requireContext(),
-                Constants.KEY_REMEMBER_ME,
-                Constants.KEY_REMEMBER_ME
-            )
-        }
-    }
 }

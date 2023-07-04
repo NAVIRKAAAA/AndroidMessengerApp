@@ -7,7 +7,7 @@ private const val SMALL_LETTER_REGEX = "[a-z]"
 private const val IS_HAVE_NUMBER_REGEX = "\\d"
 private const val IS_SPACE = ' '
 
-class Validation {
+object Validation {
 
     fun isValidEmail(email: String): Boolean =
         Patterns.EMAIL_ADDRESS.matcher(email).matches()

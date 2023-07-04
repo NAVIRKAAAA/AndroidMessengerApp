@@ -68,5 +68,6 @@
     <!-- most often used -->
     <string name="username">Username</string>
     <string name="career">Career</string>
+    <string name="not_correct_input">Invalid email or password</string>
 
 </resources>

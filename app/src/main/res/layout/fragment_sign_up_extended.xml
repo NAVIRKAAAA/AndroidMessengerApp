@@ -87,7 +87,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/textInputEditTextUserName"
             android:layout_width="match_parent"
-            android:maxLength="30"
+            android:maxLength="32"
             android:layout_height="@dimen/edit_text_height"
             android:textColor="@color/white"
             android:textSize="@dimen/edit_text_size" />
@@ -120,7 +120,7 @@
             android:id="@+id/textInputEditTextMobilePhone"
             android:layout_width="match_parent"
             android:layout_height="@dimen/edit_text_height"
-            android:maxLength="20"
+            android:maxLength="15"
             android:textColor="@color/white"
             android:inputType="number"
             android:textSize="@dimen/edit_text_size" />
