@@ -21,7 +21,11 @@ class ViewPagerAdapter(
                 userProfileFragment.arguments = args.toBundle()
                 userProfileFragment
             }
-            Fragments.CONTACTS -> ContactsFragment()
+            Fragments.CONTACTS -> {
+                val contactsFragment = ContactsFragment()
+                contactsFragment.arguments = args.toBundle()
+                contactsFragment
+            }
         }
     }
     enum class Fragments {

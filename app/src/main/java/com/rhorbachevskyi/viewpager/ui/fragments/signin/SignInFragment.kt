@@ -6,12 +6,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.rhorbachevskyi.viewpager.data.model.UserRequest
+import com.rhorbachevskyi.viewpager.data.model.UserWithTokens
 import com.rhorbachevskyi.viewpager.databinding.FragmentSignInBinding
 import com.rhorbachevskyi.viewpager.domain.utils.ApiState
 import com.rhorbachevskyi.viewpager.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.utils.DataStore.saveData
 import com.rhorbachevskyi.viewpager.utils.ext.showErrorSnackBar
-import com.rhorbachevskyi.viewpager.utils.ext.showProgressBar
+import com.rhorbachevskyi.viewpager.utils.ext.visible
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -62,14 +63,15 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(FragmentSignInBinding
                             }
                         }
                         val direction =
-                            SignInFragmentDirections.actionSignInFragmentToViewPagerFragment(it.userData.user)
+                            SignInFragmentDirections.actionSignInFragmentToViewPagerFragment(
+                                UserWithTokens(it.userData.user, it.userData.accessToken, it.userData.refreshToken))
                         navController.navigate(direction)
                     }
                     is ApiState.Initial -> {
 
                     }
                     is ApiState.Loading -> {
-                        binding.progressBar.showProgressBar()
+                        binding.progressBar.visible()
                     }
 
                     is ApiState.Error -> {

@@ -6,5 +6,5 @@ data class UserResponse(
     val message: String? = null,
     val data: Data? = null
 ) {
-    data class Data(val user: UserData)
+    data class Data(val user: UserData, val accessToken: String, val refreshToken: String)
 }

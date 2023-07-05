@@ -65,13 +65,41 @@
         app:layout_constraintStart_toEndOf="@id/imageViewUserPhoto"
         app:layout_constraintTop_toBottomOf="@id/textViewName" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imageViewDelete"
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/normal_margin"
-        android:src="@drawable/ic_bin"
+        android:fontFamily="@font/example8"
+        android:text="@string/add"
+        android:textColor="@color/orange"
+        android:textSize="@dimen/text_normal_size"
+        android:drawableEnd="@drawable/ic_add_item"
+        android:drawablePadding="@dimen/small_margin"
+        android:gravity="center_vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageViewDoneAddContact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/normal_margin"
+        android:src="@drawable/ic_success_add_contact"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/textViewAdd"
+        app:layout_constraintEnd_toEndOf="@id/textViewAdd"
+        app:layout_constraintStart_toStartOf="@id/textViewAdd"
+        app:layout_constraintTop_toTopOf="@id/textViewAdd" />
 </androidx.constraintlayout.widget.ConstraintLayout>

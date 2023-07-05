@@ -22,6 +22,3 @@ fun View.showErrorSnackBar(context : Context, error: Int){
         Snackbar.LENGTH_SHORT
     ).show()
 }
-fun View.showProgressBar() {
-    visibility = View.VISIBLE
-}

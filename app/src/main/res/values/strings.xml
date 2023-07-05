@@ -72,4 +72,8 @@
     <string name="invalid_request">Invalid request</string>
     <string name="invalid_username">Invalid user name</string>
     <string name="invalid_mobile_phone">Invalid mobile phone</string>
+
+    <!-- fragment users -->
+    <string name="add">Add</string>
+    <string name="users">Users</string>
 </resources>

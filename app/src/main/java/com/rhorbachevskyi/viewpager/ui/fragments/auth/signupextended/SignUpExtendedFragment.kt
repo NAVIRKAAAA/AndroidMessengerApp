@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.UserRequest
+import com.rhorbachevskyi.viewpager.data.model.UserWithTokens
 import com.rhorbachevskyi.viewpager.databinding.FragmentSignUpExtendedBinding
 import com.rhorbachevskyi.viewpager.domain.utils.ApiState
 import com.rhorbachevskyi.viewpager.ui.BaseFragment
@@ -22,7 +23,7 @@ import com.rhorbachevskyi.viewpager.utils.Validation
 import com.rhorbachevskyi.viewpager.utils.ext.loadImage
 import com.rhorbachevskyi.viewpager.utils.ext.log
 import com.rhorbachevskyi.viewpager.utils.ext.showErrorSnackBar
-import com.rhorbachevskyi.viewpager.utils.ext.showProgressBar
+import com.rhorbachevskyi.viewpager.utils.ext.visible
 import kotlinx.coroutines.launch
 
 
@@ -122,17 +123,23 @@ class SignUpExtendedFragment :
                         log(it.userData.user.toString())
                         val direction =
                             SignUpExtendedFragmentDirections.actionSignUpExtendedFragmentToViewPagerFragment(
-                                it.userData.user
+                                UserWithTokens(
+                                    it.userData.user,
+                                    it.userData.accessToken,
+                                    it.userData.refreshToken
+                                )
                             )
                         navController.navigate(direction)
                     }
 
                     is ApiState.Loading -> {
-                        binding.progressBar.showProgressBar()
+                        binding.progressBar.visible()
                     }
+
                     is ApiState.Initial -> {
 
                     }
+
                     is ApiState.Error -> {
                         binding.root.showErrorSnackBar(requireContext(), it.error)
                         viewModel.isLogout()

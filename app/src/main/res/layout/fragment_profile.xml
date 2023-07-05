@@ -59,14 +59,15 @@
         android:layout_width="@dimen/photo_size"
         android:layout_height="@dimen/photo_size"
         android:scaleType="centerCrop"
+        android:src="@drawable/ic_my_photo"
         app:layout_constraintBottom_toBottomOf="@id/viewTop"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewSettings"
-        app:layout_constraintVertical_bias="0.25"
-        app:shapeAppearanceOverlay="@style/rounded"
-        tools:src="@tools:sample/avatars" />
+        app:layout_constraintVertical_bias="0.24"
+        app:shapeAppearanceOverlay="@style/rounded" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textViewName"
@@ -114,31 +115,31 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:gravity="center"
         app:layout_constraintBottom_toTopOf="@id/buttonEditProfile"
         app:layout_constraintEnd_toEndOf="parent"
-        android:gravity="center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/viewTop">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iconFacebook"
-            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:src="@drawable/ic_facebook" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iconLinkedIn"
             android:layout_width="wrap_content"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:src="@drawable/ic_linkedin" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iconInstagram"
             android:layout_width="wrap_content"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:src="@drawable/ic_instagram" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>

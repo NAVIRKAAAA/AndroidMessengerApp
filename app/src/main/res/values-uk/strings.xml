@@ -72,4 +72,8 @@
     <string name="invalid_request">Невірний запит</string>
     <string name="invalid_username">Недійсне ім\'я</string>
     <string name="invalid_mobile_phone">Недійсний мобільний телефон</string>
+
+    <!-- fragment users -->
+    <string name="add">Додати</string>
+    <string name="users">Користувачі</string>
 </resources>

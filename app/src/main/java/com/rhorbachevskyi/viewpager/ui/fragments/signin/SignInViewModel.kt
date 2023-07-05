@@ -35,7 +35,6 @@ class SignInViewModel : ViewModel() {
             )
         }
     }
-
     fun autoLogin(context: Context) =
         viewModelScope.launch(Dispatchers.IO) {// TODO: appropriate exception
             val apiService = ApiServiceFactory.createApiService()

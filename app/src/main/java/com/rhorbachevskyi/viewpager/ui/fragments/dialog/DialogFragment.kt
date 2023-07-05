@@ -10,13 +10,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.R
-import com.rhorbachevskyi.viewpager.databinding.FragmentAddUserBinding
+import com.rhorbachevskyi.viewpager.databinding.FragmentAddContactsBinding
 import com.rhorbachevskyi.viewpager.ui.fragments.contact.ContactsViewModel
 import com.rhorbachevskyi.viewpager.utils.ext.loadImage
 
 
 class DialogFragment : AppCompatDialogFragment() {
-    private lateinit var binding: FragmentAddUserBinding
+    private lateinit var binding: FragmentAddContactsBinding
     private var photoUri: Uri? = null
 
     private var viewModel = ContactsViewModel()
@@ -36,9 +36,9 @@ class DialogFragment : AppCompatDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireActivity())
         val inflater = requireActivity().layoutInflater
-        val dialogView = inflater.inflate(R.layout.fragment_add_user, null)
+        val dialogView = inflater.inflate(R.layout.fragment_add_contacts, null)
         builder.setView(dialogView)
-        binding = FragmentAddUserBinding.bind(dialogView)
+        binding = FragmentAddContactsBinding.bind(dialogView)
         setListeners()
         return builder.create()
     }

@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.viewpager.ui.fragments.contactprofile
+package com.rhorbachevskyi.viewpager.ui.fragments.contact.contactprofile
 
 import android.os.Bundle
 import android.transition.TransitionInflater

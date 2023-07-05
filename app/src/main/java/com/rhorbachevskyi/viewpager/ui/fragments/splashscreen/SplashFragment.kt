@@ -5,6 +5,7 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import com.rhorbachevskyi.viewpager.data.model.UserWithTokens
 import com.rhorbachevskyi.viewpager.databinding.FragmentSplashScreenBinding
 import com.rhorbachevskyi.viewpager.domain.utils.ApiState
 import com.rhorbachevskyi.viewpager.ui.BaseFragment
@@ -42,15 +43,23 @@ class SplashFragment :
                 when (it) {
                     is ApiState.Success -> {
                         val direction =
-                            SplashFragmentDirections.actionSplashFragment2ToViewPagerFragment(it.userData.user)
+                            SplashFragmentDirections.actionSplashFragment2ToViewPagerFragment(
+                                UserWithTokens(
+                                    it.userData.user,
+                                    it.userData.accessToken,
+                                    it.userData.refreshToken
+                                )
+                            )
                         navController.navigate(direction)
                     }
 
                     is ApiState.Loading -> {
                     }
+
                     is ApiState.Initial -> {
 
                     }
+
                     is ApiState.Error -> {
                         binding.root.showErrorSnackBar(requireContext(), it.error)
                     }

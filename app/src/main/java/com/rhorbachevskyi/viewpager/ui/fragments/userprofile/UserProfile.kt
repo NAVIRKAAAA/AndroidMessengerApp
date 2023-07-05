@@ -10,7 +10,6 @@ import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragment
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragmentDirections
 import com.rhorbachevskyi.viewpager.utils.Constants
 import com.rhorbachevskyi.viewpager.utils.DataStore
-import com.rhorbachevskyi.viewpager.utils.ext.loadImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -48,9 +47,8 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
     }
 
     private fun setUserProfile() {
-        binding.imageViewProfileImage?.loadImage()
-        binding.textViewName.text = args.user.name.toString()
-        binding.textViewCareer.text = args.user.career?: ""
-        binding.textViewHomeAddress.text = args.user.address ?: ""
+        binding.textViewName.text = args.userData.user.name.toString()
+        binding.textViewCareer.text = args.userData.user.career?: ""
+        binding.textViewHomeAddress.text = args.userData.user.address ?: ""
     }
 }
