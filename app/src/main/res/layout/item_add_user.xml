@@ -74,9 +74,11 @@
         android:text="@string/add"
         android:textColor="@color/orange"
         android:textSize="@dimen/text_normal_size"
+
         android:drawableEnd="@drawable/ic_add_item"
         android:drawablePadding="@dimen/small_margin"
         android:gravity="center_vertical"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -86,20 +88,20 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/normal_margin"
         android:src="@drawable/ic_success_add_contact"
-        android:visibility="gone"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
         android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/progressbar"
+        android:layout_height="@dimen/progressbar"
         android:layout_centerInParent="true"
         android:indeterminate="true"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/textViewAdd"
-        app:layout_constraintEnd_toEndOf="@id/textViewAdd"
-        app:layout_constraintStart_toStartOf="@id/textViewAdd"
-        app:layout_constraintTop_toTopOf="@id/textViewAdd" />
+        app:layout_constraintBottom_toBottomOf="@id/imageViewDoneAddContact"
+        app:layout_constraintEnd_toEndOf="@id/imageViewDoneAddContact"
+        app:layout_constraintStart_toStartOf="@id/imageViewDoneAddContact"
+        app:layout_constraintTop_toTopOf="@id/imageViewDoneAddContact" />
 </androidx.constraintlayout.widget.ConstraintLayout>

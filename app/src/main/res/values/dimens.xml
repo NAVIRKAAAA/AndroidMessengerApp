@@ -31,4 +31,5 @@
     <dimen name="view_pager_height">40dp</dimen>
     <dimen name="photo_size_dialog">120dp</dimen>
     <dimen name="input_dialog_height">40dp</dimen>
+    <dimen name="progressbar">35dp</dimen>
 </resources>

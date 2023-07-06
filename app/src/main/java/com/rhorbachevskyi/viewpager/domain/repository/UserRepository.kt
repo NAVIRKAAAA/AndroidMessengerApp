@@ -26,4 +26,7 @@ class UserRepository constructor(private val service: ApiService) {
     suspend fun addContact(userId: Long, accessToken: String, contactId: Long) : UsersResponse {
         return service.addContact(userId, accessToken, contactId)
     }
+    suspend fun deleteContact(userId: Long, accessToken: String, contactId: Long) : UsersResponse {
+        return service.deleteContact(userId, contactId, accessToken)
+    }
 }

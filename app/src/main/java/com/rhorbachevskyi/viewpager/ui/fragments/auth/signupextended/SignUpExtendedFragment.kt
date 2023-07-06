@@ -21,7 +21,6 @@ import com.rhorbachevskyi.viewpager.utils.Constants
 import com.rhorbachevskyi.viewpager.utils.DataStore.saveData
 import com.rhorbachevskyi.viewpager.utils.Validation
 import com.rhorbachevskyi.viewpager.utils.ext.loadImage
-import com.rhorbachevskyi.viewpager.utils.ext.log
 import com.rhorbachevskyi.viewpager.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.utils.ext.visible
 import kotlinx.coroutines.launch
@@ -117,10 +116,8 @@ class SignUpExtendedFragment :
             viewModel.registerState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                 when (it) {
                     is ApiState.Success -> {
-
                         if (args.rememberMe) saveData(requireContext(), args.email, args.password)
                         viewModel.isLogout()
-                        log(it.userData.user.toString())
                         val direction =
                             SignUpExtendedFragmentDirections.actionSignUpExtendedFragmentToViewPagerFragment(
                                 UserWithTokens(

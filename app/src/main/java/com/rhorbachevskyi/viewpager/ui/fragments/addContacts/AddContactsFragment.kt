@@ -25,14 +25,17 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
     private val adapter: AddContactsAdapter by lazy {
         AddContactsAdapter(listener = object : UserItemClickListener {
             override fun onClickAdd(contact: Contact) {
-                viewModel.addContact(contact.id, args.userData.accessToken, args.userData.user.id)
+                viewModel.addContact(args.userData.user.id, contact, args.userData.accessToken)
             }
 
             override fun onClickContact(
                 contact: Contact,
                 transitionPairs: Array<Pair<View, String>>
             ) {
-                TODO("Not yet implemented")
+//                val extras = FragmentNavigatorExtras(*transitionPairs)
+//                val direction =
+//                    ViewPagerFragmentDirections.actionViewPagerFragmentToContactProfile(contact)
+//                navController.navigate(direction, extras)
             }
 
             override fun onOpenNewFragment(
@@ -59,6 +62,7 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
         binding.recyclerViewUsers.layoutManager = layoutManager
         binding.recyclerViewUsers.adapter = adapter
     }
+
 
     private fun setObserves() {
         viewModel.users.observe(viewLifecycleOwner) {
@@ -87,23 +91,8 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
             }
         }
         lifecycleScope.launch {
-            viewModel.usersState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
-                when(it) {
-                    is ApiStateUsers.Success -> {
-
-                    }
-
-                    is ApiStateUsers.Initial -> {
-
-                    }
-
-                    is ApiStateUsers.Loading -> {
-                    }
-
-                    is ApiStateUsers.Error -> {
-
-                    }
-                }
+            viewModel.states.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
+                adapter.setStates(it)
             }
         }
     }

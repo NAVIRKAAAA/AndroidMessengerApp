@@ -8,7 +8,6 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
-import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.databinding.FragmentAddContactsBinding
 import com.rhorbachevskyi.viewpager.ui.fragments.contact.ContactsViewModel
@@ -59,12 +58,12 @@ class DialogFragment : AppCompatDialogFragment() {
 
     private fun save() {
         binding.buttonSave.setOnClickListener {
-            viewModel.addContact(
-                Contact(
-         binding.textInputEditTextUserName.text.toString(),
-                  binding.textInputEditTextCareer.text.toString(),
-                photoUri.toString())
-            )
+//            viewModel.addContactToList(
+//                Contact(
+//         binding.textInputEditTextUserName.text.toString(),
+//                  binding.textInputEditTextCareer.text.toString(),
+//                photoUri.toString())
+//            )
             dismiss()
         }
     }

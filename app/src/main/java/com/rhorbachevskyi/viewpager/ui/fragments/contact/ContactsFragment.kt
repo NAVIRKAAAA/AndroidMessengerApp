@@ -22,8 +22,9 @@ import com.rhorbachevskyi.viewpager.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.ui.fragments.addContacts.adapter.utils.ApiStateUsers
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragment
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragmentDirections
-import com.rhorbachevskyi.viewpager.utils.ext.log
+import com.rhorbachevskyi.viewpager.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.utils.ext.showErrorSnackBar
+import com.rhorbachevskyi.viewpager.utils.ext.visible
 import kotlinx.coroutines.launch
 
 class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsBinding::inflate) {
@@ -95,7 +96,6 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
             adapter.submitList(it)
         }
 
-
         viewModel.isMultiselect.observe(viewLifecycleOwner) {
             binding.recyclerViewContacts.adapter = adapter
             adapter.isMultiselectMode = it
@@ -106,7 +106,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
             viewModel.usersState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                 when (it) {
                     is ApiStateUsers.Success -> {
-                        log("success")
+                        binding.progressBar.invisible()
                     }
 
                     is ApiStateUsers.Error -> {
@@ -114,7 +114,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                     }
 
                     is ApiStateUsers.Loading -> {
-
+                        binding.progressBar.visible()
                     }
 
                     is ApiStateUsers.Initial -> {
@@ -154,7 +154,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
     private fun deleteSelectedContacts() {
         binding.imageViewDeleteSelectMode.setOnClickListener {
             val size = viewModel.selectContacts.value?.size
-            viewModel.deleteSelectList()
+            viewModel.deleteSelectList(args.userData.user.id, args.userData.accessToken)
             binding.root.showErrorSnackBar(
                 requireContext(),
                 if (size!! > 1) R.string.contacts_removed else R.string.contact_removed
@@ -210,15 +210,16 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
     }
 
     fun deleteUserWithRestore(contact: Contact) {
+
         val position = getPosition(contact)
-        if (viewModel.deleteContact(contact)) {
+        if (viewModel.deleteContactFromList(args.userData.user.id, args.userData.accessToken, contact.id)) {
             Snackbar.make(
                 binding.recyclerViewContacts,
                 getString(R.string.s_has_been_removed).format(contact.name),
                 Snackbar.LENGTH_LONG
             )
                 .setAction(getString(R.string.restore)) {
-                    viewModel.addContact(contact, position)
+                    viewModel.addContactToList(args.userData.user.id,contact, args.userData.accessToken, position)
                 }.show()
         }
     }

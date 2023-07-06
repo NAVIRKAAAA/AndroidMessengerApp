@@ -21,8 +21,8 @@ class AuthViewModel : ViewModel() { // TODO: register exception
     }
     fun registerUser(body: UserRequest) = viewModelScope.launch(Dispatchers.IO) {
         _registerStateFlow.value = ApiState.Loading
-        val apiService = ApiServiceFactory.createApiService()
 
+        val apiService = ApiServiceFactory.createApiService()
         try {
             val response = UserRepository(apiService).registerUser(body)
             _registerStateFlow.value =
@@ -33,5 +33,4 @@ class AuthViewModel : ViewModel() { // TODO: register exception
             )
         }
     }
-
 }
