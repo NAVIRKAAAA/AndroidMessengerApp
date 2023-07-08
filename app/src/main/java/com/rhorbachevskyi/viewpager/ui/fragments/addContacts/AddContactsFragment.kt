@@ -2,6 +2,8 @@ package com.rhorbachevskyi.viewpager.ui.fragments.addContacts
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -18,6 +20,7 @@ import com.rhorbachevskyi.viewpager.ui.fragments.addContacts.adapter.utils.ApiSt
 import com.rhorbachevskyi.viewpager.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.utils.ext.visible
+import com.rhorbachevskyi.viewpager.utils.ext.visibleIf
 import kotlinx.coroutines.launch
 
 
@@ -103,7 +106,34 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
 
     private fun setListeners() {
         navigateBack()
+        searchView()
+    }
 
+    private fun searchView() {
+        with(binding) {
+            imageSearchView.setOnCloseListener {
+                imageSearchView.layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
+                textViewUsers.visible()
+                imageViewNavigationBack.visible()
+                false
+            }
+            imageSearchView.setOnSearchClickListener {
+                imageSearchView.layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+                textViewUsers.invisible()
+                imageViewNavigationBack.invisible()
+            }
+            imageSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return false
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    textViewNoResultFound.visibleIf(viewModel.updateContactList(newText) == 0)
+                    if (newText.isNullOrEmpty()) initialRecyclerview()
+                    return false
+                }
+            })
+        }
     }
 
     private fun navigateBack() {

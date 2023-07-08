@@ -29,12 +29,16 @@ class ContactsViewModel : ViewModel() {
     private val _isSelectItem: MutableStateFlow<ArrayList<Pair<Boolean, Int>>> =
         MutableStateFlow(ArrayList())
     val isSelectItem: StateFlow<ArrayList<Pair<Boolean, Int>>> = _isSelectItem
+
+    private var startedListContact: List<Contact> = listOf()
+
     fun initialContactList(userId: Long, accessToken: String) =
         viewModelScope.launch(Dispatchers.IO) {
             _usersStateFlow.value = ApiStateUsers.Loading
             NetworkImplementation.getContacts(userId, accessToken)
             _contactList.postValue(NetworkImplementation.getContactList())
             _usersStateFlow.value = NetworkImplementation.getStateContact()
+            startedListContact = NetworkImplementation.getContactList()
         }
 
     private fun addContact(userId: Long, contact: Contact, accessToken: String) =
@@ -125,9 +129,17 @@ class ContactsViewModel : ViewModel() {
         if (isMultiselect.value == false) {
             _selectContacts.value = emptyList()
             _isSelectItem.value.clear()
-            contactList.value?.forEach { contact ->
+            _contactList.value?.forEach { contact ->
                 contact.isChecked = false
             }
         }
+    }
+
+    fun updateContactList(newText: String?):Int {
+        val filteredList = startedListContact.filter { contact: Contact ->
+            contact.name?.contains(newText ?: "", ignoreCase = true) == true
+        }
+        _contactList.value = filteredList
+        return filteredList.size
     }
 }

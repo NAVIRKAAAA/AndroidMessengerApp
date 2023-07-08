@@ -26,13 +26,14 @@ class AddContactViewModel : ViewModel() {
         MutableStateFlow(ArrayList())
     val states: StateFlow<ArrayList<Pair<Long, ApiStateUsers>>> = _states
     val supportList: ArrayList<Contact> = arrayListOf()
-
+    private var startedListContact: List<Contact> = listOf()
     fun getAllUsers(accessToken: String, user: UserData) = viewModelScope.launch(Dispatchers.IO) {
         _usersStateFlow.value = ApiStateUsers.Loading
         NetworkImplementation.getAllUsers(accessToken, user)
         withContext(Dispatchers.Main) {
             _usersStateFlow.value = NetworkImplementation.getStateUserAction()
             _users.value = NetworkImplementation.getServerUsers()
+            startedListContact = NetworkImplementation.getServerUsers()!!
         }
     }
 
@@ -47,4 +48,12 @@ class AddContactViewModel : ViewModel() {
                 _usersStateFlow.value = ApiStateUsers.Error(R.string.already_have_this_a_contact)
             }
         }
+
+    fun updateContactList(newText: String?) : Int {
+        val filteredList = startedListContact.filter { contact: Contact ->
+            contact.name?.contains(newText ?: "", ignoreCase = true) == true
+        }
+        _users.value = filteredList
+        return filteredList.size
+    }
 }

@@ -3,6 +3,7 @@ package com.rhorbachevskyi.viewpager.ui.fragments.contact
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
@@ -27,6 +28,7 @@ import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragmentDire
 import com.rhorbachevskyi.viewpager.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.utils.ext.visible
+import com.rhorbachevskyi.viewpager.utils.ext.visibleIf
 import kotlinx.coroutines.launch
 
 class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsBinding::inflate) {
@@ -101,23 +103,32 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
     }
 
     private fun searchView() {
-        binding.imageViewFindScope.setOnCloseListener {
-            with(binding) {
-                imageViewFindScope.layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
+        with(binding) {
+            imageSearchView.setOnCloseListener {
+                imageSearchView.layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
                 textViewContacts.visible()
                 imageViewNavigationBack.visible()
+                false
             }
-            false
-        }
-        binding.imageViewFindScope.setOnSearchClickListener {
-            with(binding) {
-                imageViewFindScope.layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+            imageSearchView.setOnSearchClickListener {
+                imageSearchView.layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
                 textViewContacts.invisible()
                 imageViewNavigationBack.invisible()
             }
+            imageSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return false
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    textViewNoResultFound.visibleIf(viewModel.updateContactList(newText) == 0)
+                    textViewMoreContacts.visibleIf(viewModel.updateContactList(newText) == 0)
+                    if(newText.isNullOrEmpty()) initialRecyclerview()
+                    return false
+                }
+            })
         }
     }
-
 
     private fun setObservers() {
         viewModel.contactList.observe(viewLifecycleOwner) {

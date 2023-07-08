@@ -41,7 +41,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <SearchView
-        android:id="@+id/imageViewFindScope"
+        android:id="@+id/imageSearchView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="@style/searchViewTheme"
@@ -100,6 +100,34 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guidelineBackground" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewNoResultFound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/example9"
+        android:text="@string/no_results_found"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_large_size"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/guidelineBackground"
+        app:layout_constraintVertical_bias="0.1" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewMoreContacts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/example9"
+        android:text="@string/you_can_see_more_contacts_in_the_recommendation"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewNoResultFound" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineBackground"
