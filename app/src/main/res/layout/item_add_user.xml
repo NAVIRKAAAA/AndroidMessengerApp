@@ -68,17 +68,15 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textViewAdd"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginEnd="@dimen/normal_margin"
         android:fontFamily="@font/example8"
         android:text="@string/add"
         android:textColor="@color/orange"
         android:textSize="@dimen/text_normal_size"
-
         android:drawableEnd="@drawable/ic_add_item"
         android:drawablePadding="@dimen/small_margin"
         android:gravity="center_vertical"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

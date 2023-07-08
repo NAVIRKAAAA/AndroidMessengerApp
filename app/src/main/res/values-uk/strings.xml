@@ -53,7 +53,8 @@
     <!-- fragment detail view -->
     <string name="home_address">Домашня адреса</string>
     <string name="profile">Профіль</string>
-    <string name="message">повідомлення</string>
+    <string name="message">Повідомлення</string>
+    <string name="add_to_my_contacts">Додати до моїх контактів</string>
 
     <!-- fragment profile -->
     <string name="settings">Налаштування</string>
@@ -72,8 +73,13 @@
     <string name="invalid_request">Невірний запит</string>
     <string name="invalid_username">Недійсне ім\'я</string>
     <string name="invalid_mobile_phone">Недійсний мобільний телефон</string>
+    <string name="already_have_this_a_contact">Вже є цей контакт</string>
+    <string name="contact_not_found">Контакт не знайдено</string>
 
     <!-- fragment users -->
     <string name="add">Додати</string>
     <string name="users">Користувачі</string>
+
+
+
 </resources>

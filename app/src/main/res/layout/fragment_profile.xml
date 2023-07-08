@@ -59,7 +59,7 @@
         android:layout_width="@dimen/photo_size"
         android:layout_height="@dimen/photo_size"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_my_photo"
+        android:src="@drawable/ic_avatar"
         app:layout_constraintBottom_toBottomOf="@id/viewTop"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
@@ -116,7 +116,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@id/buttonEditProfile"
+        app:layout_constraintBottom_toTopOf="@id/buttonMessageTop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/viewTop">
@@ -145,7 +145,7 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/buttonEditProfile"
+        android:id="@+id/buttonMessageTop"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/normal_margin"

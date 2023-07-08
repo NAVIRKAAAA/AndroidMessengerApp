@@ -18,11 +18,13 @@ import com.google.android.material.snackbar.Snackbar
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.UserWithTokens
 import com.rhorbachevskyi.viewpager.databinding.FragmentContactsBinding
+import com.rhorbachevskyi.viewpager.domain.utils.NetworkImplementation
 import com.rhorbachevskyi.viewpager.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.ui.fragments.addContacts.adapter.utils.ApiStateUsers
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragment
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragmentDirections
 import com.rhorbachevskyi.viewpager.utils.ext.invisible
+import com.rhorbachevskyi.viewpager.utils.ext.log
 import com.rhorbachevskyi.viewpager.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.utils.ext.visible
 import kotlinx.coroutines.launch
@@ -41,47 +43,44 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                 transitionPairs: Array<Pair<View, String>>
             ) {
                 if (adapter.isMultiselectMode) {
+
                     contact.isChecked = !contact.isChecked
-                    if (contact.isChecked && viewModel.selectContacts.value?.contains(contact) == false) {
+                    if (viewModel.selectContacts.value?.contains(contact) == false) {
                         viewModel.addSelectContact(contact)
-                    }
-                    if (!contact.isChecked && viewModel.selectContacts.value?.contains(contact) == true) {
+                        log("add")
+                    } else  {
                         viewModel.deleteSelectContact(contact)
+                        log("delete")
                     }
                     if (viewModel.selectContacts.value?.size == 0) {
                         viewModel.changeMultiselectMode()
+                        log("change")
                     }
                 } else {
                     val extras = FragmentNavigatorExtras(*transitionPairs)
                     val direction =
-                        ViewPagerFragmentDirections.actionViewPagerFragmentToContactProfile(contact)
+                        ViewPagerFragmentDirections.actionViewPagerFragmentToContactProfile(
+                            false, UserWithTokens(
+                                args.userData.user,
+                                args.userData.accessToken,
+                                args.userData.refreshToken
+                            ), contact
+                        )
                     navController.navigate(direction, extras)
                 }
             }
 
             override fun onLongClick(contact: Contact) {
-                removeChecked()
-                contact.isChecked = true
-                viewModel.changeMultiselectMode()
-                if (viewModel.isMultiselect.value == true) viewModel.addSelectContact(contact) else removeChecked()
-            }
 
-            override fun onOpenNewFragment(
-                contact: Contact,
-                transitionPairs: Array<Pair<View, String>>
-            ) {
-                val direction =
-                    ViewPagerFragmentDirections.actionViewPagerFragmentToContactProfile(contact)
-                val extras = FragmentNavigatorExtras(*transitionPairs)
-                navController.navigate(direction, extras)
+                viewModel.changeMultiselectMode()
+                if (viewModel.isMultiselect.value == true) {
+                    log("add")
+                    contact.isChecked = true
+                    viewModel.addSelectContact(contact)
+                }
+
             }
         })
-    }
-
-    private fun removeChecked() {
-        viewModel.contactList.value?.forEach { contact ->
-            contact.isChecked = false
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -101,6 +100,11 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
             adapter.isMultiselectMode = it
             binding.textViewAddContacts.visibility = if (it) View.GONE else View.VISIBLE
             binding.imageViewDeleteSelectMode.visibility = if (it) View.VISIBLE else View.GONE
+        }
+        lifecycleScope.launch {
+            viewModel.isSelectItem.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
+                adapter.setMultiselectData(it)
+            }
         }
         lifecycleScope.launch {
             viewModel.usersState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
@@ -123,10 +127,12 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                 }
             }
         }
+
     }
 
     private fun initialRecyclerview() {
-        viewModel.initList(args.userData.user.id, args.userData.accessToken)
+        NetworkImplementation.deleteStates()
+        viewModel.initialContactList(args.userData.user.id, args.userData.accessToken)
         val layoutManager = LinearLayoutManager(context)
         binding.recyclerViewContacts.layoutManager = layoutManager
         binding.recyclerViewContacts.adapter = adapter
@@ -141,6 +147,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
 
     private fun navigationBack() {
         binding.imageViewNavigationBack.setOnClickListener {
+
             (parentFragment as? ViewPagerFragment)?.openFragment(0)
         }
         val callback = object : OnBackPressedCallback(true) {
@@ -212,14 +219,24 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
     fun deleteUserWithRestore(contact: Contact) {
 
         val position = getPosition(contact)
-        if (viewModel.deleteContactFromList(args.userData.user.id, args.userData.accessToken, contact.id)) {
+        if (viewModel.deleteContactFromList(
+                args.userData.user.id,
+                args.userData.accessToken,
+                contact.id
+            )
+        ) {
             Snackbar.make(
                 binding.recyclerViewContacts,
                 getString(R.string.s_has_been_removed).format(contact.name),
                 Snackbar.LENGTH_LONG
             )
                 .setAction(getString(R.string.restore)) {
-                    viewModel.addContactToList(args.userData.user.id,contact, args.userData.accessToken, position)
+                    viewModel.addContactToList(
+                        args.userData.user.id,
+                        contact,
+                        args.userData.accessToken,
+                        position
+                    )
                 }.show()
         }
     }

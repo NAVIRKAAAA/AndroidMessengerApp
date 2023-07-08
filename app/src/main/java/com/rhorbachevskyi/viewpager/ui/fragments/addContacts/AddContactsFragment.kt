@@ -5,9 +5,11 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rhorbachevskyi.viewpager.data.model.Contact
+import com.rhorbachevskyi.viewpager.data.model.UserWithTokens
 import com.rhorbachevskyi.viewpager.databinding.FragmentUsersBinding
 import com.rhorbachevskyi.viewpager.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.ui.fragments.addContacts.adapter.AddContactsAdapter
@@ -32,17 +34,14 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
                 contact: Contact,
                 transitionPairs: Array<Pair<View, String>>
             ) {
-//                val extras = FragmentNavigatorExtras(*transitionPairs)
-//                val direction =
-//                    ViewPagerFragmentDirections.actionViewPagerFragmentToContactProfile(contact)
-//                navController.navigate(direction, extras)
-            }
 
-            override fun onOpenNewFragment(
-                contact: Contact,
-                transitionPairs: Array<Pair<View, String>>
-            ) {
-                TODO("Not yet implemented")
+                val extras = FragmentNavigatorExtras(*transitionPairs)
+                val direction =
+                    AddContactsFragmentDirections.actionAddContactsFragmentToContactProfile(!viewModel.supportList.contains(contact), UserWithTokens(
+                        args.userData.user,
+                        args.userData.accessToken,
+                        args.userData.refreshToken), contact)
+                navController.navigate(direction, extras)
             }
 
         })
@@ -65,9 +64,11 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
 
 
     private fun setObserves() {
+
         viewModel.users.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
+
         lifecycleScope.launch {
             viewModel.usersState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                 when (it) {
@@ -86,6 +87,7 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
                     is ApiStateUsers.Error -> {
                         binding.progressBar.invisible()
                         binding.root.showErrorSnackBar(requireContext(), it.error)
+
                     }
                 }
             }

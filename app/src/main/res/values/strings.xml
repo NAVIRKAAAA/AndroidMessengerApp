@@ -50,10 +50,12 @@
     <string name="contacts_removed">Contacts has been removed</string>
     <string name="contact_removed">Contact has been removed</string>
 
+
     <!-- fragment detail view -->
     <string name="home_address">Home address</string>
-    <string name="message">message</string>
+    <string name="message">Message</string>
     <string name="profile">Profile</string>
+    <string name="add_to_my_contacts">Add to my contacts</string>
 
     <!-- fragment profile -->
     <string name="settings">Settings</string>
@@ -72,8 +74,11 @@
     <string name="invalid_request">Invalid request</string>
     <string name="invalid_username">Invalid user name</string>
     <string name="invalid_mobile_phone">Invalid mobile phone</string>
+    <string name="already_have_this_a_contact">Already have this a contact</string>
+    <string name="contact_not_found">Contact not found</string>
 
     <!-- fragment users -->
     <string name="add">Add</string>
     <string name="users">Users</string>
+
 </resources>

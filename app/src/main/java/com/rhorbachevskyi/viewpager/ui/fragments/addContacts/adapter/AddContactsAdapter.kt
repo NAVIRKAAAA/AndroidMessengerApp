@@ -22,7 +22,7 @@ class AddContactsAdapter(
     private val listener: UserItemClickListener,
 ) :
     ListAdapter<Contact, AddContactsAdapter.UsersViewHolder>(ContactDiffUtil()) {
-    private var states: Array<Pair<Long, ApiStateUsers>> = emptyArray()
+    private var states: ArrayList<Pair<Long, ApiStateUsers>> = ArrayList()
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -33,7 +33,10 @@ class AddContactsAdapter(
     }
 
     override fun onBindViewHolder(holder: UsersViewHolder, position: Int) {
-        holder.bind(currentList[position], states.find { it.first == currentList[position].id }?.second ?: ApiStateUsers.Initial)
+        holder.bind(
+            currentList[position],
+            states.find { it.first == currentList[position].id }?.second ?: ApiStateUsers.Initial
+        )
     }
 
     inner class UsersViewHolder(private val binding: ItemAddUserBinding) :
@@ -48,7 +51,7 @@ class AddContactsAdapter(
             setListeners(contact)
         }
 
-        private fun setState( state: ApiStateUsers) {
+        private fun setState(state: ApiStateUsers) {
 
             when (state) {
                 is ApiStateUsers.Success -> {
@@ -56,6 +59,7 @@ class AddContactsAdapter(
                     binding.progressBar.gone()
                     binding.imageViewDoneAddContact.visible()
                 }
+
                 is ApiStateUsers.Initial -> {
                     binding.textViewAdd.visible()
                     binding.progressBar.gone()
@@ -63,7 +67,7 @@ class AddContactsAdapter(
                 }
 
                 is ApiStateUsers.Loading -> {
-                    binding.textViewAdd.invisible()
+                    binding.textViewAdd.gone()
                     binding.progressBar.visible()
                     binding.imageViewDoneAddContact.invisible()
                 }
@@ -112,11 +116,15 @@ class AddContactsAdapter(
             return view to name
         }
     }
+
     @SuppressLint("NotifyDataSetChanged")
-    fun setStates(states: Array<Pair<Long, ApiStateUsers>>) {
+    fun setStates(states: ArrayList<Pair<Long, ApiStateUsers>>) {
         if (this.states.size != states.size) {
             this.states = states
-            notifyDataSetChanged()
+            val lastIndex = currentList.indexOfLast { it.id == states.lastOrNull()?.first }
+            if (lastIndex != -1) {
+                notifyItemChanged(lastIndex)
+            }
             return
         }
         states.forEachIndexed { index, state ->

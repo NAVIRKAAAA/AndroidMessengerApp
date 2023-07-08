@@ -13,7 +13,7 @@ fun ImageView.loadImage(image: String? = null) {
         .placeholder(R.drawable.ic_user_photo)
         .error(
             Glide.with(this)
-                .load(R.drawable.ic_user_photo)
+                .load(R.drawable.ic_avatar)
                 .centerCrop()
                 .circleCrop()
         )

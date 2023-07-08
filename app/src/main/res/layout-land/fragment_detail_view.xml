@@ -59,10 +59,10 @@
         app:layout_constraintBottom_toBottomOf="@id/viewTop"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.7"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewProfile"
         app:layout_constraintVertical_bias="0.25"
-        app:layout_constraintHorizontal_bias="0.7"
         app:shapeAppearanceOverlay="@style/rounded"
         tools:src="@tools:sample/avatars" />
 
@@ -76,9 +76,9 @@
         android:textColor="@color/white"
         android:textSize="@dimen/text_large_size"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewProfile"
-        app:layout_constraintHorizontal_bias="0.3"
         tools:text="@string/username" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -112,41 +112,56 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:gravity="center"
         app:layout_constraintBottom_toTopOf="@id/buttonMessage"
         app:layout_constraintEnd_toEndOf="parent"
-        android:gravity="center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/viewTop"
         app:layout_constraintVertical_bias="0.3">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iconFacebook"
-            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:src="@drawable/ic_facebook" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iconLinkedIn"
             android:layout_width="wrap_content"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:src="@drawable/ic_linkedin" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iconInstagram"
             android:layout_width="wrap_content"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:src="@drawable/ic_instagram" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/buttonMessageTop"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/view_contacts_height"
+        android:layout_marginBottom="@dimen/normal_margin"
+        android:background="@drawable/bc_edit_profile"
+        android:text="@string/message"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_normal_size"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/buttonMessage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.45" />
+
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonMessage"
         android:layout_width="0dp"
         android:layout_height="@dimen/view_contacts_height"
-        android:layout_marginHorizontal="@dimen/normal_margin"
         android:layout_marginBottom="@dimen/normal_margin"
         android:background="@drawable/bc_view_my_contacts"
         android:letterSpacing="0.2"
@@ -155,7 +170,20 @@
         android:textSize="@dimen/text_normal_size"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/buttonMessageTop"
+        app:layout_constraintWidth_percent="0.45" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminate="true"
+        app:layout_constraintBottom_toBottomOf="@id/viewTop"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

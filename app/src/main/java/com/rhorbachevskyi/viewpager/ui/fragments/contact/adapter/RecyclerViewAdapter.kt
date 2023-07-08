@@ -16,7 +16,7 @@ import com.rhorbachevskyi.viewpager.utils.ext.loadImage
 
 class RecyclerViewAdapter(private val listener: ContactItemClickListener) :
     ListAdapter<Contact, RecyclerViewAdapter.UsersViewHolder>(ContactDiffUtil()) {
-
+    private var isSelectItems: ArrayList<Pair<Boolean, Int>> = ArrayList()
     var isMultiselectMode = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UsersViewHolder {
@@ -58,7 +58,7 @@ class RecyclerViewAdapter(private val listener: ContactItemClickListener) :
             with(binding) {
                 root.setOnClickListener {
                     if (isMultiselectMode) checkboxSelectMode.isChecked =
-                        !contact.isChecked
+                        !checkboxSelectMode.isChecked
                     listener.onClickContact(
                         contact, arrayOf(
                             setTransitionName(
@@ -82,7 +82,7 @@ class RecyclerViewAdapter(private val listener: ContactItemClickListener) :
             with(binding) {
                 checkboxSelectMode.visibility = View.VISIBLE
                 imageViewDelete.visibility = View.GONE
-                checkboxSelectMode.isChecked = contact.isChecked
+                checkboxSelectMode.isChecked = isSelectItems.find { it.second == contact.id.toInt() }?.first == true
                 viewBorder.background = ContextCompat.getDrawable(
                     root.context,
                     R.drawable.bc_user_select_mode
@@ -104,5 +104,8 @@ class RecyclerViewAdapter(private val listener: ContactItemClickListener) :
             view.transitionName = name
             return view to name
         }
+    }
+    fun setMultiselectData(isMultiselectItem: ArrayList<Pair<Boolean, Int>>) {
+        this.isSelectItems = isMultiselectItem
     }
 }

@@ -6,15 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.Contact
-import com.rhorbachevskyi.viewpager.domain.repository.UserRepository
-import com.rhorbachevskyi.viewpager.domain.utils.ApiServiceFactory
+import com.rhorbachevskyi.viewpager.domain.utils.NetworkImplementation
 import com.rhorbachevskyi.viewpager.ui.fragments.addContacts.adapter.utils.ApiStateUsers
-import com.rhorbachevskyi.viewpager.utils.ext.log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.lang.Exception
 
 class ContactsViewModel : ViewModel() {
     private val _usersStateFlow = MutableStateFlow<ApiStateUsers>(ApiStateUsers.Initial)
@@ -28,44 +25,36 @@ class ContactsViewModel : ViewModel() {
 
     val isMultiselect = MutableLiveData(false)
 
-
-    fun initList(userId: Long, accessToken: String) = viewModelScope.launch(Dispatchers.IO) {
-        _usersStateFlow.value = ApiStateUsers.Loading
-        val apiService = ApiServiceFactory.createApiService()
-        try {
-            val response = UserRepository(apiService).getUserContacts(userId, "Bearer $accessToken")
-            val users = response.data.contacts
-            _usersStateFlow.value = users.let {
-                ApiStateUsers.Success(it)
-            }
-            if (!users.isNullOrEmpty()) {
-                _contactList.postValue(users.map { it.toContact() })
-            }
-        } catch (e: Exception) {
-            _usersStateFlow.value = ApiStateUsers.Error(R.string.invalid_request)
-        }
-    }
-
-    private fun addContact(userId: Long, contactId: Long, accessToken: String) =
+    private val _isSelectItem: MutableStateFlow<ArrayList<Pair<Boolean, Int>>> =
+        MutableStateFlow(ArrayList())
+    val isSelectItem: StateFlow<ArrayList<Pair<Boolean, Int>>> = _isSelectItem
+    fun initialContactList(userId: Long, accessToken: String) =
         viewModelScope.launch(Dispatchers.IO) {
             _usersStateFlow.value = ApiStateUsers.Loading
-            val apiService = ApiServiceFactory.createApiService()
-            try {
-                val response =
-                    UserRepository(apiService).addContact(userId, "Bearer $accessToken", contactId)
-                _usersStateFlow.value = response.data.let { ApiStateUsers.Success(it.users) }
-            } catch (e: Exception) {
-                _usersStateFlow.value = ApiStateUsers.Error(R.string.invalid_request)
-            }
+            NetworkImplementation.getContacts(userId, accessToken)
+            _contactList.postValue(NetworkImplementation.getContactList())
+            _usersStateFlow.value = NetworkImplementation.getStateContact()
         }
 
-    fun addContactToList(userId: Long, contact: Contact, accessToken: String, position: Int = _contactList.value?.size ?: 0): Boolean {
+    private fun addContact(userId: Long, contact: Contact, accessToken: String) =
+        viewModelScope.launch(Dispatchers.IO) {
+            _usersStateFlow.value = ApiStateUsers.Loading
+            NetworkImplementation.addContact(userId, contact, accessToken)
+            _usersStateFlow.value = NetworkImplementation.getStateUserAction()
+        }
+
+    fun addContactToList(
+        userId: Long,
+        contact: Contact,
+        accessToken: String,
+        position: Int = _contactList.value?.size ?: 0
+    ): Boolean {
         val contactList = _contactList.value?.toMutableList() ?: mutableListOf()
 
         if (!contactList.contains(contact)) {
             contactList.add(position, contact)
             _contactList.value = contactList
-            addContact(userId, contact.id, accessToken)
+            addContact(userId, contact, accessToken)
             return true
         }
 
@@ -78,12 +67,17 @@ class ContactsViewModel : ViewModel() {
         if (!contactList.contains(contact)) {
             contactList.add(contact)
             _selectContacts.value = contactList
+            _isSelectItem.value.add(Pair(true, contact.id.toInt()))
             return true
         }
 
         return false
     }
-
+    private fun deleteContact(userId: Long, accessToken: String, contactId: Long) =
+        viewModelScope.launch(Dispatchers.IO) {
+            NetworkImplementation.deleteContact(userId, accessToken, contactId)
+            _usersStateFlow.value = NetworkImplementation.getStateUserAction()
+        }
     fun deleteContactFromList(userId: Long, accessToken: String, contactId: Long): Boolean {
         val contact = _contactList.value?.find { it.id == contactId }
         val contactList = _contactList.value?.toMutableList() ?: return false
@@ -94,25 +88,9 @@ class ContactsViewModel : ViewModel() {
             deleteContact(userId, accessToken, contactId)
             return true
         }
-
+        _usersStateFlow.value = ApiStateUsers.Error(R.string.contact_not_found)
         return false
     }
-
-
-    private fun deleteContact(userId: Long, accessToken: String, contactId: Long) =
-        viewModelScope.launch(Dispatchers.IO) {
-            val apiService = ApiServiceFactory.createApiService()
-            try {
-                val response = UserRepository(apiService).deleteContact(
-                    userId,
-                    "Bearer $accessToken",
-                    contactId
-                )
-                log(response.data.toString())
-            } catch (e: Exception) {
-                _usersStateFlow.value = ApiStateUsers.Error(R.string.invalid_request)
-            }
-        }
 
     fun deleteSelectList(userId: Long, accessToken: String) {
         val contactList = _selectContacts.value?.toMutableList() ?: return
@@ -124,18 +102,29 @@ class ContactsViewModel : ViewModel() {
 
         _selectContacts.value = contactList
     }
+
     fun deleteSelectContact(contact: Contact): Boolean {
         val contactList = _selectContacts.value?.toMutableList() ?: return false
         if (contactList.contains(contact)) {
             contactList.remove(contact)
             _selectContacts.value = contactList
+            val id = contact.id.toInt()
+            val index = _isSelectItem.value.indexOfFirst { it.second == id }
+            _isSelectItem.value.removeAt(index)
             return true
         }
 
         return false
     }
+
     fun changeMultiselectMode() {
         isMultiselect.value = !isMultiselect.value!!
-        if (isMultiselect.value == true) _selectContacts.value = emptyList()
+        if (isMultiselect.value == false) {
+            _selectContacts.value = emptyList()
+            _isSelectItem.value.clear()
+            contactList.value?.forEach { contact ->
+                contact.isChecked = false
+            }
+        }
     }
 }
