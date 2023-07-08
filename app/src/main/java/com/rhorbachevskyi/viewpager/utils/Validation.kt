@@ -12,4 +12,5 @@ object Validation {
 
     fun isValidUserName(username: String): Boolean = username.length >= 2
     fun isValidMobilePhone(phone: String):Boolean = phone.length >= 10
+
 }

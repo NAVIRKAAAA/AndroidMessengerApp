@@ -87,15 +87,16 @@
         android:id="@+id/textViewCareer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:fontFamily="@font/example5"
         android:text="@string/career"
         android:textColor="@color/gray"
         android:textSize="@dimen/text_normal_size"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewName"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintVertical_chainStyle="packed"
+        />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textViewHomeAddress"
@@ -106,6 +107,7 @@
         android:text="@string/home_address"
         android:textColor="@color/gray"
         android:textSize="@dimen/text_normal_size"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@id/viewTop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -173,5 +175,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/imageViewProfileImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

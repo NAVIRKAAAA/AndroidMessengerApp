@@ -44,4 +44,19 @@ interface ApiService {
         @Header("Authorization") tokenHeader: String,
     ): UsersResponse
 
+    @GET("users/{userId}")
+    suspend fun getUser(
+        @Path("userId") userId: Long,
+        @Header("Authorization") accessToken: String
+    ): UserResponse
+
+    @FormUrlEncoded
+    @PUT("users/{userId}")
+    suspend fun editUser(
+        @Path("userId") id: Long, @Header("Authorization") tokenHeader: String,
+        @Field("name") name: String, @Field("career") career: String?,
+        @Field("phone") phone: String, @Field("address") address: String?,
+        @Field("birthday") birthday: String?
+    ): UserResponse
+
 }

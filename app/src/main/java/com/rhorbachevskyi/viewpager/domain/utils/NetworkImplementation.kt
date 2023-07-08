@@ -21,6 +21,8 @@ private val users = MutableLiveData<List<Contact>>()
 private var contactList = ArrayList<Contact>()
 private val contactStateFlow = MutableStateFlow<ApiStateUsers>(ApiStateUsers.Initial)
 private val states: ArrayList<Pair<Long, ApiStateUsers>> = ArrayList()
+private val getStateFlow = MutableStateFlow<ApiState>(ApiState.Initial)
+private val editUserStateFlow = MutableStateFlow<ApiState>(ApiState.Initial)
 
 object NetworkImplementation {
     suspend fun registerUser(body: UserRequest) {
@@ -100,7 +102,7 @@ object NetworkImplementation {
             val response =
                 UserRepository(apiService).getUserContacts(userId, "Bearer $accessToken")
             contactStateFlow.value = response.data.let { ApiStateUsers.Success(it.contacts) }
-             (response.data.contacts?.map { it.toContact() }
+            (response.data.contacts?.map { it.toContact() }
                 ?: emptyList()) as ArrayList<Contact>
         } catch (e: Exception) {
             contactStateFlow.value = ApiStateUsers.Error(R.string.invalid_request)
@@ -137,6 +139,41 @@ object NetworkImplementation {
             usersStateFlow.value = ApiStateUsers.Error(R.string.invalid_request)
         }
     }
+
+    suspend fun getUser(userId: Long, accessToken: String) {
+        getStateFlow.value = ApiState.Loading
+        val apiService = ApiServiceFactory.createApiService()
+        try {
+            val response = UserRepository(apiService).getUser(userId, "Bearer $accessToken")
+            getStateFlow.value = response.data?.let { ApiState.Success(it) }
+                ?: ApiState.Error(R.string.invalid_request)
+        } catch (e: Exception) {
+            getStateFlow.value = ApiState.Error(R.string.invalid_request)
+        }
+    }
+
+    suspend fun editUser(user: UserData, accessToken: String) {
+        editUserStateFlow.value = ApiState.Loading
+        val apiService = ApiServiceFactory.createApiService()
+        try {
+            val response = UserRepository(apiService).editUser(
+                user.id,
+                "Bearer $accessToken",
+                user.name.toString(),
+                user.career,
+                user.phone.toString(),
+                user.address,
+                user.birthday
+            )
+            editUserStateFlow.value = response.data?.let { ApiState.Success(it) } ?: ApiState.Error(
+                R.string.invalid_request
+            )
+        } catch (e: Exception) {
+            editUserStateFlow.value = ApiState.Error(R.string.invalid_request)
+        }
+
+    }
+
     fun getStateRegister(): ApiState = registerStateFlow.value
     fun getStateLogin(): ApiState = authorizationStateFlow.value
     fun getStateAutoLogin(): ApiState = authorizationStateFlow.value
@@ -145,5 +182,7 @@ object NetworkImplementation {
     fun getStateAddContact(): ArrayList<Pair<Long, ApiStateUsers>> = states
     fun deleteStates() = states.clear()
     fun getContactList(): ArrayList<Contact> = contactList
-    fun getStateContact() : ApiStateUsers = contactStateFlow.value
+    fun getStateContact(): ApiStateUsers = contactStateFlow.value
+    fun getStateUser(): ApiState = getStateFlow.value
+    fun getStateEditUser(): ApiState = editUserStateFlow.value
 }

@@ -11,6 +11,7 @@ import com.rhorbachevskyi.viewpager.databinding.FragmentSignInBinding
 import com.rhorbachevskyi.viewpager.domain.utils.ApiState
 import com.rhorbachevskyi.viewpager.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.utils.DataStore.saveData
+import com.rhorbachevskyi.viewpager.utils.ext.gone
 import com.rhorbachevskyi.viewpager.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.utils.ext.visible
 import kotlinx.coroutines.Dispatchers
@@ -75,6 +76,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(FragmentSignInBinding
                     }
 
                     is ApiState.Error -> {
+                        binding.progressBar.gone()
                         binding.root.showErrorSnackBar(requireContext(), it.error)
                     }
                 }
