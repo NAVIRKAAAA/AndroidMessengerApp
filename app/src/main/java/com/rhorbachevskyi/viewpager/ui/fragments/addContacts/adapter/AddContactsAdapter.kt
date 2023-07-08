@@ -15,7 +15,7 @@ import com.rhorbachevskyi.viewpager.utils.Constants
 import com.rhorbachevskyi.viewpager.utils.ext.gone
 import com.rhorbachevskyi.viewpager.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.utils.ext.loadImage
-import com.rhorbachevskyi.viewpager.utils.ext.log
+
 import com.rhorbachevskyi.viewpager.utils.ext.visible
 
 class AddContactsAdapter(
@@ -52,28 +52,26 @@ class AddContactsAdapter(
         }
 
         private fun setState(state: ApiStateUsers) {
+            with(binding) {
+                when (state) {
+                    is ApiStateUsers.Success -> {
+                        textViewAdd.gone()
+                        progressBar.gone()
+                        imageViewDoneAddContact.visible()
+                    }
+                    is ApiStateUsers.Initial -> {
+                        textViewAdd.visible()
+                        progressBar.gone()
+                        imageViewDoneAddContact.invisible()
+                    }
+                    is ApiStateUsers.Loading -> {
+                        textViewAdd.gone()
+                        progressBar.visible()
+                        imageViewDoneAddContact.invisible()
+                    }
+                    is ApiStateUsers.Error -> {
 
-            when (state) {
-                is ApiStateUsers.Success -> {
-                    binding.textViewAdd.gone()
-                    binding.progressBar.gone()
-                    binding.imageViewDoneAddContact.visible()
-                }
-
-                is ApiStateUsers.Initial -> {
-                    binding.textViewAdd.visible()
-                    binding.progressBar.gone()
-                    binding.imageViewDoneAddContact.invisible()
-                }
-
-                is ApiStateUsers.Loading -> {
-                    binding.textViewAdd.gone()
-                    binding.progressBar.visible()
-                    binding.imageViewDoneAddContact.invisible()
-                }
-
-                is ApiStateUsers.Error -> {
-                    log("Error2")
+                    }
                 }
             }
         }

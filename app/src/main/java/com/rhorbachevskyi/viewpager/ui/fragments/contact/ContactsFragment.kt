@@ -2,6 +2,7 @@ package com.rhorbachevskyi.viewpager.ui.fragments.contact
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
@@ -24,12 +25,12 @@ import com.rhorbachevskyi.viewpager.ui.fragments.addContacts.adapter.utils.ApiSt
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragment
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragmentDirections
 import com.rhorbachevskyi.viewpager.utils.ext.invisible
-import com.rhorbachevskyi.viewpager.utils.ext.log
 import com.rhorbachevskyi.viewpager.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.utils.ext.visible
 import kotlinx.coroutines.launch
 
 class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsBinding::inflate) {
+
     private val args: ContactsFragmentArgs by navArgs()
     private val viewModel: ContactsViewModel by viewModels()
     private val adapter: RecyclerViewAdapter by lazy {
@@ -43,18 +44,13 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                 transitionPairs: Array<Pair<View, String>>
             ) {
                 if (adapter.isMultiselectMode) {
-
-                    contact.isChecked = !contact.isChecked
                     if (viewModel.selectContacts.value?.contains(contact) == false) {
                         viewModel.addSelectContact(contact)
-                        log("add")
-                    } else  {
+                    } else {
                         viewModel.deleteSelectContact(contact)
-                        log("delete")
                     }
-                    if (viewModel.selectContacts.value?.size == 0) {
+                    if (viewModel.selectContacts.value?.isEmpty() == true) {
                         viewModel.changeMultiselectMode()
-                        log("change")
                     }
                 } else {
                     val extras = FragmentNavigatorExtras(*transitionPairs)
@@ -74,8 +70,6 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
 
                 viewModel.changeMultiselectMode()
                 if (viewModel.isMultiselect.value == true) {
-                    log("add")
-                    contact.isChecked = true
                     viewModel.addSelectContact(contact)
                 }
 
@@ -89,6 +83,41 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
         setClickListener()
         setObservers()
     }
+
+    private fun initialRecyclerview() {
+        NetworkImplementation.deleteStates()
+        viewModel.initialContactList(args.userData.user.id, args.userData.accessToken)
+        val layoutManager = LinearLayoutManager(context)
+        binding.recyclerViewContacts.layoutManager = layoutManager
+        binding.recyclerViewContacts.adapter = adapter
+        ItemTouchHelper(setTouchCallBackListener()).attachToRecyclerView(binding.recyclerViewContacts)
+    }
+
+    private fun setClickListener() {
+        addContacts()
+        navigationBack()
+        deleteSelectedContacts()
+        searchView()
+    }
+
+    private fun searchView() {
+        binding.imageViewFindScope.setOnCloseListener {
+            with(binding) {
+                imageViewFindScope.layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
+                textViewContacts.visible()
+                imageViewNavigationBack.visible()
+            }
+            false
+        }
+        binding.imageViewFindScope.setOnSearchClickListener {
+            with(binding) {
+                imageViewFindScope.layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+                textViewContacts.invisible()
+                imageViewNavigationBack.invisible()
+            }
+        }
+    }
+
 
     private fun setObservers() {
         viewModel.contactList.observe(viewLifecycleOwner) {
@@ -127,22 +156,6 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                 }
             }
         }
-
-    }
-
-    private fun initialRecyclerview() {
-        NetworkImplementation.deleteStates()
-        viewModel.initialContactList(args.userData.user.id, args.userData.accessToken)
-        val layoutManager = LinearLayoutManager(context)
-        binding.recyclerViewContacts.layoutManager = layoutManager
-        binding.recyclerViewContacts.adapter = adapter
-        ItemTouchHelper(setTouchCallBackListener()).attachToRecyclerView(binding.recyclerViewContacts)
-    }
-
-    private fun setClickListener() {
-        addContacts()
-        navigationBack()
-        deleteSelectedContacts()
     }
 
     private fun navigationBack() {

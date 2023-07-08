@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 
 
 class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBinding::inflate) {
+
     private val args: AddContactsFragmentArgs by navArgs()
     private val viewModel: AddContactViewModel by viewModels()
     private val adapter: AddContactsAdapter by lazy {
@@ -37,10 +38,13 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
 
                 val extras = FragmentNavigatorExtras(*transitionPairs)
                 val direction =
-                    AddContactsFragmentDirections.actionAddContactsFragmentToContactProfile(!viewModel.supportList.contains(contact), UserWithTokens(
-                        args.userData.user,
-                        args.userData.accessToken,
-                        args.userData.refreshToken), contact)
+                    AddContactsFragmentDirections.actionAddContactsFragmentToContactProfile(
+                        !viewModel.supportList.contains(contact), UserWithTokens(
+                            args.userData.user,
+                            args.userData.accessToken,
+                            args.userData.refreshToken
+                        ), contact
+                    )
                 navController.navigate(direction, extras)
             }
 
@@ -56,7 +60,6 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
     }
 
     private fun initialRecyclerview() {
-
         val layoutManager = LinearLayoutManager(context)
         binding.recyclerViewUsers.layoutManager = layoutManager
         binding.recyclerViewUsers.adapter = adapter
@@ -64,7 +67,6 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
 
 
     private fun setObserves() {
-
         viewModel.users.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
@@ -101,6 +103,7 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
 
     private fun setListeners() {
         navigateBack()
+
     }
 
     private fun navigateBack() {

@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ContactsViewModel : ViewModel() {
+
     private val _usersStateFlow = MutableStateFlow<ApiStateUsers>(ApiStateUsers.Initial)
     val usersState: StateFlow<ApiStateUsers> = _usersStateFlow
 
@@ -73,11 +74,13 @@ class ContactsViewModel : ViewModel() {
 
         return false
     }
+
     private fun deleteContact(userId: Long, accessToken: String, contactId: Long) =
         viewModelScope.launch(Dispatchers.IO) {
             NetworkImplementation.deleteContact(userId, accessToken, contactId)
             _usersStateFlow.value = NetworkImplementation.getStateUserAction()
         }
+
     fun deleteContactFromList(userId: Long, accessToken: String, contactId: Long): Boolean {
         val contact = _contactList.value?.find { it.id == contactId }
         val contactList = _contactList.value?.toMutableList() ?: return false

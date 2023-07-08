@@ -4,4 +4,13 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+    <style name="searchViewTheme">
+        <item name="android:editTextColor">@color/white</item>
+        <item name="colorAccent">@color/white</item>
+    </style>
+    <style name="searchViewStyle">
+        <item name="android:theme">@style/searchViewTheme</item>
+        <item name="android:closeIcon">@drawable/ic_close_search</item>
+        <item name="android:searchIcon">@drawable/ic_find_scope</item>
+    </style>
 </resources>

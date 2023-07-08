@@ -40,14 +40,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <SearchView
         android:id="@+id/imageViewFindScope"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/normal_margin"
-        android:src="@drawable/ic_find_scope"
+        style="@style/searchViewTheme"
+        android:queryBackground="@drawable/bc_edit_text_search"
         app:layout_constraintBottom_toBottomOf="@id/textViewContacts"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="1"
         app:layout_constraintTop_toTopOf="@id/textViewContacts" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -59,34 +61,33 @@
         android:text="@string/add_contacts"
         android:textColor="@color/white"
         android:textSize="@dimen/text_normal_size"
-        app:layout_constraintTop_toBottomOf="@id/imageViewNavigationBack"
         app:layout_constraintBottom_toBottomOf="@id/guidelineBackground"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="0.75"/>
+        app:layout_constraintTop_toBottomOf="@id/imageViewNavigationBack"
+        app:layout_constraintVertical_bias="0.75" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_contacts"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="@dimen/normal_margin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/guidelineBackground"
         app:layout_constraintBottom_toTopOf="@id/imageViewDeleteSelectMode"
-        tools:listitem="@layout/item_user"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/guidelineBackground"
+        tools:listitem="@layout/item_user" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageViewDeleteSelectMode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_bin_select_mode"
         android:layout_marginEnd="@dimen/large_margin"
         android:layout_marginBottom="@dimen/largest_margin"
+        android:src="@drawable/ic_bin_select_mode"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/recycler_view_contacts"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recycler_view_contacts" />
 
     <ProgressBar
         android:id="@+id/progressBar"
