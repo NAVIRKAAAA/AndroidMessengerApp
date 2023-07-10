@@ -7,6 +7,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.rhorbachevskyi.viewpager.data.model.UserData
+import com.rhorbachevskyi.viewpager.data.model.UserWithTokens
 import com.rhorbachevskyi.viewpager.databinding.FragmentProfileBinding
 import com.rhorbachevskyi.viewpager.domain.utils.ApiState
 import com.rhorbachevskyi.viewpager.ui.BaseFragment
@@ -24,9 +25,11 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
 
     private val args: UserProfileArgs by navArgs()
     private val viewModel: UserProfileViewModel by viewModels()
+    private lateinit var user: UserData
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.requestGetUser(args.userData.user.id, args.userData.accessToken)
+        user = args.userData.user
         setListeners()
         setObserver()
     }
@@ -51,7 +54,8 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
                             textViewHomeAddress.visible()
                             progressBar.gone()
                         }
-                        setUserProfile(it.userData.user)
+                        user = it.userData.user
+                        setUserProfile()
                     }
                 }
             }
@@ -66,7 +70,9 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
 
     private fun editProfile() {
         binding.buttonMessageTop.setOnClickListener {
-            val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToEditProfile(args.userData)
+            val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToEditProfile(
+                UserWithTokens(user, args.userData.accessToken, args.userData.refreshToken)
+            )
             navController.navigate(direction)
         }
     }
@@ -89,8 +95,8 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
         }
     }
 
-    private fun setUserProfile(user: UserData) {
-        binding.textViewName.text = user.name.toString()
+    private fun setUserProfile() {
+        binding.textViewName.text = user.name?: ""
         binding.textViewCareer.text = user.career ?: ""
         binding.textViewHomeAddress.text = user.address ?: ""
     }

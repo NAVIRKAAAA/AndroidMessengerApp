@@ -83,7 +83,6 @@
         android:id="@+id/textViewCareer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:fontFamily="@font/example5"
         android:text="@string/career"
         android:textColor="@color/gray"

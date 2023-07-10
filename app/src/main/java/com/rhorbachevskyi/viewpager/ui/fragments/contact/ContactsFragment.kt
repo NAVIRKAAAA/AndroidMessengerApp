@@ -35,6 +35,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
 
     private val args: ContactsFragmentArgs by navArgs()
     private val viewModel: ContactsViewModel by viewModels()
+    private lateinit var searchViewText: String
     private val adapter: RecyclerViewAdapter by lazy {
         RecyclerViewAdapter(listener = object : ContactItemClickListener {
             override fun onClickDelete(contact: Contact) {
@@ -64,6 +65,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                                 args.userData.refreshToken
                             ), contact
                         )
+                    closeSearchView()
                     navController.navigate(direction, extras)
                 }
             }
@@ -102,67 +104,41 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
         searchView()
     }
 
-    private fun searchView() {
-        with(binding) {
-            imageSearchView.setOnCloseListener {
-                imageSearchView.layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
-                textViewContacts.visible()
-                imageViewNavigationBack.visible()
-                false
-            }
-            imageSearchView.setOnSearchClickListener {
-                imageSearchView.layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
-                textViewContacts.invisible()
-                imageViewNavigationBack.invisible()
-            }
-            imageSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    return false
-                }
-
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    textViewNoResultFound.visibleIf(viewModel.updateContactList(newText) == 0)
-                    textViewMoreContacts.visibleIf(viewModel.updateContactList(newText) == 0)
-                    if(newText.isNullOrEmpty()) initialRecyclerview()
-                    return false
-                }
-            })
-        }
-    }
-
     private fun setObservers() {
-        viewModel.contactList.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
-        }
-
-        viewModel.isMultiselect.observe(viewLifecycleOwner) {
-            binding.recyclerViewContacts.adapter = adapter
-            adapter.isMultiselectMode = it
-            binding.textViewAddContacts.visibility = if (it) View.GONE else View.VISIBLE
-            binding.imageViewDeleteSelectMode.visibility = if (it) View.VISIBLE else View.GONE
-        }
-        lifecycleScope.launch {
-            viewModel.isSelectItem.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
-                adapter.setMultiselectData(it)
+        with(binding) {
+            viewModel.contactList.observe(viewLifecycleOwner) {
+                adapter.submitList(it)
             }
-        }
-        lifecycleScope.launch {
-            viewModel.usersState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
-                when (it) {
-                    is ApiStateUsers.Success -> {
-                        binding.progressBar.invisible()
-                    }
 
-                    is ApiStateUsers.Error -> {
-                        binding.root.showErrorSnackBar(requireContext(), it.error)
-                    }
+            viewModel.isMultiselect.observe(viewLifecycleOwner) {
+                recyclerViewContacts.adapter = adapter
+                adapter.isMultiselectMode = it
+                textViewAddContacts.visibility = if (it) View.GONE else View.VISIBLE
+                imageViewDeleteSelectMode.visibility = if (it) View.VISIBLE else View.GONE
+            }
+            lifecycleScope.launch {
+                viewModel.isSelectItem.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
+                    adapter.setMultiselectData(it)
+                }
+            }
+            lifecycleScope.launch {
+                viewModel.usersState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
+                    when (it) {
+                        is ApiStateUsers.Success -> {
+                            progressBar.invisible()
+                        }
 
-                    is ApiStateUsers.Loading -> {
-                        binding.progressBar.visible()
-                    }
+                        is ApiStateUsers.Error -> {
+                            root.showErrorSnackBar(requireContext(), it.error)
+                        }
 
-                    is ApiStateUsers.Initial -> {
+                        is ApiStateUsers.Loading -> {
+                            progressBar.visible()
+                        }
 
+                        is ApiStateUsers.Initial -> {
+
+                        }
                     }
                 }
             }
@@ -197,6 +173,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
     private fun addContacts() {
 
         binding.textViewAddContacts.setOnClickListener {
+
             val direction =
                 ViewPagerFragmentDirections.actionViewPagerFragmentToAddContactsFragment(
                     UserWithTokens(
@@ -205,8 +182,43 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                         args.userData.refreshToken
                     )
                 )
+            closeSearchView()
             navController.navigate(direction)
 
+        }
+    }
+
+    private fun searchView() {
+        with(binding) {
+            imageSearchView.setOnCloseListener {
+                imageSearchView.layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
+                textViewContacts.visible()
+                imageViewNavigationBack.visible()
+                false
+            }
+            imageSearchView.setOnSearchClickListener {
+                imageSearchView.layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+                textViewContacts.invisible()
+                imageViewNavigationBack.invisible()
+            }
+            imageSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return false
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    searchViewText = newText.toString()
+                    updateSearchView()
+                    return false
+                }
+            })
+        }
+    }
+
+    private fun closeSearchView() {
+        with(binding) {
+            imageSearchView.setQuery("", false)
+            imageSearchView.isIconified = true
         }
     }
 
@@ -249,19 +261,31 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                 contact.id
             )
         ) {
+            updateSearchView()
             Snackbar.make(
                 binding.recyclerViewContacts,
                 getString(R.string.s_has_been_removed).format(contact.name),
                 Snackbar.LENGTH_LONG
             )
                 .setAction(getString(R.string.restore)) {
-                    viewModel.addContactToList(
-                        args.userData.user.id,
-                        contact,
-                        args.userData.accessToken,
-                        position
-                    )
+                    if (viewModel.addContactToList(
+                            args.userData.user.id,
+                            contact,
+                            args.userData.accessToken,
+                            position
+                        )
+                    ) {
+                        updateSearchView()
+                    }
                 }.show()
+        }
+    }
+
+    private fun updateSearchView() {
+        with(binding) {
+            textViewNoResultFound.visibleIf(viewModel.updateContactList(searchViewText) == 0)
+            textViewMoreContacts.visibleIf(viewModel.updateContactList(searchViewText) == 0)
+            if (searchViewText.isEmpty()) initialRecyclerview()
         }
     }
 

@@ -24,7 +24,7 @@ object DataStore {
         }
     }
 
-    private suspend fun putData(context: Context, key: String, value: String) {
+    suspend fun putData(context: Context, key: String, value: String) {
         val dataStoreKey = stringPreferencesKey(key)
         context.dataStore.edit { settings ->
             settings[dataStoreKey] = value

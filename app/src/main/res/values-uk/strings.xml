@@ -81,4 +81,6 @@
     <!-- fragment users -->
     <string name="add">Додати</string>
     <string name="users">Користувачі</string>
+    <string name="phone_must_be_at_least_10_digits_long">Phone must be at least 10 digits long</string>
+    <string name="user_name_must_contain_at_least_3_letters">User name must contain at least 3 letters</string>
 </resources>

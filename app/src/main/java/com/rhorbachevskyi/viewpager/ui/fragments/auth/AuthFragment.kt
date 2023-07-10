@@ -6,7 +6,6 @@ import androidx.core.widget.doOnTextChanged
 import com.rhorbachevskyi.viewpager.databinding.FragmentSignUpBinding
 import com.rhorbachevskyi.viewpager.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.utils.Validation
-import com.rhorbachevskyi.viewpager.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.utils.ext.visibleIf
 
 class AuthFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding::inflate) {
@@ -15,6 +14,7 @@ class AuthFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding::
         super.onViewCreated(view, savedInstanceState)
         setListeners()
         dataValidation()
+
     }
     private fun setListeners() {
         register()
@@ -54,12 +54,7 @@ class AuthFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding::
                 )
             }
             textInputEditTextPassword.doOnTextChanged { text, _, _, _ ->
-                if (!text.isNullOrEmpty()) {
-                    textViewInvalidPassword.visibility =
-                        if (Validation.isValidPassword(text.toString())) View.INVISIBLE else View.VISIBLE
-                } else {
-                    textViewInvalidPassword.invisible()
-                }
+                textViewInvalidPassword.visibleIf(!Validation.isValidPassword(text.toString()) && !text.isNullOrEmpty())
             }
         }
     }

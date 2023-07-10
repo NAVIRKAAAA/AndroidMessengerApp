@@ -2,6 +2,7 @@ package com.rhorbachevskyi.viewpager.data.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import java.util.Date
 
 @Parcelize
 data class UserData(
@@ -11,7 +12,7 @@ data class UserData(
     val phone: String? = null,
     val career: String? = null,
     val address: String? = null,
-    val birthday: String? = null,
+    val birthday: Date? = null,
     val facebook: String? = null,
     val instagram: String? = null,
     val twitter: String? = null,

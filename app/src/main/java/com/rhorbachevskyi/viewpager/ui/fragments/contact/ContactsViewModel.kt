@@ -30,7 +30,7 @@ class ContactsViewModel : ViewModel() {
         MutableStateFlow(ArrayList())
     val isSelectItem: StateFlow<ArrayList<Pair<Boolean, Int>>> = _isSelectItem
 
-    private var startedListContact: List<Contact> = listOf()
+    private var startedListContact: ArrayList<Contact> = arrayListOf()
 
     fun initialContactList(userId: Long, accessToken: String) =
         viewModelScope.launch(Dispatchers.IO) {
@@ -60,6 +60,7 @@ class ContactsViewModel : ViewModel() {
             contactList.add(position, contact)
             _contactList.value = contactList
             addContact(userId, contact, accessToken)
+            startedListContact.add(contact)
             return true
         }
 
@@ -83,6 +84,7 @@ class ContactsViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             NetworkImplementation.deleteContact(userId, accessToken, contactId)
             _usersStateFlow.value = NetworkImplementation.getStateUserAction()
+
         }
 
     fun deleteContactFromList(userId: Long, accessToken: String, contactId: Long): Boolean {
@@ -93,6 +95,7 @@ class ContactsViewModel : ViewModel() {
             contactList.remove(contact)
             _contactList.value = contactList
             deleteContact(userId, accessToken, contactId)
+            startedListContact.remove(contact)
             return true
         }
         _usersStateFlow.value = ApiStateUsers.Error(R.string.contact_not_found)
