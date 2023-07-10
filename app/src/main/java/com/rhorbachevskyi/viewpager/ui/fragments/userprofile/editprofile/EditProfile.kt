@@ -17,6 +17,8 @@ import com.rhorbachevskyi.viewpager.ui.fragments.userprofile.interfaces.DialogCa
 import com.rhorbachevskyi.viewpager.utils.Constants
 import com.rhorbachevskyi.viewpager.utils.Parser
 import com.rhorbachevskyi.viewpager.utils.Validation
+import com.rhorbachevskyi.viewpager.utils.ext.invisible
+import com.rhorbachevskyi.viewpager.utils.ext.loadImage
 import com.rhorbachevskyi.viewpager.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.utils.ext.visible
 import com.rhorbachevskyi.viewpager.utils.ext.visibleIf
@@ -107,6 +109,8 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
     private fun setInputs() {
         inputsErrors()
         with(binding) {
+            imageViewSignUpExtendedMockup.invisible()
+            imageViewSignUpExtendedPhoto.loadImage(args.userData.user.image)
             textInputEditTextUserName.setText(args.userData.user.name ?: "")
             textInputEditTextCareer.setText(args.userData.user.career ?: "")
             textInputEditTextPhone.setText(args.userData.user.phone ?: "")
@@ -136,16 +140,13 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
         with(binding) {
             textInputEditTextDate.setOnClickListener {
                 val dialog = DialogCalendar()
-                dialog.setListeners(listener = object : DialogCalendarListener {
+                dialog.setListener(listener = object : DialogCalendarListener {
                     override fun onDateSelected(date: String) {
                         textInputEditTextDate.setText(date)
                     }
-
                 })
                 dialog.show(parentFragmentManager, Constants.DIALOG_TAG)
             }
         }
     }
-
-
 }

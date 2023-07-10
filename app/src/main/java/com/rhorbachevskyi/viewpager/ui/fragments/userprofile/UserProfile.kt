@@ -28,16 +28,52 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
     private lateinit var user: UserData
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.requestGetUser(args.userData.user.id, args.userData.accessToken)
-        user = args.userData.user
+        initialUser()
         setListeners()
         setObserver()
+    }
+
+    private fun initialUser() {
+        viewModel.requestGetUser(args.userData.user.id, args.userData.accessToken)
+        user = args.userData.user
+    }
+
+    private fun setListeners() {
+        viewContact()
+        logout()
+        editProfile()
+    }
+
+    private fun viewContact() {
+        binding.buttonViewContacts.setOnClickListener {
+            (parentFragment as? ViewPagerFragment)?.openFragment(1)
+        }
+    }
+    private fun logout() {
+        binding.textViewLogout.setOnClickListener {
+            lifecycleScope.launch(Dispatchers.IO) {
+                DataStore.deleteDataFromDataStore(requireContext(), Constants.KEY_EMAIL)
+                DataStore.deleteDataFromDataStore(requireContext(), Constants.KEY_PASSWORD)
+                DataStore.deleteDataFromDataStore(requireContext(), Constants.KEY_REMEMBER_ME)
+            }
+            val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToSignInFragment()
+            navController.navigate(direction)
+        }
+    }
+
+    private fun editProfile() {
+        binding.buttonMessageTop.setOnClickListener {
+            val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToEditProfile(
+                UserWithTokens(user, args.userData.accessToken, args.userData.refreshToken)
+            )
+            navController.navigate(direction)
+        }
     }
 
     private fun setObserver() {
         lifecycleScope.launch {
             viewModel.getUserState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
-                when(it) {
+                when (it) {
                     is ApiState.Error -> {
                         binding.root.showErrorSnackBar(requireContext(), it.error)
                     }
@@ -45,9 +81,11 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
                     ApiState.Initial -> {
 
                     }
+
                     ApiState.Loading -> {
                         binding.progressBar.visible()
                     }
+
                     is ApiState.Success -> {
                         with(binding) {
                             textViewCareer.visible()
@@ -62,42 +100,11 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
         }
     }
 
-    private fun setListeners() {
-        viewContact()
-        logout()
-        editProfile()
-    }
-
-    private fun editProfile() {
-        binding.buttonMessageTop.setOnClickListener {
-            val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToEditProfile(
-                UserWithTokens(user, args.userData.accessToken, args.userData.refreshToken)
-            )
-            navController.navigate(direction)
-        }
-    }
-
-    private fun logout() {
-        binding.textViewLogout.setOnClickListener {
-            lifecycleScope.launch(Dispatchers.IO) {
-                DataStore.deleteDataFromDataStore(requireContext(), Constants.KEY_EMAIL)
-                DataStore.deleteDataFromDataStore(requireContext(), Constants.KEY_PASSWORD)
-                DataStore.deleteDataFromDataStore(requireContext(), Constants.KEY_REMEMBER_ME)
-            }
-            val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToAuthFragment()
-            navController.navigate(direction)
-        }
-    }
-
-    private fun viewContact() {
-        binding.buttonViewContacts.setOnClickListener {
-            (parentFragment as? ViewPagerFragment)?.openFragment(1)
-        }
-    }
-
     private fun setUserProfile() {
-        binding.textViewName.text = user.name?: ""
-        binding.textViewCareer.text = user.career ?: ""
-        binding.textViewHomeAddress.text = user.address ?: ""
+        with(binding) {
+            textViewName.text = user.name ?: ""
+            textViewCareer.text = user.career ?: ""
+            textViewHomeAddress.text = user.address ?: ""
+        }
     }
 }

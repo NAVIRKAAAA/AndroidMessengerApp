@@ -14,7 +14,6 @@ object Constants {
     const val KEY_EMAIL = "email"
     const val KEY_PASSWORD = "password"
     const val KEY_REMEMBER_ME = "remember me"
-
     // ext log tag
     const val LOG_TAG = "LOG_TAG"
 
@@ -30,4 +29,8 @@ object Constants {
     // validation
     const val PASSWORD_REGEX =
         "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)[A-Za-z\\d]{7,}\$"
+
+    // date
+    const val OUTPUT_DATE_FORMAT = "dd/MM/yyyy"
+    const val INPUT_DATE_FORMAT = "EEE MMM dd HH:mm:ss zzz yyyy"
 }

@@ -10,11 +10,11 @@
         android:label="SplashFragment"
         tools:layout="@layout/fragment_splash_screen">
         <action
-            android:id="@+id/action_splashFragment2_to_authFragment"
-            app:destination="@id/authFragment" />
-        <action
             android:id="@+id/action_splashFragment2_to_viewPagerFragment"
             app:destination="@id/viewPagerFragment" />
+        <action
+            android:id="@+id/action_splashFragment2_to_signInFragment"
+            app:destination="@id/signInFragment" />
     </fragment>
     <fragment
         android:id="@+id/signInFragment"
@@ -24,6 +24,9 @@
         <action
             android:id="@+id/action_signInFragment_to_viewPagerFragment"
             app:destination="@id/viewPagerFragment" />
+        <action
+            android:id="@+id/action_signInFragment_to_authFragment"
+            app:destination="@id/authFragment" />
     </fragment>
     <fragment
         android:id="@+id/authFragment"
@@ -34,9 +37,6 @@
             android:id="@+id/action_authFragment_to_signUpExtendedFragment"
             app:destination="@id/signUpExtendedFragment"
             app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_authFragment_to_signInFragment"
-            app:destination="@id/signInFragment" />
     </fragment>
 
     <fragment
@@ -67,15 +67,16 @@
         <action
             android:id="@+id/action_viewPagerFragment_to_contactProfile"
             app:destination="@id/contactProfile" />
-        <action
-            android:id="@+id/action_viewPagerFragment_to_authFragment"
-            app:destination="@id/authFragment" />
+
         <action
             android:id="@+id/action_viewPagerFragment_to_addContactsFragment"
             app:destination="@id/addContactsFragment" />
         <action
             android:id="@+id/action_viewPagerFragment_to_editProfile"
             app:destination="@id/editProfile" />
+        <action
+            android:id="@+id/action_viewPagerFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
     </fragment>
     <fragment
         android:id="@+id/contactProfile"

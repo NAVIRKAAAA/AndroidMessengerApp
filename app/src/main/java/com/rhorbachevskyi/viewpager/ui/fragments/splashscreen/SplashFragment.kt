@@ -31,7 +31,7 @@ class SplashFragment :
             if (isRememberMe != null) {
                 viewModel.autoLogin(requireContext())
             } else {
-                val direction = SplashFragmentDirections.actionSplashFragment2ToAuthFragment()
+                val direction = SplashFragmentDirections.actionSplashFragment2ToSignInFragment()
                 navController.navigate(direction)
             }
         }

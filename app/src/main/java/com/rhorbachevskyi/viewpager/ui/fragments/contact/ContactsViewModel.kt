@@ -30,15 +30,19 @@ class ContactsViewModel : ViewModel() {
         MutableStateFlow(ArrayList())
     val isSelectItem: StateFlow<ArrayList<Pair<Boolean, Int>>> = _isSelectItem
 
-    private var startedListContact: ArrayList<Contact> = arrayListOf()
+    private val startedListContact: ArrayList<Contact> = arrayListOf()
 
     fun initialContactList(userId: Long, accessToken: String) =
         viewModelScope.launch(Dispatchers.IO) {
+
             _usersStateFlow.value = ApiStateUsers.Loading
             NetworkImplementation.getContacts(userId, accessToken)
             _contactList.postValue(NetworkImplementation.getContactList())
             _usersStateFlow.value = NetworkImplementation.getStateContact()
-            startedListContact = NetworkImplementation.getContactList()
+            _contactList.value?.let {
+                startedListContact.clear()
+                startedListContact.addAll(it)
+            }
         }
 
     private fun addContact(userId: Long, contact: Contact, accessToken: String) =
@@ -52,7 +56,7 @@ class ContactsViewModel : ViewModel() {
         userId: Long,
         contact: Contact,
         accessToken: String,
-        position: Int = _contactList.value?.size ?: 0
+        position: Int
     ): Boolean {
         val contactList = _contactList.value?.toMutableList() ?: mutableListOf()
 
@@ -92,9 +96,9 @@ class ContactsViewModel : ViewModel() {
         val contactList = _contactList.value?.toMutableList() ?: return false
 
         if (contactList.contains(contact)) {
+            deleteContact(userId, accessToken, contactId)
             contactList.remove(contact)
             _contactList.value = contactList
-            deleteContact(userId, accessToken, contactId)
             startedListContact.remove(contact)
             return true
         }
@@ -138,7 +142,7 @@ class ContactsViewModel : ViewModel() {
         }
     }
 
-    fun updateContactList(newText: String?):Int {
+    fun updateContactList(newText: String?): Int {
         val filteredList = startedListContact.filter { contact: Contact ->
             contact.name?.contains(newText ?: "", ignoreCase = true) == true
         }

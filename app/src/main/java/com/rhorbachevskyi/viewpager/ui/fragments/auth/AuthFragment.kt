@@ -23,8 +23,7 @@ class AuthFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding::
 
     private fun signIn() {
         binding.textViewSignIn.setOnClickListener {
-            val direction = AuthFragmentDirections.actionAuthFragmentToSignInFragment()
-            navController.navigate(direction)
+            navController.navigateUp()
         }
     }
 

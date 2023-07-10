@@ -26,9 +26,9 @@ import com.rhorbachevskyi.viewpager.ui.fragments.addContacts.adapter.utils.ApiSt
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragment
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragmentDirections
 import com.rhorbachevskyi.viewpager.utils.ext.invisible
+import com.rhorbachevskyi.viewpager.utils.ext.log
 import com.rhorbachevskyi.viewpager.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.utils.ext.visible
-import com.rhorbachevskyi.viewpager.utils.ext.visibleIf
 import kotlinx.coroutines.launch
 
 class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsBinding::inflate) {
@@ -86,6 +86,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
         initialRecyclerview()
         setClickListener()
         setObservers()
+
     }
 
     private fun initialRecyclerview() {
@@ -171,9 +172,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
     }
 
     private fun addContacts() {
-
         binding.textViewAddContacts.setOnClickListener {
-
             val direction =
                 ViewPagerFragmentDirections.actionViewPagerFragmentToAddContactsFragment(
                     UserWithTokens(
@@ -215,6 +214,20 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
         }
     }
 
+    private fun updateSearchView() {
+        with(binding) {
+            if (searchViewText.isBlank()) initialRecyclerview()
+            if (viewModel.updateContactList(searchViewText) == 0) {
+                textViewMoreContacts.visible()
+                textViewNoResultFound.visible()
+            } else {
+                textViewMoreContacts.invisible()
+                textViewNoResultFound.invisible()
+            }
+        }
+
+    }
+
     private fun closeSearchView() {
         with(binding) {
             imageSearchView.setQuery("", false)
@@ -253,39 +266,28 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
     }
 
     fun deleteUserWithRestore(contact: Contact) {
-
         val position = getPosition(contact)
+        log(position.toString())
         if (viewModel.deleteContactFromList(
                 args.userData.user.id,
                 args.userData.accessToken,
                 contact.id
             )
         ) {
-            updateSearchView()
             Snackbar.make(
                 binding.recyclerViewContacts,
                 getString(R.string.s_has_been_removed).format(contact.name),
                 Snackbar.LENGTH_LONG
             )
                 .setAction(getString(R.string.restore)) {
-                    if (viewModel.addContactToList(
-                            args.userData.user.id,
-                            contact,
-                            args.userData.accessToken,
-                            position
-                        )
-                    ) {
-                        updateSearchView()
-                    }
-                }.show()
-        }
-    }
+                    viewModel.addContactToList(
+                        args.userData.user.id,
+                        contact,
+                        args.userData.accessToken,
+                        position
+                    )
 
-    private fun updateSearchView() {
-        with(binding) {
-            textViewNoResultFound.visibleIf(viewModel.updateContactList(searchViewText) == 0)
-            textViewMoreContacts.visibleIf(viewModel.updateContactList(searchViewText) == 0)
-            if (searchViewText.isEmpty()) initialRecyclerview()
+                }.show()
         }
     }
 
