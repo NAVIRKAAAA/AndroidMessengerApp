@@ -26,9 +26,7 @@ class SplashFragment :
 
     private fun isAutologin() {
         lifecycleScope.launch {
-            val isRememberMe =
-                DataStore.getDataFromKey(requireContext(), Constants.KEY_REMEMBER_ME)
-            if (isRememberMe != null) {
+            if (DataStore.getDataFromKey(requireContext(), Constants.KEY_REMEMBER_ME) != null) {
                 viewModel.autoLogin(requireContext())
             } else {
                 val direction = SplashFragmentDirections.actionSplashFragment2ToSignInFragment()

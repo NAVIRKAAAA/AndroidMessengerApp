@@ -10,6 +10,5 @@ data class Contact(
     val photo: String? = null,
     val address: String? = null,
     val id: Long = 0,
-    var isChecked: Boolean = false,
     var isAdd: Boolean = false
 ) : Parcelable

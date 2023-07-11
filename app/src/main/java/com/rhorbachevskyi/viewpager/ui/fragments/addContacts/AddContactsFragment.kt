@@ -38,7 +38,6 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
                 contact: Contact,
                 transitionPairs: Array<Pair<View, String>>
             ) {
-
                 val extras = FragmentNavigatorExtras(*transitionPairs)
                 val direction =
                     AddContactsFragmentDirections.actionAddContactsFragmentToContactProfile(
@@ -48,6 +47,7 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
                             args.userData.refreshToken
                         ), contact
                     )
+                closeSearchView()
                 navController.navigate(direction, extras)
             }
 
@@ -63,8 +63,7 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
     }
 
     private fun initialRecyclerview() {
-        val layoutManager = LinearLayoutManager(context)
-        binding.recyclerViewUsers.layoutManager = layoutManager
+        binding.recyclerViewUsers.layoutManager = LinearLayoutManager(context)
         binding.recyclerViewUsers.adapter = adapter
     }
 
@@ -108,7 +107,11 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
         navigateBack()
         searchView()
     }
-
+    private fun navigateBack() {
+        binding.imageViewNavigationBack.setOnClickListener {
+            navController.navigateUp()
+        }
+    }
     private fun searchView() {
         with(binding) {
             imageSearchView.setOnCloseListener {
@@ -135,10 +138,10 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
             })
         }
     }
-
-    private fun navigateBack() {
-        binding.imageViewNavigationBack.setOnClickListener {
-            navController.navigateUp()
+    private fun closeSearchView() {
+        with(binding) {
+            imageSearchView.setQuery("", false)
+            imageSearchView.isIconified = true
         }
     }
 }

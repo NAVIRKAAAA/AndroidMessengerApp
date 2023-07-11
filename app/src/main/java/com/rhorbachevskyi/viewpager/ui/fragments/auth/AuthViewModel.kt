@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class AuthViewModel : ViewModel() { // TODO: register exception
+class AuthViewModel : ViewModel() {
     private val _registerStateFlow = MutableStateFlow<ApiState>(ApiState.Initial)
     val registerState: StateFlow<ApiState> = _registerStateFlow
     fun isLogout() {

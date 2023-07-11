@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.viewpager.ui.fragments.contact.contactprofile
+package com.rhorbachevskyi.viewpager.ui.fragments.contactprofile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

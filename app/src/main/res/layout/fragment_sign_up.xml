@@ -7,7 +7,7 @@
     android:background="@color/background">
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/acquainted"
+        android:id="@+id/textViewAcquainted"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/example2"
@@ -32,7 +32,7 @@
         android:textSize="@dimen/text_normal_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/acquainted" />
+        app:layout_constraintTop_toBottomOf="@id/textViewAcquainted" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textViewEmail"
@@ -78,7 +78,7 @@
         android:textSize="@dimen/text_normal_size"
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@id/textInputPassword"
-        app:layout_constraintRight_toRightOf="@id/buttonGoogle"
+        app:layout_constraintStart_toStartOf="@id/buttonGoogle"
         app:layout_constraintTop_toBottomOf="@id/textInputEmail" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -119,17 +119,15 @@
         android:id="@+id/textViewInvalidPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/large_margin"
         android:fontFamily="@font/example6"
         android:text="@string/invalid_password"
         android:textColor="@color/red"
         android:textSize="@dimen/text_normal_size"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@id/checkboxRemember"
-        app:layout_constraintRight_toRightOf="@id/buttonGoogle"
+        app:layout_constraintStart_toStartOf="@id/buttonGoogle"
         app:layout_constraintTop_toBottomOf="@id/textInputPassword" />
 
-    <CheckBox
+    <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/checkboxRemember"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -137,7 +135,7 @@
         android:paddingStart="@dimen/small_margin"
         android:text="@string/remember_me"
         app:layout_constraintStart_toStartOf="@id/buttonGoogle"
-        app:layout_constraintTop_toBottomOf="@id/textInputPassword"
+        app:layout_constraintTop_toBottomOf="@id/textViewInvalidPassword"
         tools:ignore="Rtl,RtlSymmetry" />
 
     <androidx.appcompat.widget.AppCompatButton

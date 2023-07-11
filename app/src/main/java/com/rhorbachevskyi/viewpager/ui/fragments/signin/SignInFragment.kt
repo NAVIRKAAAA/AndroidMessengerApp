@@ -29,15 +29,6 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(FragmentSignInBinding
         login()
         signUp()
     }
-
-
-    private fun signUp() {
-        binding.textViewSignUp.setOnClickListener {
-            val direction = SignInFragmentDirections.actionSignInFragmentToAuthFragment()
-            navController.navigate(direction)
-        }
-    }
-
     private fun login() {
         with(binding) {
             buttonLogin.setOnClickListener {
@@ -50,6 +41,15 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(FragmentSignInBinding
             }
         }
     }
+
+    private fun signUp() {
+        binding.textViewSignUp.setOnClickListener {
+            val direction = SignInFragmentDirections.actionSignInFragmentToAuthFragment()
+            navController.navigate(direction)
+        }
+    }
+
+
 
     private fun setObserver() {
         lifecycleScope.launch {

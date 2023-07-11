@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/white">
 
     <androidx.viewpager2.widget.ViewPager2
@@ -20,7 +19,6 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/view_pager_height"
         android:background="@color/background"
-
         app:tabIndicatorColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.viewpager.ui.fragments.contact.contactprofile
+package com.rhorbachevskyi.viewpager.ui.fragments.contactprofile
 
 import android.os.Bundle
 import android.transition.TransitionInflater
@@ -25,24 +25,49 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
     private val viewModel: ContactProfileViewModel by viewModels()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val contact = args.contact
-        setProfile(contact)
-        setSharedElementsTransition(contact)
         setListeners()
         setObserver()
+        setProfile(args.contact)
+        setSharedElementsTransition(args.contact)
+    }
+
+    private fun setListeners() {
+        navigationBack()
+        addToContacts()
+    }
+
+
+    private fun navigationBack() {
+        binding.imageViewNavigationBack.setOnClickListener {
+            navController.navigateUp()
+        }
+    }
+
+    private fun addToContacts() {
+        if (args.isNewUser) {
+            binding.buttonMessage.setOnClickListener {
+                viewModel.addContact(args.userData.user.id, args.contact, args.userData.accessToken)
+            }
+        }
     }
 
     private fun setObserver() {
         lifecycleScope.launch {
             viewModel.usersState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
-                when(it) {
-                    is ApiStateUsers.Error -> binding.root.showErrorSnackBar(requireContext(), it.error)
+                when (it) {
+                    is ApiStateUsers.Error -> binding.root.showErrorSnackBar(
+                        requireContext(),
+                        it.error
+                    )
+
                     ApiStateUsers.Initial -> {
 
                     }
+
                     ApiStateUsers.Loading -> {
                         binding.progressBar.visible()
                     }
+
                     is ApiStateUsers.Success -> {
                         binding.progressBar.gone()
                         binding.buttonMessageTop.gone()
@@ -50,6 +75,19 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
                     }
                 }
             }
+        }
+    }
+
+    private fun setProfile(contact: Contact) {
+        with(binding) {
+            if (args.isNewUser) {
+                buttonMessageTop.visible()
+                buttonMessage.text = getString(R.string.add_to_my_contacts)
+            }
+            textViewName.text = contact.name
+            textViewCareer.text = contact.career
+            textViewHomeAddress.text = contact.address
+            imageViewContactProfilePhoto.loadImage(contact.photo)
         }
     }
 
@@ -65,39 +103,5 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
         )
         sharedElementEnterTransition = animation
         sharedElementReturnTransition = animation
-    }
-
-    private fun setProfile(contact: Contact) {
-        if (args.isNewUser) {
-            with(binding) {
-                buttonMessageTop.visible()
-                buttonMessage.text = getString(R.string.add_to_my_contacts)
-            }
-        }
-        with(binding) {
-            imageViewContactProfilePhoto.loadImage(contact.photo)
-            textViewName.text = contact.name
-            textViewCareer.text = contact.career
-            textViewHomeAddress.text = contact.address
-        }
-    }
-
-    private fun setListeners() {
-        navigationBack()
-        addToContacts()
-    }
-
-    private fun addToContacts() {
-        if(args.isNewUser) {
-            binding.buttonMessage.setOnClickListener {
-                viewModel.addContact(args.userData.user.id, args.contact, args.userData.accessToken)
-            }
-        }
-    }
-
-    private fun navigationBack() {
-        binding.imageViewNavigationBack.setOnClickListener {
-            navController.navigateUp()
-        }
     }
 }

@@ -20,13 +20,6 @@ class AuthFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding::
         register()
         signIn()
     }
-
-    private fun signIn() {
-        binding.textViewSignIn.setOnClickListener {
-            navController.navigateUp()
-        }
-    }
-
     private fun register() {
         with(binding) {
             buttonRegister.setOnClickListener {
@@ -44,13 +37,16 @@ class AuthFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding::
             }
         }
     }
+    private fun signIn() {
+        binding.textViewSignIn.setOnClickListener {
+            navController.navigateUp()
+        }
+    }
 
     private fun dataValidation() {
         with(binding) {
             textInputEditTextEmail.doOnTextChanged { text, _, _, _ ->
-                textViewInvalidEmail.visibleIf(
-                    !Validation.isValidEmail(text.toString()) && !text.isNullOrEmpty()
-                )
+                textViewInvalidEmail.visibleIf(!Validation.isValidEmail(text.toString()) && !text.isNullOrEmpty())
             }
             textInputEditTextPassword.doOnTextChanged { text, _, _, _ ->
                 textViewInvalidPassword.visibleIf(!Validation.isValidPassword(text.toString()) && !text.isNullOrEmpty())

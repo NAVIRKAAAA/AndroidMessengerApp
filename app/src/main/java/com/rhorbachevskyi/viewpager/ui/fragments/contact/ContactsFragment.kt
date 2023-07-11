@@ -26,16 +26,15 @@ import com.rhorbachevskyi.viewpager.ui.fragments.addContacts.adapter.utils.ApiSt
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragment
 import com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragmentDirections
 import com.rhorbachevskyi.viewpager.utils.ext.invisible
-import com.rhorbachevskyi.viewpager.utils.ext.log
 import com.rhorbachevskyi.viewpager.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.utils.ext.visible
+import com.rhorbachevskyi.viewpager.utils.ext.visibleIf
 import kotlinx.coroutines.launch
 
 class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsBinding::inflate) {
 
     private val args: ContactsFragmentArgs by navArgs()
     private val viewModel: ContactsViewModel by viewModels()
-    private lateinit var searchViewText: String
     private val adapter: RecyclerViewAdapter by lazy {
         RecyclerViewAdapter(listener = object : ContactItemClickListener {
             override fun onClickDelete(contact: Contact) {
@@ -71,7 +70,6 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
             }
 
             override fun onLongClick(contact: Contact) {
-
                 viewModel.changeMultiselectMode()
                 if (viewModel.isMultiselect.value == true) {
                     viewModel.addSelectContact(contact)
@@ -86,14 +84,12 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
         initialRecyclerview()
         setClickListener()
         setObservers()
-
     }
 
     private fun initialRecyclerview() {
         NetworkImplementation.deleteStates()
         viewModel.initialContactList(args.userData.user.id, args.userData.accessToken)
-        val layoutManager = LinearLayoutManager(context)
-        binding.recyclerViewContacts.layoutManager = layoutManager
+        binding.recyclerViewContacts.layoutManager = LinearLayoutManager(context)
         binding.recyclerViewContacts.adapter = adapter
         ItemTouchHelper(setTouchCallBackListener()).attachToRecyclerView(binding.recyclerViewContacts)
     }
@@ -103,6 +99,90 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
         navigationBack()
         deleteSelectedContacts()
         searchView()
+    }
+
+    private fun addContacts() {
+        binding.textViewAddContacts.setOnClickListener {
+            val direction =
+                ViewPagerFragmentDirections.actionViewPagerFragmentToAddContactsFragment(
+                    UserWithTokens(
+                        args.userData.user,
+                        args.userData.accessToken,
+                        args.userData.refreshToken
+                    )
+                )
+            closeSearchView()
+            navController.navigate(direction)
+        }
+    }
+
+    private fun navigationBack() {
+        binding.imageViewNavigationBack.setOnClickListener {
+            (parentFragment as? ViewPagerFragment)?.openFragment(0)
+        }
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                (requireParentFragment() as? ViewPagerFragment)?.openFragment(0)
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+    }
+
+
+    private fun deleteSelectedContacts() {
+        binding.imageViewDeleteSelectMode.setOnClickListener {
+            val size = viewModel.selectContacts.value?.size ?: 0
+            viewModel.deleteSelectList(args.userData.user.id, args.userData.accessToken)
+            binding.root.showErrorSnackBar(
+                requireContext(),
+                if (size > 1) R.string.contacts_removed else R.string.contact_removed
+            )
+            viewModel.changeMultiselectMode()
+        }
+    }
+
+    private fun searchView() {
+        with(binding) {
+            imageSearchView.setOnCloseListener {
+                imageSearchView.layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
+                textViewContacts.visible()
+                imageViewNavigationBack.visible()
+                false
+            }
+            imageSearchView.setOnSearchClickListener {
+                imageSearchView.layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+                textViewContacts.invisible()
+                imageViewNavigationBack.invisible()
+            }
+            imageSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean = false
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    updateSearchView(newText.toString())
+                    return false
+                }
+            })
+        }
+    }
+
+    private fun updateSearchView(newText: String?) {
+        if (newText?.isBlank() == true) initialRecyclerview()
+        setContactsText(newText)
+    }
+
+    private fun setContactsText(newText: String?) {
+        val isContactListEmpty = viewModel.contactList.value?.isEmpty() == true
+        val isTextEmpty = newText?.isEmpty() == true
+        val isNoResult =
+            !isTextEmpty && viewModel.updateContactList(newText) == 0 && isContactListEmpty
+
+        if (isContactListEmpty && isTextEmpty) {
+            binding.textViewMoreContacts.visible()
+            binding.textViewNoResultFound.visible()
+        } else {
+            binding.textViewMoreContacts.visibleIf(isNoResult)
+            binding.textViewNoResultFound.visibleIf(isNoResult)
+        }
     }
 
     private fun setObservers() {
@@ -127,6 +207,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                     when (it) {
                         is ApiStateUsers.Success -> {
                             progressBar.invisible()
+                            setContactsText("")
                         }
 
                         is ApiStateUsers.Error -> {
@@ -146,88 +227,6 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
         }
     }
 
-    private fun navigationBack() {
-        binding.imageViewNavigationBack.setOnClickListener {
-
-            (parentFragment as? ViewPagerFragment)?.openFragment(0)
-        }
-        val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                (requireParentFragment() as? ViewPagerFragment)?.openFragment(0)
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
-    }
-
-    private fun deleteSelectedContacts() {
-        binding.imageViewDeleteSelectMode.setOnClickListener {
-            val size = viewModel.selectContacts.value?.size
-            viewModel.deleteSelectList(args.userData.user.id, args.userData.accessToken)
-            binding.root.showErrorSnackBar(
-                requireContext(),
-                if (size!! > 1) R.string.contacts_removed else R.string.contact_removed
-            )
-            viewModel.changeMultiselectMode()
-        }
-    }
-
-    private fun addContacts() {
-        binding.textViewAddContacts.setOnClickListener {
-            val direction =
-                ViewPagerFragmentDirections.actionViewPagerFragmentToAddContactsFragment(
-                    UserWithTokens(
-                        args.userData.user,
-                        args.userData.accessToken,
-                        args.userData.refreshToken
-                    )
-                )
-            closeSearchView()
-            navController.navigate(direction)
-
-        }
-    }
-
-    private fun searchView() {
-        with(binding) {
-            imageSearchView.setOnCloseListener {
-                imageSearchView.layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
-                textViewContacts.visible()
-                imageViewNavigationBack.visible()
-                false
-            }
-            imageSearchView.setOnSearchClickListener {
-                imageSearchView.layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
-                textViewContacts.invisible()
-                imageViewNavigationBack.invisible()
-            }
-            imageSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    return false
-                }
-
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    searchViewText = newText.toString()
-                    updateSearchView()
-                    return false
-                }
-            })
-        }
-    }
-
-    private fun updateSearchView() {
-        with(binding) {
-            if (searchViewText.isBlank()) initialRecyclerview()
-            if (viewModel.updateContactList(searchViewText) == 0) {
-                textViewMoreContacts.visible()
-                textViewNoResultFound.visible()
-            } else {
-                textViewMoreContacts.invisible()
-                textViewNoResultFound.invisible()
-            }
-        }
-
-    }
-
     private fun closeSearchView() {
         with(binding) {
             imageSearchView.setQuery("", false)
@@ -242,16 +241,12 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder
-            ): Boolean {
-                return false
-            }
+            ): Boolean = false
 
             override fun getSwipeDirs(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder
-            ): Int {
-                return ItemTouchHelper.LEFT
-            }
+            ): Int = ItemTouchHelper.LEFT
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 deleteUserWithRestore(
@@ -259,40 +254,36 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                 )
             }
 
-            override fun isItemViewSwipeEnabled(): Boolean {
-                return viewModel.isMultiselect.value == false
-            }
+            override fun isItemViewSwipeEnabled(): Boolean = viewModel.isMultiselect.value == false
         }
     }
 
     fun deleteUserWithRestore(contact: Contact) {
-        val position = getPosition(contact)
-        log(position.toString())
+        val position = viewModel.contactList.value?.indexOfFirst { it == contact }
         if (viewModel.deleteContactFromList(
                 args.userData.user.id,
                 args.userData.accessToken,
                 contact.id
             )
         ) {
+            setContactsText("")
             Snackbar.make(
                 binding.recyclerViewContacts,
                 getString(R.string.s_has_been_removed).format(contact.name),
                 Snackbar.LENGTH_LONG
             )
                 .setAction(getString(R.string.restore)) {
-                    viewModel.addContactToList(
-                        args.userData.user.id,
-                        contact,
-                        args.userData.accessToken,
-                        position
-                    )
+                    if (viewModel.addContactToList(
+                            args.userData.user.id,
+                            contact,
+                            args.userData.accessToken,
+                            position!!
+                        )
+                    ) {
+                        setContactsText("")
+                    }
 
                 }.show()
         }
-    }
-
-    private fun getPosition(currentContact: Contact): Int {
-        val contactList = viewModel.contactList.value ?: emptyList()
-        return contactList.indexOfFirst { it == currentContact }
     }
 }

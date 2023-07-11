@@ -97,7 +97,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/input_dialog_height"
                 android:background="@drawable/bc_bottom_line"
-                android:maxLength="30"
+                android:maxLength="25"
                 android:textColor="@color/black"
                 android:textSize="@dimen/edit_text_size" />
 

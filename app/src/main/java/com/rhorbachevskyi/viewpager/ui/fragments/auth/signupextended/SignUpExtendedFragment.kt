@@ -64,9 +64,9 @@ class SignUpExtendedFragment :
         with(binding) {
             buttonForward.setOnClickListener {
                 if (!Validation.isValidUserName(textInputEditTextUserName.text.toString())) {
-                    root.showErrorSnackBar(requireContext(), R.string.invalid_username)
+                    root.showErrorSnackBar(requireContext(), R.string.user_name_must_contain_at_least_3_letters)
                 } else if (!Validation.isValidMobilePhone(textInputEditTextMobilePhone.text.toString())) {
-                    root.showErrorSnackBar(requireContext(), R.string.invalid_mobile_phone)
+                    root.showErrorSnackBar(requireContext(), R.string.phone_must_be_at_least_10_digits_long)
                 } else {
                     viewModel.registerUser(
                         UserRequest(

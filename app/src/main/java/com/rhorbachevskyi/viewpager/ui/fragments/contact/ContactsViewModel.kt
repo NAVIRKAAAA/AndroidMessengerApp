@@ -39,10 +39,8 @@ class ContactsViewModel : ViewModel() {
             NetworkImplementation.getContacts(userId, accessToken)
             _contactList.postValue(NetworkImplementation.getContactList())
             _usersStateFlow.value = NetworkImplementation.getStateContact()
-            _contactList.value?.let {
-                startedListContact.clear()
-                startedListContact.addAll(it)
-            }
+            startedListContact.clear()
+            startedListContact.addAll(NetworkImplementation.getContactList())
         }
 
     private fun addContact(userId: Long, contact: Contact, accessToken: String) =
@@ -56,7 +54,7 @@ class ContactsViewModel : ViewModel() {
         userId: Long,
         contact: Contact,
         accessToken: String,
-        position: Int
+        position: Int = _contactList.value?.size ?: 0
     ): Boolean {
         val contactList = _contactList.value?.toMutableList() ?: mutableListOf()
 
@@ -136,9 +134,6 @@ class ContactsViewModel : ViewModel() {
         if (isMultiselect.value == false) {
             _selectContacts.value = emptyList()
             _isSelectItem.value.clear()
-            _contactList.value?.forEach { contact ->
-                contact.isChecked = false
-            }
         }
     }
 

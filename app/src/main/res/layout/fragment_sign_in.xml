@@ -46,7 +46,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputEmail"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/normal_margin"
         app:boxBackgroundMode="none"
@@ -81,7 +81,7 @@
     <com.google.android.material.textfield.TextInputLayout
 
         android:id="@+id/textInputPassword"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/normal_margin"
         app:boxBackgroundMode="none"
@@ -101,7 +101,7 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <CheckBox
+    <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/checkboxRemember"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

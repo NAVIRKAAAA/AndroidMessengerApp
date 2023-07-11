@@ -16,8 +16,6 @@
     <string name="register">ЗАРЕЄСТРУВАТИСЬ</string>
     <string name="by_clicking">Натискаючи "Зареєструватись", ви погоджуєтеся з нашими Умовами та Політикою конфіденційності</string>
     <string name="or">або</string>
-    <string name="invalid_email">недійсна електронна пошта</string>
-    <string name="invalid_password">недійсний пароль</string>
 
     <!-- fragment sign up extended -->
     <string name="your_profile_data">Ваші дані профілю</string>
@@ -49,7 +47,7 @@
     <string name="contacts">Контакти</string>
     <string name="contacts_removed">Контакти було видалено</string>
     <string name="contact_removed">Контакт було видалено</string>
-    <string name="you_can_see_more_contacts_in_the_recommendation">Більше контактів ви можете побачити в рекомендації</string>
+    <string name="you_can_see_more_contacts_in_the_recommendation">Більше контактів ви можете побачити в рекомендаціях</string>
     <string name="no_results_found">Нічого не знайдено</string>
 
     <!-- fragment detail view -->
@@ -77,10 +75,12 @@
     <string name="invalid_mobile_phone">Недійсний мобільний телефон</string>
     <string name="already_have_this_a_contact">Вже є цей контакт</string>
     <string name="contact_not_found">Контакт не знайдено</string>
+    <string name="invalid_email">Недійсна електронна пошта</string>
+    <string name="invalid_password">Недійсний пароль</string>
+    <string name="phone_must_be_at_least_10_digits_long">Телефон повинен містити принаймні 10 цифр</string>
+    <string name="user_name_must_contain_at_least_3_letters">Ім\'я користувача повинно містити принаймні 3 букви</string>
 
     <!-- fragment users -->
     <string name="add">Додати</string>
     <string name="users">Користувачі</string>
-    <string name="phone_must_be_at_least_10_digits_long">Phone must be at least 10 digits long</string>
-    <string name="user_name_must_contain_at_least_3_letters">User name must contain at least 3 letters</string>
 </resources>

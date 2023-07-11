@@ -40,7 +40,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/small_margin"
-
         android:text="@string/e_mail"
         android:textColor="@color/gray"
         app:layout_constraintStart_toStartOf="@id/textInputEmail"
@@ -115,7 +114,7 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textViewInvalidPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -125,11 +124,10 @@
         android:textColor="@color/red"
         android:textSize="@dimen/text_normal_size"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@id/checkboxRemember"
         app:layout_constraintRight_toRightOf="@id/buttonGoogle"
         app:layout_constraintTop_toBottomOf="@id/textInputPassword" />
 
-    <CheckBox
+    <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/checkboxRemember"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -204,7 +202,6 @@
         android:text="@string/by_clicking"
         android:textColor="@color/white"
         android:textSize="@dimen/text_normal_size"
-        app:layout_constraintTop_toBottomOf="@id/textViewOr"
         app:layout_constraintBottom_toTopOf="@id/textViewDoNotHaveAccount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

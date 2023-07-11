@@ -12,7 +12,9 @@ import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.ui.fragments.contact.adapter.utils.ContactDiffUtil
 import com.rhorbachevskyi.viewpager.ui.fragments.contact.adapter.interfaces.ContactItemClickListener
 import com.rhorbachevskyi.viewpager.utils.Constants
+import com.rhorbachevskyi.viewpager.utils.ext.gone
 import com.rhorbachevskyi.viewpager.utils.ext.loadImage
+import com.rhorbachevskyi.viewpager.utils.ext.visible
 
 class RecyclerViewAdapter(private val listener: ContactItemClickListener) :
     ListAdapter<Contact, RecyclerViewAdapter.UsersViewHolder>(ContactDiffUtil()) {
@@ -80,8 +82,8 @@ class RecyclerViewAdapter(private val listener: ContactItemClickListener) :
 
         private fun setSelectList(contact: Contact) {
             with(binding) {
-                checkboxSelectMode.visibility = View.VISIBLE
-                imageViewDelete.visibility = View.GONE
+                checkboxSelectMode.visible()
+                imageViewDelete.gone()
                 checkboxSelectMode.isChecked = isSelectItems.find { it.second == contact.id.toInt() }?.first == true
                 viewBorder.background = ContextCompat.getDrawable(
                     root.context,

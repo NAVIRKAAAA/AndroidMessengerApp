@@ -22,7 +22,7 @@ class SignInViewModel : ViewModel() {
         _authorizationStateFlow.value = NetworkImplementation.getStateLogin()
     }
     fun autoLogin(context: Context) =
-        viewModelScope.launch(Dispatchers.IO) {// TODO: appropriate exception
+        viewModelScope.launch(Dispatchers.IO) {
             _authorizationStateFlow.value = ApiState.Loading
             NetworkImplementation.autoLogin(context)
             _authorizationStateFlow.value = NetworkImplementation.getStateAutoLogin()

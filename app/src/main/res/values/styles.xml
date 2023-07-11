@@ -13,19 +13,4 @@
         <item name="android:closeIcon">@drawable/ic_close_search</item>
         <item name="android:searchIcon">@drawable/ic_find_scope</item>
     </style>
-    <style name="CalendarViewStyle">
-        <item name="android:dateTextAppearance">@style/CalendarViewDateTextAppearance</item>
-        <item name="android:dayOfWeekBackground">@style/CalendarViewWeekDayTextAppearance</item>
-        <item name="android:dayOfWeekTextAppearance">@style/CalendarViewWeekDayTextAppearance</item>
-    </style>
-
-    <style name="CalendarViewDateTextAppearance">
-        <item name="android:textColor">@android:color/black</item>
-    </style>
-
-    <style name="CalendarViewWeekDayTextAppearance">
-        <item name="android:textColor">@android:color/black</item>
-    </style>
-
-
 </resources>
