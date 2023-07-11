@@ -1,7 +1,7 @@
 package com.rhorbachevskyi.viewpager.domain.utils
 
-import com.rhorbachevskyi.viewpager.domain.di.network.ApiService
-import com.rhorbachevskyi.viewpager.utils.Constants
+import com.rhorbachevskyi.viewpager.domain.network.ApiService
+import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

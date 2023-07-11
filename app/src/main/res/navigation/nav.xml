@@ -6,7 +6,7 @@
     app:startDestination="@id/splashFragment2">
     <fragment
         android:id="@+id/splashFragment2"
-        android:name="com.rhorbachevskyi.viewpager.ui.fragments.splashscreen.SplashFragment"
+        android:name="com.rhorbachevskyi.viewpager.presentation.ui.fragments.splashscreen.SplashFragment"
         android:label="SplashFragment"
         tools:layout="@layout/fragment_splash_screen">
         <action
@@ -18,7 +18,7 @@
     </fragment>
     <fragment
         android:id="@+id/signInFragment"
-        android:name="com.rhorbachevskyi.viewpager.ui.fragments.signin.SignInFragment"
+        android:name="com.rhorbachevskyi.viewpager.presentation.ui.fragments.auth.signin.SignInFragment"
         android:label="SignInFragment"
         tools:layout="@layout/fragment_sign_in">
         <action
@@ -30,7 +30,7 @@
     </fragment>
     <fragment
         android:id="@+id/authFragment"
-        android:name="com.rhorbachevskyi.viewpager.ui.fragments.auth.AuthFragment"
+        android:name="com.rhorbachevskyi.viewpager.presentation.ui.fragments.auth.signup.AuthFragment"
         android:label="AuthFragment"
         tools:layout="@layout/fragment_sign_up">
         <action
@@ -41,7 +41,7 @@
 
     <fragment
         android:id="@+id/signUpExtendedFragment"
-        android:name="com.rhorbachevskyi.viewpager.ui.fragments.auth.signupextended.SignUpExtendedFragment"
+        android:name="com.rhorbachevskyi.viewpager.presentation.ui.fragments.auth.signup.signupextended.SignUpExtendedFragment"
         android:label="SignUpExtendedFragment"
         tools:layout="@layout/fragment_sign_up_extended">
         <argument
@@ -59,7 +59,7 @@
     </fragment>
     <fragment
         android:id="@+id/viewPagerFragment"
-        android:name="com.rhorbachevskyi.viewpager.ui.fragments.viewpager.ViewPagerFragment"
+        android:name="com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.ViewPagerFragment"
         android:label="ViewPagerFragment">
         <argument
             android:name="userData"
@@ -80,7 +80,7 @@
     </fragment>
     <fragment
         android:id="@+id/contactProfile"
-        android:name="com.rhorbachevskyi.viewpager.ui.fragments.contactprofile.ContactProfile"
+        android:name="com.rhorbachevskyi.viewpager.presentation.ui.fragments.contactprofile.ContactProfile"
         android:label="ContactProfile"
         tools:layout="@layout/fragment_detail_view">
         <argument
@@ -95,7 +95,7 @@
     </fragment>
     <fragment
         android:id="@+id/userProfile"
-        android:name="com.rhorbachevskyi.viewpager.ui.fragments.userprofile.UserProfile"
+        android:name="com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile.UserProfile"
         android:label="UserProfile"
         tools:layout="@layout/fragment_profile">
         <argument
@@ -104,7 +104,7 @@
     </fragment>
     <fragment
         android:id="@+id/contactsFragment"
-        android:name="com.rhorbachevskyi.viewpager.ui.fragments.contact.ContactsFragment"
+        android:name="com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.ContactsFragment"
         android:label="ContactsFragment"
         tools:layout="@layout/fragment_contacts">
         <argument
@@ -113,7 +113,7 @@
     </fragment>
     <fragment
         android:id="@+id/addContactsFragment"
-        android:name="com.rhorbachevskyi.viewpager.ui.fragments.addContacts.AddContactsFragment"
+        android:name="com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.AddContactsFragment"
         android:label="AddContactsFragment"
         tools:layout="@layout/fragment_users">
 
@@ -126,7 +126,7 @@
     </fragment>
     <fragment
         android:id="@+id/editProfile"
-        android:name="com.rhorbachevskyi.viewpager.ui.fragments.userprofile.editprofile.EditProfile"
+        android:name="com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile.editprofile.EditProfile"
         android:label="EditProfile"
         tools:layout="@layout/fragment_edit_profile">
         <argument
