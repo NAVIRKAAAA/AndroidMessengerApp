@@ -16,7 +16,6 @@ import com.rhorbachevskyi.viewpager.data.model.UserWithTokens
 import com.rhorbachevskyi.viewpager.databinding.FragmentSignUpExtendedBinding
 import com.rhorbachevskyi.viewpager.domain.utils.ApiStateUser
 import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
-import com.rhorbachevskyi.viewpager.presentation.ui.fragments.auth.signup.AuthViewModel
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.DataStore.saveData
 import com.rhorbachevskyi.viewpager.presentation.utils.Validation
@@ -27,7 +26,7 @@ import kotlinx.coroutines.launch
 
 
 class SignUpExtendedFragment : BaseFragment<FragmentSignUpExtendedBinding>(FragmentSignUpExtendedBinding::inflate) {
-    private val viewModel: AuthViewModel by viewModels()
+    private val viewModel: SignUpExtendedViewModel by viewModels()
     private val args: SignUpExtendedFragmentArgs by navArgs()
 
     private var photoUri: Uri? = null

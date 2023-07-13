@@ -1,16 +1,16 @@
-package com.rhorbachevskyi.viewpager.presentation.ui.fragments.auth.signup
+package com.rhorbachevskyi.viewpager.presentation.ui.fragments.auth.signup.signupextended
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rhorbachevskyi.viewpager.data.model.UserRequest
-import com.rhorbachevskyi.viewpager.domain.utils.ApiStateUser
 import com.rhorbachevskyi.viewpager.data.repository.NetworkImplementation
+import com.rhorbachevskyi.viewpager.domain.utils.ApiStateUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class AuthViewModel : ViewModel() {
+class SignUpExtendedViewModel : ViewModel() {
     private val _registerStateFlow = MutableStateFlow<ApiStateUser>(ApiStateUser.Initial)
     val registerState: StateFlow<ApiStateUser> = _registerStateFlow
     fun isLogout() {

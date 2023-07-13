@@ -9,7 +9,7 @@ import com.rhorbachevskyi.viewpager.data.model.UserWithTokens
 import com.rhorbachevskyi.viewpager.databinding.FragmentSplashScreenBinding
 import com.rhorbachevskyi.viewpager.domain.utils.ApiStateUser
 import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
-import com.rhorbachevskyi.viewpager.presentation.ui.fragments.auth.signin.SignInViewModel
+
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.DataStore
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class SplashFragment :
     BaseFragment<FragmentSplashScreenBinding>(FragmentSplashScreenBinding::inflate) {
-    private val viewModel: SignInViewModel by viewModels()
+    private val viewModel: SplashScreenViewModel by viewModels()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         isAutologin()

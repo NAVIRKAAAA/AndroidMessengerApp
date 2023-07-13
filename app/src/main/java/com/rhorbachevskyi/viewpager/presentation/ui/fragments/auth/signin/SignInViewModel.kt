@@ -1,6 +1,5 @@
 package com.rhorbachevskyi.viewpager.presentation.ui.fragments.auth.signin
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rhorbachevskyi.viewpager.data.model.UserRequest
@@ -21,10 +20,4 @@ class SignInViewModel : ViewModel() {
         NetworkImplementation.authorizationUser(body)
         _authorizationStateFlow.value = NetworkImplementation.getStateLogin()
     }
-    fun autoLogin(context: Context) =
-        viewModelScope.launch(Dispatchers.IO) {
-            _authorizationStateFlow.value = ApiStateUser.Loading
-            NetworkImplementation.autoLogin(context)
-            _authorizationStateFlow.value = NetworkImplementation.getStateAutoLogin()
-        }
 }
