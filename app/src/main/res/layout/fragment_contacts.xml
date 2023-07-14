@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".presentation.ui.activity.MainActivity">
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/background"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageViewNavigationBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/normal_margin"
+        android:background="@color/background"
+        android:src="@drawable/ic_navigation_back"
+        app:layout_constraintBottom_toBottomOf="@id/textViewContacts"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/textViewContacts" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewContacts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/small_margin"
+        android:fontFamily="@font/example9"
+        android:text="@string/contacts"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_large_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <SearchView
+        android:id="@+id/imageSearchView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/searchViewTheme"
+        android:queryBackground="@drawable/bc_edit_text_search"
+        app:layout_constraintBottom_toBottomOf="@id/textViewContacts"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintTop_toTopOf="@id/textViewContacts" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewAddContacts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/normal_margin"
+        android:fontFamily="@font/example9"
+        android:text="@string/add_contacts"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_normal_size"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBackground"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imageViewNavigationBack"
+        app:layout_constraintVertical_bias="0.75" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_contacts"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/normal_margin"
+        app:layout_constraintBottom_toTopOf="@id/imageViewDeleteSelectMode"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/guidelineBackground"
+        tools:listitem="@layout/item_user" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageViewDeleteSelectMode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/large_margin"
+        android:layout_marginBottom="@dimen/largest_margin"
+        android:src="@drawable/ic_bin_select_mode"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recycler_view_contacts" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/guidelineBackground" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewNoResultFound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/example9"
+        android:text="@string/no_results_found"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_large_size"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/guidelineBackground"
+        app:layout_constraintVertical_bias="0.1" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewMoreContacts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/example9"
+        android:text="@string/you_can_see_more_contacts_in_the_recommendation"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewNoResultFound" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineBackground"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.2" />
+</androidx.constraintlayout.widget.ConstraintLayout>
