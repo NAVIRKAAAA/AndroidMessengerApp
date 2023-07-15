@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.viewpager.data.repository
+package com.rhorbachevskyi.viewpager.data.repository.repositoryimpl
 
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
@@ -6,6 +6,8 @@ import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserData
 import com.rhorbachevskyi.viewpager.data.model.UserRequest
+import com.rhorbachevskyi.viewpager.data.repository.ContactRepository
+import com.rhorbachevskyi.viewpager.data.repository.UserRepository
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
@@ -20,28 +22,25 @@ private val contactStateFlow = MutableStateFlow<ApiStateUsers>(ApiStateUsers.Ini
 private val states: ArrayList<Pair<Long, ApiStateUsers>> = ArrayList()
 
 class NetworkImplementation @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val contactRepository: ContactRepository
 ) {
-    suspend fun registerUser(body: UserRequest) : ApiStateUser {
-        return try {
-            val response = userRepository.registerUser(body)
-            response.data?.let { ApiStateUser.Success(it) }
-                ?: ApiStateUser.Error(R.string.invalid_request)
-        } catch (e: Exception) {
-            ApiStateUser.Error(R.string.register_error_user_exist)
-        }
+    suspend fun registerUser(body: UserRequest): ApiStateUser = try {
+
+        userRepository.registerUser(body).data?.let { ApiStateUser.Success(it) }
+            ?: ApiStateUser.Error(R.string.invalid_request)
+    } catch (e: Exception) {
+        ApiStateUser.Error(R.string.register_error_user_exist)
     }
 
-    suspend fun authorizationUser(body: UserRequest) : ApiStateUser {
-        return try {
-            userRepository.authorizeUser(body).data?.let { ApiStateUser.Success(it) }
-                ?: ApiStateUser.Error(R.string.invalid_request)
-        } catch (e: Exception) {
-            ApiStateUser.Error(R.string.not_correct_input)
-        }
+    suspend fun authorizeUser(body: UserRequest): ApiStateUser = try {
+        userRepository.authorizeUser(body).data?.let { ApiStateUser.Success(it) }
+            ?: ApiStateUser.Error(R.string.invalid_request)
+    } catch (e: Exception) {
+        ApiStateUser.Error(R.string.not_correct_input)
     }
 
-    suspend fun autoLogin(context: Context) : ApiStateUser {
+    suspend fun autoLogin(context: Context): ApiStateUser {
         return try {
             val response = userRepository.authorizeUser(
                 UserRequest(
@@ -58,10 +57,10 @@ class NetworkImplementation @Inject constructor(
         }
     }
 
-    suspend fun getAllUsers(accessToken: String, user: UserData) : ApiStateUsers {
+    suspend fun getAllUsers(accessToken: String, user: UserData): ApiStateUsers {
         contactList = getContacts(user.id, accessToken)
         return try {
-            val response = userRepository.getAllUsers("$AUTHORIZATION_PREFIX $accessToken")
+            val response = contactRepository.getAllUsers("$AUTHORIZATION_PREFIX $accessToken")
 
             val filteredUsers =
                 response.data.users?.filter {
@@ -76,11 +75,12 @@ class NetworkImplementation @Inject constructor(
         }
     }
 
-    suspend fun getContacts(userId: Long, accessToken: String) : ArrayList<Contact> {
+    suspend fun getContacts(userId: Long, accessToken: String): ArrayList<Contact> {
         return try {
             val response =
-                userRepository.getUserContacts(userId, "$AUTHORIZATION_PREFIX $accessToken")
-            contactStateFlow.value = response.data.let { ApiStateUsers.Success(it.contacts) }
+                contactRepository.getUserContacts(userId, "$AUTHORIZATION_PREFIX $accessToken")
+            contactStateFlow.value =
+                response.data.let { ApiStateUsers.Success(it.contacts) }
             (response.data.contacts?.map { it.toContact() }
                 ?: emptyList()) as ArrayList<Contact>
         } catch (e: Exception) {
@@ -89,12 +89,13 @@ class NetworkImplementation @Inject constructor(
         }
     }
 
-    suspend fun addContact(userId: Long, contact: Contact, accessToken: String) : ApiStateUsers {
+    suspend fun addContact(userId: Long, contact: Contact, accessToken: String): ApiStateUsers {
         states.add(Pair(contact.id, ApiStateUsers.Loading))
         return try {
             val response =
-                userRepository.addContact(userId, "$AUTHORIZATION_PREFIX $accessToken", contact.id)
-            states[states.size - 1] = Pair(contact.id, ApiStateUsers.Success(response.data.users))
+                contactRepository.addContact(userId, "$AUTHORIZATION_PREFIX $accessToken", contact.id)
+            states[states.size - 1] =
+                Pair(contact.id, ApiStateUsers.Success(response.data.users))
             response.data.let { ApiStateUsers.Success(it.users) }
         } catch (e: Exception) {
             states[states.size - 1] =
@@ -103,9 +104,9 @@ class NetworkImplementation @Inject constructor(
         }
     }
 
-    suspend fun deleteContact(userId: Long, accessToken: String, contactId: Long):ApiStateUsers {
+    suspend fun deleteContact(userId: Long, accessToken: String, contactId: Long): ApiStateUsers {
         return try {
-            val response = userRepository.deleteContact(
+            val response = contactRepository.deleteContact(
                 userId,
                 "$AUTHORIZATION_PREFIX $accessToken",
                 contactId
@@ -116,16 +117,17 @@ class NetworkImplementation @Inject constructor(
         }
     }
 
-    suspend fun getUser(userId: Long, accessToken: String) : ApiStateUser {
+    suspend fun getUser(userId: Long, accessToken: String): ApiStateUser {
         return try {
             val response = userRepository.getUser(userId, "$AUTHORIZATION_PREFIX $accessToken")
-            response.data?.let { ApiStateUser.Success(it) } ?: ApiStateUser.Error(R.string.invalid_request)
+            response.data?.let { ApiStateUser.Success(it) }
+                ?: ApiStateUser.Error(R.string.invalid_request)
         } catch (e: Exception) {
             ApiStateUser.Error(R.string.invalid_request)
         }
     }
 
-    suspend fun editUser(user: UserData, accessToken: String) : ApiStateUser {
+    suspend fun editUser(user: UserData, accessToken: String): ApiStateUser {
         return try {
             val response = userRepository.editUser(
                 user.id,
@@ -136,7 +138,7 @@ class NetworkImplementation @Inject constructor(
                 user.address,
                 user.birthday
             )
-             response.data?.let { ApiStateUser.Success(it) } ?: ApiStateUser.Error(
+            response.data?.let { ApiStateUser.Success(it) } ?: ApiStateUser.Error(
                 R.string.invalid_request
             )
         } catch (e: Exception) {

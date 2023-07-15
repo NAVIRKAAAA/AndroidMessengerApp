@@ -6,7 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.Contact
-import com.rhorbachevskyi.viewpager.data.repository.NetworkImplementation
+import com.rhorbachevskyi.viewpager.data.repository.ContactRepository
+import com.rhorbachevskyi.viewpager.data.repository.repositoryimpl.NetworkImplementation
 import com.rhorbachevskyi.viewpager.data.repository.UserRepository
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +18,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ContactsViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
+class ContactsViewModel @Inject constructor(
+    private val userRepository: UserRepository,
+    private val contactRepository: ContactRepository,
+    private val networkImpl: NetworkImplementation = NetworkImplementation(userRepository, contactRepository)
+) : ViewModel() {
 
     private val _usersStateFlow = MutableStateFlow<ApiStateUsers>(ApiStateUsers.Initial)
     val usersState: StateFlow<ApiStateUsers> = _usersStateFlow
@@ -33,22 +38,33 @@ class ContactsViewModel @Inject constructor(private val userRepository: UserRepo
     private val _isSelectItem: MutableStateFlow<ArrayList<Pair<Boolean, Int>>> =
         MutableStateFlow(ArrayList())
     val isSelectItem: StateFlow<ArrayList<Pair<Boolean, Int>>> = _isSelectItem
-
+    // search helper
     private val startedListContact: ArrayList<Contact> = arrayListOf()
 
     fun initialContactList(userId: Long, accessToken: String) =
         viewModelScope.launch(Dispatchers.IO) {
             _usersStateFlow.value = ApiStateUsers.Loading
-            _contactList.postValue(NetworkImplementation(userRepository).getContacts(userId, accessToken))
-            _usersStateFlow.value = NetworkImplementation(userRepository).getStateContact()
+            _contactList.postValue(
+                networkImpl.getContacts(
+                    userId,
+                    accessToken
+                )
+            )
+            _usersStateFlow.value = networkImpl.getStateContact()
             startedListContact.clear()
-            startedListContact.addAll(NetworkImplementation(userRepository).getContacts(userId, accessToken))
+            startedListContact.addAll(
+                networkImpl.getContacts(
+                    userId,
+                    accessToken
+                )
+            )
         }
 
     private fun addContact(userId: Long, contact: Contact, accessToken: String) =
         viewModelScope.launch(Dispatchers.IO) {
             _usersStateFlow.value = ApiStateUsers.Loading
-            _usersStateFlow.value = NetworkImplementation(userRepository).addContact(userId, contact, accessToken)
+            _usersStateFlow.value =
+                networkImpl.addContact(userId, contact, accessToken)
         }
 
     fun addContactToList(
@@ -85,7 +101,8 @@ class ContactsViewModel @Inject constructor(private val userRepository: UserRepo
 
     private fun deleteContact(userId: Long, accessToken: String, contactId: Long) =
         viewModelScope.launch(Dispatchers.IO) {
-            _usersStateFlow.value = NetworkImplementation(userRepository).deleteContact(userId, accessToken, contactId)
+            _usersStateFlow.value =
+                networkImpl.deleteContact(userId, accessToken, contactId)
         }
 
     fun deleteContactFromList(userId: Long, accessToken: String, contactId: Long): Boolean {
@@ -143,7 +160,8 @@ class ContactsViewModel @Inject constructor(private val userRepository: UserRepo
         _contactList.value = filteredList
         return filteredList.size
     }
+
     fun deleteStates() {
-        NetworkImplementation(userRepository).deleteStates()
+        networkImpl.deleteStates()
     }
 }

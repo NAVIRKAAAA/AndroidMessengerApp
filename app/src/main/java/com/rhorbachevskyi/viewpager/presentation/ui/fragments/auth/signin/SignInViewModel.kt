@@ -3,8 +3,9 @@ package com.rhorbachevskyi.viewpager.presentation.ui.fragments.auth.signin
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rhorbachevskyi.viewpager.data.model.UserRequest
+import com.rhorbachevskyi.viewpager.data.repository.ContactRepository
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
-import com.rhorbachevskyi.viewpager.data.repository.NetworkImplementation
+import com.rhorbachevskyi.viewpager.data.repository.repositoryimpl.NetworkImplementation
 import com.rhorbachevskyi.viewpager.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -14,12 +15,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SignInViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
+class SignInViewModel @Inject constructor(
+    private val userRepository: UserRepository,
+    private val contactRepository: ContactRepository,
+    private val networkImpl: NetworkImplementation = NetworkImplementation(userRepository, contactRepository)
+) : ViewModel() {
     private val _authorizationStateFlow = MutableStateFlow<ApiStateUser>(ApiStateUser.Initial)
     val authorizationState: StateFlow<ApiStateUser> = _authorizationStateFlow
 
     fun authorizationUser(body: UserRequest) = viewModelScope.launch(Dispatchers.IO) {
         _authorizationStateFlow.value = ApiStateUser.Loading
-        _authorizationStateFlow.value = NetworkImplementation(userRepository).authorizationUser(body)
+        _authorizationStateFlow.value =
+            networkImpl.authorizeUser(body)
     }
 }

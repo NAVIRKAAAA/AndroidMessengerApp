@@ -17,9 +17,7 @@ import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.loadImage
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 
-class AddContactsAdapter(
-    private val listener: UserItemClickListener,
-) :
+class AddContactsAdapter(private val listener: UserItemClickListener) :
     ListAdapter<Contact, AddContactsAdapter.UsersViewHolder>(ContactDiffUtil()) {
     private var states: ArrayList<Pair<Long, ApiStateUsers>> = ArrayList()
     override fun onCreateViewHolder(

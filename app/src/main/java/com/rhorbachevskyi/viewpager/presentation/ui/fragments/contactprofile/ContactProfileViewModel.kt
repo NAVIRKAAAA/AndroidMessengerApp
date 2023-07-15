@@ -3,7 +3,8 @@ package com.rhorbachevskyi.viewpager.presentation.ui.fragments.contactprofile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rhorbachevskyi.viewpager.data.model.Contact
-import com.rhorbachevskyi.viewpager.data.repository.NetworkImplementation
+import com.rhorbachevskyi.viewpager.data.repository.ContactRepository
+import com.rhorbachevskyi.viewpager.data.repository.repositoryimpl.NetworkImplementation
 import com.rhorbachevskyi.viewpager.data.repository.UserRepository
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +15,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ContactProfileViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
+class ContactProfileViewModel @Inject constructor(
+    private val userRepository: UserRepository,
+    private val contactRepository: ContactRepository,
+    private val networkImpl: NetworkImplementation = NetworkImplementation(userRepository, contactRepository)
+) : ViewModel() {
 
     private val _usersStateFlow = MutableStateFlow<ApiStateUsers>(ApiStateUsers.Initial)
     val usersState: StateFlow<ApiStateUsers> = _usersStateFlow
@@ -23,11 +28,16 @@ class ContactProfileViewModel @Inject constructor(private val userRepository: Us
 
     fun addContact(userId: Long, contact: Contact, accessToken: String) =
         viewModelScope.launch(Dispatchers.IO) {
-            if(alreadyAdded) return@launch
+            if (alreadyAdded) return@launch
             alreadyAdded = true
 
             _usersStateFlow.value = ApiStateUsers.Loading
-            _usersStateFlow.value = NetworkImplementation(userRepository).addContact(userId, contact, accessToken)
+            _usersStateFlow.value =
+                networkImpl.addContact(
+                    userId,
+                    contact,
+                    accessToken
+                )
 
         }
 }

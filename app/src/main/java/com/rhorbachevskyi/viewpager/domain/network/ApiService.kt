@@ -58,5 +58,4 @@ interface ApiService {
         @Field("phone") phone: String, @Field("address") address: String?,
         @Field("birthday") birthday: Date?
     ): UserResponse
-
 }

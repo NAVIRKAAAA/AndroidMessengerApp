@@ -84,7 +84,8 @@ class RecyclerViewAdapter(private val listener: ContactItemClickListener) :
             with(binding) {
                 checkboxSelectMode.visible()
                 imageViewDelete.gone()
-                checkboxSelectMode.isChecked = isSelectItems.find { it.second == contact.id.toInt() }?.first == true
+                checkboxSelectMode.isChecked =
+                    isSelectItems.find { it.second == contact.id.toInt() }?.first == true
                 viewBorder.background = ContextCompat.getDrawable(
                     root.context,
                     R.drawable.bc_user_select_mode
@@ -107,6 +108,7 @@ class RecyclerViewAdapter(private val listener: ContactItemClickListener) :
             return view to name
         }
     }
+
     fun setMultiselectData(isMultiselectItem: ArrayList<Pair<Boolean, Int>>) {
         this.isSelectItems = isMultiselectItem
     }

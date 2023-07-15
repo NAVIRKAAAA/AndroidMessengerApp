@@ -32,14 +32,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsBinding::inflate) {
-
+    private var thisScreen = true
     private val args: ContactsFragmentArgs by navArgs()
     private val viewModel: ContactsViewModel by viewModels()
     private val adapter: RecyclerViewAdapter by lazy {
         RecyclerViewAdapter(listener = object : ContactItemClickListener {
-            override fun onClickDelete(contact: Contact) {
-                deleteUserWithRestore(contact)
-            }
 
             override fun onClickContact(
                 contact: Contact,
@@ -55,6 +52,8 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                         viewModel.changeMultiselectMode()
                     }
                 } else {
+                    if(viewModel.contactList.value?.contains(contact) == false) return
+                    thisScreen = false
                     val extras = FragmentNavigatorExtras(*transitionPairs)
                     val direction =
                         ViewPagerFragmentDirections.actionViewPagerFragmentToContactProfile(
@@ -75,6 +74,10 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                     viewModel.addSelectContact(contact)
                 }
 
+            }
+
+            override fun onClickDelete(contact: Contact) {
+                deleteUserWithRestore(contact)
             }
         })
     }
@@ -103,6 +106,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
 
     private fun addContacts() {
         binding.textViewAddContacts.setOnClickListener {
+            thisScreen = false
             val direction =
                 ViewPagerFragmentDirections.actionViewPagerFragmentToAddContactsFragment(
                     UserWithTokens(
@@ -167,10 +171,11 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
 
     private fun updateSearchView(newText: String?) {
         if (newText?.isBlank() == true) initialRecyclerview()
-        setContactsText(newText)
+        setContactsText(newText, true)
     }
 
-    private fun setContactsText(newText: String?) {
+    private fun setContactsText(newText: String?, thisScreen: Boolean) {
+        if(!thisScreen) return
         val isContactListEmpty = viewModel.contactList.value?.isEmpty() == true
         val isTextEmpty = newText?.isEmpty() == true
         val isNoResult =
@@ -207,7 +212,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                     when (it) {
                         is ApiStateUsers.Success -> {
                             progressBar.invisible()
-                            setContactsText("")
+                            setContactsText("", true)
                         }
 
                         is ApiStateUsers.Error -> {
@@ -266,7 +271,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                 contact.id
             )
         ) {
-            setContactsText("")
+            setContactsText("", thisScreen)
             Snackbar.make(
                 binding.recyclerViewContacts,
                 getString(R.string.s_has_been_removed).format(contact.name),
@@ -280,7 +285,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                             position!!
                         )
                     ) {
-                        setContactsText("")
+                        setContactsText("", thisScreen)
                     }
 
                 }.show()

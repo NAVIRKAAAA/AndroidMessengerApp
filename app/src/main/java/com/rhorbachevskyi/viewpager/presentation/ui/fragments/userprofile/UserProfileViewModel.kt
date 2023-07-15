@@ -2,8 +2,9 @@ package com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rhorbachevskyi.viewpager.data.repository.ContactRepository
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
-import com.rhorbachevskyi.viewpager.data.repository.NetworkImplementation
+import com.rhorbachevskyi.viewpager.data.repository.repositoryimpl.NetworkImplementation
 import com.rhorbachevskyi.viewpager.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -14,13 +15,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserProfileViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val contactRepository: ContactRepository,
+    private val networkImpl: NetworkImplementation = NetworkImplementation(userRepository, contactRepository)
 ) : ViewModel() {
     private val _getUserStateFlow = MutableStateFlow<ApiStateUser>(ApiStateUser.Initial)
     val getUserState: StateFlow<ApiStateUser> = _getUserStateFlow
     fun requestGetUser(userId: Long, accessToken: String) = viewModelScope.launch(Dispatchers.IO) {
         _getUserStateFlow.value = ApiStateUser.Loading
-        _getUserStateFlow.value = NetworkImplementation(userRepository).getUser(userId, accessToken)
+        _getUserStateFlow.value = networkImpl.getUser(userId, accessToken)
     }
-
 }

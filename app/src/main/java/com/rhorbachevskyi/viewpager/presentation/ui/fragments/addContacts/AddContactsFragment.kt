@@ -52,6 +52,7 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
                 navController.navigate(direction, extras)
             }
 
+
         })
     }
 
