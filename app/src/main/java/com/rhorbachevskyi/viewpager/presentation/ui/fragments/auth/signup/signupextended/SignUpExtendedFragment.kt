@@ -14,17 +14,19 @@ import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.UserRequest
 import com.rhorbachevskyi.viewpager.data.model.UserWithTokens
 import com.rhorbachevskyi.viewpager.databinding.FragmentSignUpExtendedBinding
-import com.rhorbachevskyi.viewpager.domain.utils.ApiStateUser
+import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
 import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.DataStore.saveData
 import com.rhorbachevskyi.viewpager.presentation.utils.Validation
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.loadImage
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class SignUpExtendedFragment : BaseFragment<FragmentSignUpExtendedBinding>(FragmentSignUpExtendedBinding::inflate) {
     private val viewModel: SignUpExtendedViewModel by viewModels()
     private val args: SignUpExtendedFragmentArgs by navArgs()
@@ -131,14 +133,12 @@ class SignUpExtendedFragment : BaseFragment<FragmentSignUpExtendedBinding>(Fragm
                         binding.progressBar.visible()
                     }
 
-                    is ApiStateUser.Initial -> {
-
-                    }
-
                     is ApiStateUser.Error -> {
                         binding.root.showErrorSnackBar(requireContext(), it.error)
                         viewModel.isLogout()
+                        binding.progressBar.invisible()
                     }
+                    is ApiStateUser.Initial -> Unit
                 }
             }
         }

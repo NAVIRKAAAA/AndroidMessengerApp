@@ -13,17 +13,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserWithTokens
 import com.rhorbachevskyi.viewpager.databinding.FragmentUsersBinding
+import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
 import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
-import com.rhorbachevskyi.viewpager.domain.utils.ApiStateUsers
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapter.AddContactsAdapter
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapter.interfaces.UserItemClickListener
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visibleIf
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBinding::inflate) {
 
     private val args: AddContactsFragmentArgs by navArgs()
@@ -69,8 +70,10 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
 
 
     private fun setObserves() {
-        viewModel.users.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+        lifecycleScope.launch {
+            viewModel.users.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
+                adapter.submitList(it)
+            }
         }
 
         lifecycleScope.launch {
@@ -79,11 +82,6 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
                     is ApiStateUsers.Success -> {
                         binding.progressBar.invisible()
                     }
-
-                    is ApiStateUsers.Initial -> {
-
-                    }
-
                     is ApiStateUsers.Loading -> {
                         binding.progressBar.visible()
                     }
@@ -93,6 +91,7 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
                         binding.root.showErrorSnackBar(requireContext(), it.error)
 
                     }
+                    is ApiStateUsers.Initial -> Unit
                 }
             }
         }
@@ -107,11 +106,13 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
         navigateBack()
         searchView()
     }
+
     private fun navigateBack() {
         binding.imageViewNavigationBack.setOnClickListener {
             navController.navigateUp()
         }
     }
+
     private fun searchView() {
         with(binding) {
             imageSearchView.setOnCloseListener {
@@ -138,6 +139,7 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
             })
         }
     }
+
     private fun closeSearchView() {
         with(binding) {
             imageSearchView.setQuery("", false)

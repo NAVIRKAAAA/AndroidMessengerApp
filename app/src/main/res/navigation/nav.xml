@@ -79,6 +79,28 @@
             app:destination="@id/signInFragment" />
     </fragment>
     <fragment
+        android:id="@+id/addContactsFragment"
+        android:name="com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.AddContactsFragment"
+        android:label="AddContactsFragment"
+        tools:layout="@layout/fragment_users">
+
+        <argument
+            android:name="userData"
+            app:argType="com.rhorbachevskyi.viewpager.data.model.UserWithTokens" />
+        <action
+            android:id="@+id/action_addContactsFragment_to_contactProfile"
+            app:destination="@id/contactProfile" />
+    </fragment>
+    <fragment
+        android:id="@+id/editProfile"
+        android:name="com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile.editprofile.EditProfile"
+        android:label="EditProfile"
+        tools:layout="@layout/fragment_edit_profile">
+        <argument
+            android:name="userData"
+            app:argType="com.rhorbachevskyi.viewpager.data.model.UserWithTokens" />
+    </fragment>
+    <fragment
         android:id="@+id/contactProfile"
         android:name="com.rhorbachevskyi.viewpager.presentation.ui.fragments.contactprofile.ContactProfile"
         android:label="ContactProfile"
@@ -107,28 +129,6 @@
         android:name="com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.ContactsFragment"
         android:label="ContactsFragment"
         tools:layout="@layout/fragment_contacts">
-        <argument
-            android:name="userData"
-            app:argType="com.rhorbachevskyi.viewpager.data.model.UserWithTokens" />
-    </fragment>
-    <fragment
-        android:id="@+id/addContactsFragment"
-        android:name="com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.AddContactsFragment"
-        android:label="AddContactsFragment"
-        tools:layout="@layout/fragment_users">
-
-        <argument
-            android:name="userData"
-            app:argType="com.rhorbachevskyi.viewpager.data.model.UserWithTokens" />
-        <action
-            android:id="@+id/action_addContactsFragment_to_contactProfile"
-            app:destination="@id/contactProfile" />
-    </fragment>
-    <fragment
-        android:id="@+id/editProfile"
-        android:name="com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile.editprofile.EditProfile"
-        android:label="EditProfile"
-        tools:layout="@layout/fragment_edit_profile">
         <argument
             android:name="userData"
             app:argType="com.rhorbachevskyi.viewpager.data.model.UserWithTokens" />

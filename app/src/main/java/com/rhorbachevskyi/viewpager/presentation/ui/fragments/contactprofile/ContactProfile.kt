@@ -10,15 +10,16 @@ import androidx.navigation.fragment.navArgs
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.databinding.FragmentDetailViewBinding
+import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
 import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
-import com.rhorbachevskyi.viewpager.domain.utils.ApiStateUsers
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.gone
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.loadImage
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-
+@AndroidEntryPoint
 class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailViewBinding::inflate) {
 
     private val args: ContactProfileArgs by navArgs()
@@ -60,9 +61,7 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
                         it.error
                     )
 
-                    ApiStateUsers.Initial -> {
-
-                    }
+                    is ApiStateUsers.Initial -> Unit
 
                     ApiStateUsers.Loading -> {
                         binding.progressBar.visible()

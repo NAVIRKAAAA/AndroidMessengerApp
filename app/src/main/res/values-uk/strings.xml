@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- app name -->
-    <string name="app_name">View pager</string>
+    <string name="app_name">Web interaction</string>
 
     <!-- fragment sign up -->
     <string name="acquainted">Давайте познайомимося</string>

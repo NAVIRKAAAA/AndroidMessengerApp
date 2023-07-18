@@ -14,7 +14,6 @@ class DialogCalendar : AppCompatDialogFragment() {
     private lateinit var binding: FragmentDialogCalendarBinding
 
     private var listener: DialogCalendarListener? = null
-
     fun setListener(listener: DialogCalendarListener) {
         this.listener = listener
     }

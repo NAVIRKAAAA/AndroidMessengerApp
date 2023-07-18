@@ -8,15 +8,16 @@ import androidx.lifecycle.lifecycleScope
 import com.rhorbachevskyi.viewpager.data.model.UserRequest
 import com.rhorbachevskyi.viewpager.data.model.UserWithTokens
 import com.rhorbachevskyi.viewpager.databinding.FragmentSignInBinding
-import com.rhorbachevskyi.viewpager.domain.utils.ApiStateUser
+import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
 import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.utils.DataStore.saveData
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.gone
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
+@AndroidEntryPoint
 class SignInFragment : BaseFragment<FragmentSignInBinding>(FragmentSignInBinding::inflate) {
     private val viewModel: SignInViewModel by viewModels()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -74,9 +75,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(FragmentSignInBinding
                             )
                         navController.navigate(direction)
                     }
-                    is ApiStateUser.Initial -> {
-
-                    }
+                    is ApiStateUser.Initial -> Unit
                     is ApiStateUser.Loading -> {
                         binding.progressBar.visible()
                     }

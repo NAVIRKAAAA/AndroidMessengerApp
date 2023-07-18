@@ -8,7 +8,7 @@ import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.databinding.FragmentViewPagerBinding
 import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.adapter.ViewPagerAdapter
-import java.lang.IllegalStateException
+import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 
 class ViewPagerFragment :
     BaseFragment<FragmentViewPagerBinding>(FragmentViewPagerBinding::inflate) {
@@ -23,11 +23,12 @@ class ViewPagerFragment :
     private fun setupViewPager() {
         val adapter = ViewPagerAdapter(this@ViewPagerFragment, args)
         with(binding) {
+            viewPager.offscreenPageLimit = 1
             viewPager.adapter = adapter
             TabLayoutMediator(tabLayout, viewPager) { tab, position ->
                 tab.text = when (position) {
-                    0 -> getString(R.string.profile)
-                    1 -> getString(R.string.contacts)
+                    Constants.FIRST_FRAGMENT -> getString(R.string.profile)
+                    Constants.SECOND_FRAGMENT -> getString(R.string.contacts)
                     else -> throw IllegalStateException("Unknown tab!")
                 }
             }.attach()

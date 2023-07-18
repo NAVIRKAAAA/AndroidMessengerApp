@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.viewpager.domain.utils
+package com.rhorbachevskyi.viewpager.domain.states
 
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
 

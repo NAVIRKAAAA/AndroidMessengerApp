@@ -9,7 +9,7 @@ import androidx.navigation.fragment.navArgs
 import com.rhorbachevskyi.viewpager.data.model.UserData
 import com.rhorbachevskyi.viewpager.data.model.UserWithTokens
 import com.rhorbachevskyi.viewpager.databinding.FragmentProfileBinding
-import com.rhorbachevskyi.viewpager.domain.utils.ApiStateUser
+import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
 import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.ViewPagerFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.ViewPagerFragmentDirections
@@ -18,9 +18,11 @@ import com.rhorbachevskyi.viewpager.presentation.utils.DataStore
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.gone
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding::inflate) {
 
     private val args: UserProfileArgs by navArgs()
@@ -30,6 +32,7 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
         super.onViewCreated(view, savedInstanceState)
         initialUser()
         setListeners()
+        setUserProfile()
         setObserver()
     }
 
@@ -46,9 +49,10 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
 
     private fun viewContact() {
         binding.buttonViewContacts.setOnClickListener {
-            (parentFragment as? ViewPagerFragment)?.openFragment(1)
+            (parentFragment as? ViewPagerFragment)?.openFragment(Constants.SECOND_FRAGMENT)
         }
     }
+
     private fun logout() {
         binding.textViewLogout.setOnClickListener {
             lifecycleScope.launch(Dispatchers.IO) {
@@ -69,7 +73,6 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
             navController.navigate(direction)
         }
     }
-
     private fun setObserver() {
         lifecycleScope.launch {
             viewModel.getUserState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
@@ -78,9 +81,7 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
                         binding.root.showErrorSnackBar(requireContext(), it.error)
                     }
 
-                    ApiStateUser.Initial -> {
-
-                    }
+                    ApiStateUser.Initial -> Unit
 
                     ApiStateUser.Loading -> {
                         binding.progressBar.visible()
@@ -102,9 +103,9 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
 
     private fun setUserProfile() {
         with(binding) {
-            textViewName.text = user.name ?: ""
-            textViewCareer.text = user.career ?: ""
-            textViewHomeAddress.text = user.address ?: ""
+            textViewName.text = user.name
+            textViewCareer.text = user.career
+            textViewHomeAddress.text = user.address
         }
     }
 }

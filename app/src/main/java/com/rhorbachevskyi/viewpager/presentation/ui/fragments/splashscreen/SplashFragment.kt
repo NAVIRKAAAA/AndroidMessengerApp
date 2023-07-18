@@ -7,14 +7,15 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.rhorbachevskyi.viewpager.data.model.UserWithTokens
 import com.rhorbachevskyi.viewpager.databinding.FragmentSplashScreenBinding
-import com.rhorbachevskyi.viewpager.domain.utils.ApiStateUser
+import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
 import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
 
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.DataStore
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-
+@AndroidEntryPoint
 class SplashFragment :
     BaseFragment<FragmentSplashScreenBinding>(FragmentSplashScreenBinding::inflate) {
     private val viewModel: SplashScreenViewModel by viewModels()
@@ -51,12 +52,9 @@ class SplashFragment :
                         navController.navigate(direction)
                     }
 
-                    is ApiStateUser.Loading -> {
-                    }
+                    is ApiStateUser.Loading -> Unit
 
-                    is ApiStateUser.Initial -> {
-
-                    }
+                    is ApiStateUser.Initial -> Unit
 
                     is ApiStateUser.Error -> {
                         binding.root.showErrorSnackBar(requireContext(), it.error)

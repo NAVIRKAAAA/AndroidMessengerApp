@@ -7,7 +7,9 @@ import com.rhorbachevskyi.viewpager.databinding.FragmentSignUpBinding
 import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.utils.Validation
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visibleIf
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class AuthFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding::inflate) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

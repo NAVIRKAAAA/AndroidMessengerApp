@@ -25,6 +25,8 @@ object Constants {
 
     // screens in viewpager
     const val FRAGMENT_COUNT = 2
+    const val FIRST_FRAGMENT = 0
+    const val SECOND_FRAGMENT = 1
 
     // validation
     const val PASSWORD_REGEX =
@@ -33,4 +35,7 @@ object Constants {
     // date
     const val OUTPUT_DATE_FORMAT = "dd/MM/yyyy"
     const val INPUT_DATE_FORMAT = "EEE MMM dd HH:mm:ss zzz yyyy"
+
+    // authorization prefix
+    const val AUTHORIZATION_PREFIX = "Bearer"
 }
