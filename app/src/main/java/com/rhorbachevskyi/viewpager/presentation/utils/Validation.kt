@@ -10,7 +10,7 @@ object Validation {
     fun isValidPassword(password: String): Boolean =
         Regex(Constants.PASSWORD_REGEX).matches(password) && !password.contains(" ")
 
-    fun isValidUserName(username: String): Boolean = username.length >= 3
-    fun isValidMobilePhone(phone: String):Boolean = phone.length >= 10
+    fun isValidUserName(username: String): Boolean = username.length >= Constants.NUMBER_OF_MIN_USERNAME_SIZE
+    fun isValidMobilePhone(phone: String):Boolean = phone.length >= Constants.NUMBER_OF_MIN_MOBILE_SIZE
 
 }

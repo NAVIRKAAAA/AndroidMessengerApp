@@ -2,10 +2,8 @@ package com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rhorbachevskyi.viewpager.data.repository.ContactRepository
+import com.rhorbachevskyi.viewpager.data.repository.repositoryimpl.NetworkImpl
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
-import com.rhorbachevskyi.viewpager.data.repository.repositoryimpl.NetworkImplementation
-import com.rhorbachevskyi.viewpager.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,9 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserProfileViewModel @Inject constructor(
-    private val userRepository: UserRepository,
-    private val contactRepository: ContactRepository,
-    private val networkImpl: NetworkImplementation = NetworkImplementation(userRepository, contactRepository)
+    private val networkImpl: NetworkImpl
 ) : ViewModel() {
     private val _getUserStateFlow = MutableStateFlow<ApiStateUser>(ApiStateUser.Initial)
     val getUserState: StateFlow<ApiStateUser> = _getUserStateFlow

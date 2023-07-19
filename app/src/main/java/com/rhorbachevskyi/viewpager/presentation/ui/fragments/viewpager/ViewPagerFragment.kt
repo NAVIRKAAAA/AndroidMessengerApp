@@ -8,6 +8,7 @@ import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.databinding.FragmentViewPagerBinding
 import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.adapter.ViewPagerAdapter
+import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import java.lang.IllegalStateException
 
 class ViewPagerFragment :
@@ -26,8 +27,8 @@ class ViewPagerFragment :
             viewPager.adapter = adapter
             TabLayoutMediator(tabLayout, viewPager) { tab, position ->
                 tab.text = when (position) {
-                    0 -> getString(R.string.profile)
-                    1 -> getString(R.string.contacts)
+                    Constants.FIRST_FRAGMENT -> getString(R.string.profile)
+                    Constants.SECOND_FRAGMENT -> getString(R.string.contacts)
                     else -> throw IllegalStateException("Unknown tab!")
                 }
             }.attach()

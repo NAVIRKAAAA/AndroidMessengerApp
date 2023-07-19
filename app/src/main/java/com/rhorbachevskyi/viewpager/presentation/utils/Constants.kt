@@ -25,10 +25,14 @@ object Constants {
 
     // screens in viewpager
     const val FRAGMENT_COUNT = 2
+    const val FIRST_FRAGMENT = 0
+    const val SECOND_FRAGMENT = 1
 
     // validation
     const val PASSWORD_REGEX =
         "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)[A-Za-z\\d]{7,}\$"
+    const val NUMBER_OF_MIN_USERNAME_SIZE = 3
+    const val NUMBER_OF_MIN_MOBILE_SIZE = 10
 
     // date
     const val OUTPUT_DATE_FORMAT = "dd/MM/yyyy"

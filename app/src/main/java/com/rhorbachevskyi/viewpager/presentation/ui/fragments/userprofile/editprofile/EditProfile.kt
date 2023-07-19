@@ -8,7 +8,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
-import com.rhorbachevskyi.viewpager.data.model.UserData
 import com.rhorbachevskyi.viewpager.databinding.FragmentEditProfileBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
 import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
@@ -24,6 +23,7 @@ import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visibleIf
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+
 @AndroidEntryPoint
 class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfileBinding::inflate) {
     private val viewModel: EditTextViewModel by viewModels()
@@ -50,19 +50,13 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
                     )
                 ) {
                     viewModel.requestEditUser(
-                        UserData(
-                            args.userData.user.id,
-                            textInputEditTextUserName.text.toString(),
-                            args.userData.user.email,
-                            textInputEditTextPhone.text.toString(),
-                            textInputEditTextAddress.text.toString(),
-                            textInputEditTextCareer.text.toString(),
-                            Parser.getDataFromString(textInputEditTextDate.text.toString()),
-                            args.userData.user.facebook.toString(),
-                            args.userData.user.instagram.toString(),
-                            args.userData.user.twitter.toString(),
-                            args.userData.user.linkedin.toString()
-                        ), args.userData.accessToken
+                        args.userData.user.id,
+                        args.userData.accessToken,
+                        textInputEditTextUserName.text.toString(),
+                        textInputEditTextCareer.text.toString(),
+                        textInputEditTextPhone.text.toString(),
+                        textInputEditTextAddress.text.toString(),
+                        Parser.getDataFromString(textInputEditTextDate.text.toString()),
                     )
                 }
             }
@@ -89,11 +83,10 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
                 when (it) {
                     is ApiStateUser.Error -> {
                         binding.root.showErrorSnackBar(requireContext(), it.error)
+                        binding.progressBar.invisible()
                     }
 
-                    ApiStateUser.Initial -> {
-
-                    }
+                    ApiStateUser.Initial -> Unit
 
                     ApiStateUser.Loading -> {
                         binding.progressBar.visible()

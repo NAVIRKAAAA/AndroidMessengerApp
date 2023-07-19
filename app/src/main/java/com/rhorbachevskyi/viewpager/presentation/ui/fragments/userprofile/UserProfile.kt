@@ -79,9 +79,7 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
                         binding.root.showErrorSnackBar(requireContext(), it.error)
                     }
 
-                    ApiStateUser.Initial -> {
-
-                    }
+                    ApiStateUser.Initial -> Unit
 
                     ApiStateUser.Loading -> {
                         binding.progressBar.visible()

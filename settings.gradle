@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "ViewPager"
+rootProject.name = "clean"
 include ':app'

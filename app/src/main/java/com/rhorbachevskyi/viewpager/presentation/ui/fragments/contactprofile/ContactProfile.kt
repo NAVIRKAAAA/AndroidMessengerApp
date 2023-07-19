@@ -61,9 +61,7 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
                         it.error
                     )
 
-                    ApiStateUsers.Initial -> {
-
-                    }
+                    ApiStateUsers.Initial -> Unit
 
                     ApiStateUsers.Loading -> {
                         binding.progressBar.visible()

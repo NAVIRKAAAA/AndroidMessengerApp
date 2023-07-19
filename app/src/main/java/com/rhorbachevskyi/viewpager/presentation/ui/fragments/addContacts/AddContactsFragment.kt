@@ -52,7 +52,6 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
                 navController.navigate(direction, extras)
             }
 
-
         })
     }
 
@@ -71,10 +70,11 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
 
 
     private fun setObserves() {
-        viewModel.users.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+        lifecycleScope.launch {
+            viewModel.users.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
+                adapter.submitList(it)
+            }
         }
-
         lifecycleScope.launch {
             viewModel.usersState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                 when (it) {
@@ -82,9 +82,7 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
                         binding.progressBar.invisible()
                     }
 
-                    is ApiStateUsers.Initial -> {
-
-                    }
+                    is ApiStateUsers.Initial -> Unit
 
                     is ApiStateUsers.Loading -> {
                         binding.progressBar.visible()
@@ -109,11 +107,13 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
         navigateBack()
         searchView()
     }
+
     private fun navigateBack() {
         binding.imageViewNavigationBack.setOnClickListener {
             navController.navigateUp()
         }
     }
+
     private fun searchView() {
         with(binding) {
             imageSearchView.setOnCloseListener {
@@ -140,6 +140,7 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
             })
         }
     }
+
     private fun closeSearchView() {
         with(binding) {
             imageSearchView.setQuery("", false)

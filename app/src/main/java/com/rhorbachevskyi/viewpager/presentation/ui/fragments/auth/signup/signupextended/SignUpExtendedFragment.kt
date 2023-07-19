@@ -19,6 +19,7 @@ import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.DataStore.saveData
 import com.rhorbachevskyi.viewpager.presentation.utils.Validation
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.loadImage
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
@@ -132,13 +133,12 @@ class SignUpExtendedFragment : BaseFragment<FragmentSignUpExtendedBinding>(Fragm
                         binding.progressBar.visible()
                     }
 
-                    is ApiStateUser.Initial -> {
-
-                    }
+                    is ApiStateUser.Initial -> Unit
 
                     is ApiStateUser.Error -> {
                         binding.root.showErrorSnackBar(requireContext(), it.error)
                         viewModel.isLogout()
+                        binding.progressBar.invisible()
                     }
                 }
             }

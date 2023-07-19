@@ -30,6 +30,7 @@ import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visibleIf
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+
 @AndroidEntryPoint
 class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsBinding::inflate) {
     private var thisScreen = true
@@ -52,7 +53,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                         viewModel.changeMultiselectMode()
                     }
                 } else {
-                    if(viewModel.contactList.value?.contains(contact) == false) return
+                    if (viewModel.contactList.value.contains(contact) == false) return
                     thisScreen = false
                     val extras = FragmentNavigatorExtras(*transitionPairs)
                     val direction =
@@ -175,8 +176,8 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
     }
 
     private fun setContactsText(newText: String?, thisScreen: Boolean) {
-        if(!thisScreen) return
-        val isContactListEmpty = viewModel.contactList.value?.isEmpty() == true
+        if (!thisScreen) return
+        val isContactListEmpty = viewModel.contactList.value.isEmpty()
         val isTextEmpty = newText?.isEmpty() == true
         val isNoResult =
             !isTextEmpty && viewModel.updateContactList(newText) == 0 && isContactListEmpty
@@ -192,10 +193,11 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
 
     private fun setObservers() {
         with(binding) {
-            viewModel.contactList.observe(viewLifecycleOwner) {
-                adapter.submitList(it)
+            lifecycleScope.launch {
+                viewModel.contactList.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
+                    adapter.submitList(it)
+                }
             }
-
             viewModel.isMultiselect.observe(viewLifecycleOwner) {
                 recyclerViewContacts.adapter = adapter
                 adapter.isMultiselectMode = it
@@ -223,13 +225,12 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                             progressBar.visible()
                         }
 
-                        is ApiStateUsers.Initial -> {
-
-                        }
+                        is ApiStateUsers.Initial -> Unit
                     }
                 }
             }
         }
+
     }
 
     private fun closeSearchView() {
@@ -255,7 +256,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 deleteUserWithRestore(
-                    viewModel.contactList.value?.getOrNull(viewHolder.bindingAdapterPosition)!!
+                    viewModel.contactList.value.getOrNull(viewHolder.bindingAdapterPosition)!!
                 )
             }
 
@@ -264,7 +265,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
     }
 
     fun deleteUserWithRestore(contact: Contact) {
-        val position = viewModel.contactList.value?.indexOfFirst { it == contact }
+        val position = viewModel.contactList.value.indexOfFirst { it == contact }
         if (viewModel.deleteContactFromList(
                 args.userData.user.id,
                 args.userData.accessToken,
@@ -282,7 +283,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                             args.userData.user.id,
                             contact,
                             args.userData.accessToken,
-                            position!!
+                            position
                         )
                     ) {
                         setContactsText("", thisScreen)

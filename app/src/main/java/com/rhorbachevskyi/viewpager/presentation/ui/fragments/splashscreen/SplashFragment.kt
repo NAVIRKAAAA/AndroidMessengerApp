@@ -52,12 +52,9 @@ class SplashFragment :
                         navController.navigate(direction)
                     }
 
-                    is ApiStateUser.Loading -> {
-                    }
+                    is ApiStateUser.Loading -> Unit
 
-                    is ApiStateUser.Initial -> {
-
-                    }
+                    is ApiStateUser.Initial -> Unit
 
                     is ApiStateUser.Error -> {
                         binding.root.showErrorSnackBar(requireContext(), it.error)

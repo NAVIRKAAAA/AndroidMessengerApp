@@ -5,10 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rhorbachevskyi.viewpager.R
+import com.rhorbachevskyi.viewpager.data.UserDataHolder
 import com.rhorbachevskyi.viewpager.data.model.Contact
-import com.rhorbachevskyi.viewpager.data.repository.ContactRepository
-import com.rhorbachevskyi.viewpager.data.repository.repositoryimpl.NetworkImplementation
-import com.rhorbachevskyi.viewpager.data.repository.UserRepository
+import com.rhorbachevskyi.viewpager.data.repository.repositoryimpl.NetworkImpl
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -19,19 +18,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ContactsViewModel @Inject constructor(
-    private val userRepository: UserRepository,
-    private val contactRepository: ContactRepository,
-    private val networkImpl: NetworkImplementation = NetworkImplementation(userRepository, contactRepository)
+    private val networkImpl: NetworkImpl
 ) : ViewModel() {
 
     private val _usersStateFlow = MutableStateFlow<ApiStateUsers>(ApiStateUsers.Initial)
     val usersState: StateFlow<ApiStateUsers> = _usersStateFlow
 
-    private val _contactList = MutableLiveData(listOf<Contact>())
-    val contactList: LiveData<List<Contact>> get() = _contactList
+    private val _contactList = MutableStateFlow(listOf<Contact>())
+    val contactList: StateFlow<List<Contact>> = _contactList
 
     private val _selectContacts = MutableLiveData<List<Contact>>(listOf())
-    val selectContacts: LiveData<List<Contact>> get() = _selectContacts
+    val selectContacts: LiveData<List<Contact>> = _selectContacts
 
     val isMultiselect = MutableLiveData(false)
 
@@ -44,20 +41,10 @@ class ContactsViewModel @Inject constructor(
     fun initialContactList(userId: Long, accessToken: String) =
         viewModelScope.launch(Dispatchers.IO) {
             _usersStateFlow.value = ApiStateUsers.Loading
-            _contactList.postValue(
-                networkImpl.getContacts(
-                    userId,
-                    accessToken
-                )
-            )
-            _usersStateFlow.value = networkImpl.getStateContact()
+            _usersStateFlow.value = networkImpl.getContacts(userId, accessToken)
+            _contactList.value = UserDataHolder.getContacts()
             startedListContact.clear()
-            startedListContact.addAll(
-                networkImpl.getContacts(
-                    userId,
-                    accessToken
-                )
-            )
+            startedListContact.addAll(_contactList.value)
         }
 
     private fun addContact(userId: Long, contact: Contact, accessToken: String) =
@@ -71,9 +58,9 @@ class ContactsViewModel @Inject constructor(
         userId: Long,
         contact: Contact,
         accessToken: String,
-        position: Int = _contactList.value?.size ?: 0
+        position: Int = _contactList.value.size
     ): Boolean {
-        val contactList = _contactList.value?.toMutableList() ?: mutableListOf()
+        val contactList = _contactList.value.toMutableList()
 
         if (!contactList.contains(contact)) {
             contactList.add(position, contact)
@@ -106,8 +93,8 @@ class ContactsViewModel @Inject constructor(
         }
 
     fun deleteContactFromList(userId: Long, accessToken: String, contactId: Long): Boolean {
-        val contact = _contactList.value?.find { it.id == contactId }
-        val contactList = _contactList.value?.toMutableList() ?: return false
+        val contact = _contactList.value.find { it.id == contactId }
+        val contactList = _contactList.value.toMutableList()
 
         if (contactList.contains(contact)) {
             deleteContact(userId, accessToken, contactId)
@@ -162,6 +149,6 @@ class ContactsViewModel @Inject constructor(
     }
 
     fun deleteStates() {
-        networkImpl.deleteStates()
+        UserDataHolder.deleteStates()
     }
 }
