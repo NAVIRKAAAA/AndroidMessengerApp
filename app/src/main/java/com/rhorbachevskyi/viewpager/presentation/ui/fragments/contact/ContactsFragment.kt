@@ -10,21 +10,20 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.google.android.material.snackbar.Snackbar
 import com.rhorbachevskyi.viewpager.R
+import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserWithTokens
 import com.rhorbachevskyi.viewpager.databinding.FragmentContactsBinding
-import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
+import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.adapter.RecyclerViewAdapter
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.adapter.interfaces.ContactItemClickListener
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.ViewPagerFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.ViewPagerFragmentDirections
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.setupSwipeToDelete
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visibleIf
@@ -93,9 +92,16 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
     private fun initialRecyclerview() {
         viewModel.deleteStates()
         viewModel.initialContactList(args.userData.user.id, args.userData.accessToken)
-        binding.recyclerViewContacts.layoutManager = LinearLayoutManager(context)
-        binding.recyclerViewContacts.adapter = adapter
-        ItemTouchHelper(setTouchCallBackListener()).attachToRecyclerView(binding.recyclerViewContacts)
+        with(binding) {
+            recyclerViewContacts.layoutManager = LinearLayoutManager(context)
+            recyclerViewContacts.adapter = adapter
+            recyclerViewContacts.setupSwipeToDelete(
+                deleteFunction = { it ->
+                    deleteUserWithRestore(viewModel.contactList.value.getOrNull(it)!!)
+                },
+                isSwipeEnabled = { viewModel.isMultiselect.value == false }
+            )
+        }
     }
 
     private fun setClickListener() {
@@ -237,30 +243,6 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
         with(binding) {
             imageSearchView.setQuery("", false)
             imageSearchView.isIconified = true
-        }
-    }
-
-
-    private fun setTouchCallBackListener(): ItemTouchHelper.Callback {
-        return object : ItemTouchHelper.SimpleCallback(0, 0) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean = false
-
-            override fun getSwipeDirs(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder
-            ): Int = ItemTouchHelper.LEFT
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                deleteUserWithRestore(
-                    viewModel.contactList.value.getOrNull(viewHolder.bindingAdapterPosition)!!
-                )
-            }
-
-            override fun isItemViewSwipeEnabled(): Boolean = viewModel.isMultiselect.value == false
         }
     }
 

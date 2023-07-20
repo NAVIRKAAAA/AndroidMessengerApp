@@ -17,6 +17,7 @@ import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapter.AddContactsAdapter
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapter.interfaces.UserItemClickListener
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.checkForInternet
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
@@ -32,7 +33,12 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
     private val adapter: AddContactsAdapter by lazy {
         AddContactsAdapter(listener = object : UserItemClickListener {
             override fun onClickAdd(contact: Contact) {
-                viewModel.addContact(args.userData.user.id, contact, args.userData.accessToken)
+                viewModel.addContact(
+                    args.userData.user.id,
+                    contact,
+                    args.userData.accessToken,
+                    requireContext().checkForInternet()
+                )
             }
 
             override fun onClickContact(
@@ -57,7 +63,9 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getAllUsers(args.userData.accessToken, args.userData.user)
+        viewModel.getAllUsers(
+            args.userData.accessToken, args.userData.user, requireContext().checkForInternet()
+        )
         initialRecyclerview()
         setObserves()
         setListeners()
@@ -82,7 +90,9 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
                         binding.progressBar.invisible()
                     }
 
-                    is ApiStateUsers.Initial -> Unit
+                    is ApiStateUsers.Initial -> {
+                        binding.progressBar.invisible()
+                    }
 
                     is ApiStateUsers.Loading -> {
                         binding.progressBar.visible()
@@ -91,7 +101,6 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
                     is ApiStateUsers.Error -> {
                         binding.progressBar.invisible()
                         binding.root.showErrorSnackBar(requireContext(), it.error)
-
                     }
                 }
             }

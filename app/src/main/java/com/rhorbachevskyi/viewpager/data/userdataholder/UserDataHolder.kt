@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.viewpager.data
+package com.rhorbachevskyi.viewpager.data.userdataholder
 
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
@@ -10,11 +10,11 @@ object UserDataHolder {
     private var contacts = ArrayList<Contact>()
 
     fun setServerList(serverUsers: MutableStateFlow<List<Contact>>) {
-        this.serverUsers.value = serverUsers.value
+        UserDataHolder.serverUsers.value = serverUsers.value
     }
 
     fun setContactList(contacts: ArrayList<Contact>) {
-        this.contacts = contacts
+        UserDataHolder.contacts = contacts
     }
 
     fun setStates(state : Pair<Long, ApiStateUsers>) {

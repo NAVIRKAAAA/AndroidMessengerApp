@@ -1,6 +1,5 @@
 package com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapter
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -111,8 +110,6 @@ class AddContactsAdapter(private val listener: UserItemClickListener) :
             return view to name
         }
     }
-
-    @SuppressLint("NotifyDataSetChanged")
     fun setStates(states: ArrayList<Pair<Long, ApiStateUsers>>) {
         if (this.states.size != states.size) {
             this.states = states

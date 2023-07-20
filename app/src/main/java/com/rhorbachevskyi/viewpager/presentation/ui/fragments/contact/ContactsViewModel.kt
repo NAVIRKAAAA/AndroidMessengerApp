@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rhorbachevskyi.viewpager.R
-import com.rhorbachevskyi.viewpager.data.UserDataHolder
+import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.repository.repositoryimpl.NetworkImpl
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers

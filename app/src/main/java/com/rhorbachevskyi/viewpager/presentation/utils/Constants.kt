@@ -30,7 +30,11 @@ object Constants {
 
     // validation
     const val PASSWORD_REGEX =
-        "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)[A-Za-z\\d]{7,}\$"
+        "(?=.*\\d)" +
+                "(?=.*[a-z])" +
+                "(?=.*[A-Z])" +
+                "(?=.*[@#$%^&+=])" +
+                "(?=\\S+\$).{8,}\$"
     const val NUMBER_OF_MIN_USERNAME_SIZE = 3
     const val NUMBER_OF_MIN_MOBILE_SIZE = 10
 

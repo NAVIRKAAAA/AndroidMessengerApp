@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.viewpager.domain.di
+package com.rhorbachevskyi.viewpager.domain.di.general
 
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import dagger.Module

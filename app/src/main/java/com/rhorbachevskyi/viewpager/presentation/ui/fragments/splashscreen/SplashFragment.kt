@@ -12,6 +12,7 @@ import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
 
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.DataStore
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -57,6 +58,7 @@ class SplashFragment :
                     is ApiStateUser.Initial -> Unit
 
                     is ApiStateUser.Error -> {
+                        binding.progressBar.invisible()
                         binding.root.showErrorSnackBar(requireContext(), it.error)
                     }
                 }

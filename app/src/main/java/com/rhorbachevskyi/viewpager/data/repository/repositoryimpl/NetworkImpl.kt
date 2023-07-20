@@ -3,7 +3,8 @@ package com.rhorbachevskyi.viewpager.data.repository.repositoryimpl
 
 import android.content.Context
 import com.rhorbachevskyi.viewpager.R
-import com.rhorbachevskyi.viewpager.data.UserDataHolder
+import com.rhorbachevskyi.viewpager.data.database.repository.DatabaseRepository
+import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserData
 import com.rhorbachevskyi.viewpager.data.model.UserRequest
@@ -14,13 +15,15 @@ import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants.AUTHORIZATION_PREFIX
 import com.rhorbachevskyi.viewpager.presentation.utils.DataStore
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.log
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.Date
 import javax.inject.Inject
 
 class NetworkImpl @Inject constructor(
     private val userRepository: UserRepository,
-    private val contactRepository: ContactRepository
+    private val contactRepository: ContactRepository,
+    private val databaseRepository: DatabaseRepository
 ) {
     suspend fun registerUser(body: UserRequest): ApiStateUser {
         return try {
@@ -128,7 +131,7 @@ class NetworkImpl @Inject constructor(
     suspend fun getUser(userId: Long, accessToken: String): ApiStateUser {
         return try {
             val response = userRepository.getUser(userId, "$AUTHORIZATION_PREFIX $accessToken")
-
+            log(databaseRepository.getUsers().toString())
             response.data?.let { ApiStateUser.Success(it) }
                 ?: ApiStateUser.Error(R.string.invalid_request)
         } catch (e: Exception) {
