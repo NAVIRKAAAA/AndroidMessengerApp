@@ -1,18 +1,19 @@
 package com.rhorbachevskyi.viewpager.data.database.repository.repositoryimpl
 
 import com.rhorbachevskyi.viewpager.R
-import com.rhorbachevskyi.viewpager.data.database.repository.DatabaseRepository
+import com.rhorbachevskyi.viewpager.data.database.repository.UserDatabaseRepository
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.fromEntity
+
 import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 
-class DatabaseImpl @Inject constructor(private val databaseRepository: DatabaseRepository) {
+class DatabaseImpl @Inject constructor(private val userDatabaseRepository: UserDatabaseRepository) {
     suspend fun getAllUsers(): ApiStateUsers {
         return try {
-            val response = databaseRepository.getUsers()
+            val response = userDatabaseRepository.getUsers()
             val users: MutableStateFlow<List<Contact>> = MutableStateFlow(emptyList())
             users.value =
                 response.map { contactEntity -> contactEntity.fromEntity() }

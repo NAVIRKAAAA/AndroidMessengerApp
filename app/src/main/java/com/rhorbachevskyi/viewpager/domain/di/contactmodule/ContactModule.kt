@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.viewpager.domain.di
+package com.rhorbachevskyi.viewpager.domain.di.contactmodule
 
 import com.rhorbachevskyi.viewpager.domain.network.ContactApiService
 import dagger.Module

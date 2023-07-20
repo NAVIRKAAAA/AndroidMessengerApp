@@ -4,8 +4,8 @@ import com.rhorbachevskyi.viewpager.data.database.entity.ContactEntity
 import com.rhorbachevskyi.viewpager.data.database.interfaces.UserDao
 import javax.inject.Inject
 
-class DatabaseRepository @Inject constructor(private val userDao: UserDao) : UserDao {
-    override suspend fun updateUsers(users: List<ContactEntity>) {
+class UserDatabaseRepository @Inject constructor(private val userDao: UserDao) : UserDao {
+    override suspend fun updateUsers(users: List<ContactEntity>)  {
         userDao.updateUsers(users)
     }
 
@@ -13,5 +13,4 @@ class DatabaseRepository @Inject constructor(private val userDao: UserDao) : Use
     override suspend fun addUsers(users: List<ContactEntity>) {
         userDao.addUsers(users)
     }
-
 }

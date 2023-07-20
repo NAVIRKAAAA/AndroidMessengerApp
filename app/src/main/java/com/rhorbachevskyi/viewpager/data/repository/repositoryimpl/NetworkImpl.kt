@@ -3,7 +3,7 @@ package com.rhorbachevskyi.viewpager.data.repository.repositoryimpl
 
 import android.content.Context
 import com.rhorbachevskyi.viewpager.R
-import com.rhorbachevskyi.viewpager.data.database.repository.DatabaseRepository
+import com.rhorbachevskyi.viewpager.data.database.repository.UserDatabaseRepository
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserData
@@ -15,15 +15,16 @@ import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants.AUTHORIZATION_PREFIX
 import com.rhorbachevskyi.viewpager.presentation.utils.DataStore
-import com.rhorbachevskyi.viewpager.presentation.utils.ext.log
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.toEntity
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import java.util.Date
 import javax.inject.Inject
 
 class NetworkImpl @Inject constructor(
     private val userRepository: UserRepository,
     private val contactRepository: ContactRepository,
-    private val databaseRepository: DatabaseRepository
+    private val userDatabaseRepository: UserDatabaseRepository
 ) {
     suspend fun registerUser(body: UserRequest): ApiStateUser {
         return try {
@@ -75,7 +76,13 @@ class NetworkImpl @Inject constructor(
             val users: MutableStateFlow<List<Contact>> =
                 MutableStateFlow(filteredUsers?.map { it.toContact() } ?: emptyList())
             UserDataHolder.setServerList(users)
+            if(userDatabaseRepository.getUsers().isEmpty()) {
+                userDatabaseRepository.addUsers(users.value.map { contact -> contact.toEntity()})
+            } else {
+                userDatabaseRepository.updateUsers(users.value.map { contact -> contact.toEntity()})
+            }
             response.data.let { ApiStateUsers.Success(it.users) }
+
         } catch (e: Exception) {
             ApiStateUsers.Error(R.string.invalid_request)
         }
@@ -131,7 +138,6 @@ class NetworkImpl @Inject constructor(
     suspend fun getUser(userId: Long, accessToken: String): ApiStateUser {
         return try {
             val response = userRepository.getUser(userId, "$AUTHORIZATION_PREFIX $accessToken")
-            log(databaseRepository.getUsers().toString())
             response.data?.let { ApiStateUser.Success(it) }
                 ?: ApiStateUser.Error(R.string.invalid_request)
         } catch (e: Exception) {

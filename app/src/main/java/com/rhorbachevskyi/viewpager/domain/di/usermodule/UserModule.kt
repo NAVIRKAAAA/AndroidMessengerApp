@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.viewpager.domain.di
+package com.rhorbachevskyi.viewpager.domain.di.usermodule
 
 import com.rhorbachevskyi.viewpager.domain.network.UserApiService
 import dagger.Module
