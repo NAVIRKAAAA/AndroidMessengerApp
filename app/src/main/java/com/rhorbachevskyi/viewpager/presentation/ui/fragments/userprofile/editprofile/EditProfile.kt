@@ -7,7 +7,8 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.navArgs
+import com.rhorbachevskyi.viewpager.data.model.UserResponse
+import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.databinding.FragmentEditProfileBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
 import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
@@ -16,6 +17,7 @@ import com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile.interf
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.Parser
 import com.rhorbachevskyi.viewpager.presentation.utils.Validation
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.checkForInternet
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.loadImage
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
@@ -27,13 +29,18 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfileBinding::inflate) {
     private val viewModel: EditTextViewModel by viewModels()
-    private val args: EditProfileArgs by navArgs()
+    private lateinit var userData: UserResponse.Data
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initUser()
         setListeners()
         setObserver()
         setInputs()
         setCalendar()
+    }
+
+    private fun initUser() {
+        userData = UserDataHolder.getUserData()
     }
 
     private fun setListeners() {
@@ -50,13 +57,15 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
                     )
                 ) {
                     viewModel.requestEditUser(
-                        args.userData.user.id,
-                        args.userData.accessToken,
+                        userData.user.id,
+                        userData.accessToken,
                         textInputEditTextUserName.text.toString(),
                         textInputEditTextCareer.text.toString(),
                         textInputEditTextPhone.text.toString(),
                         textInputEditTextAddress.text.toString(),
                         Parser.getDataFromString(textInputEditTextDate.text.toString()),
+                        userData.refreshToken,
+                        requireContext().checkForInternet()
                     )
                 }
             }
@@ -78,22 +87,24 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
     }
 
     private fun setObserver() {
-        lifecycleScope.launch {
-            viewModel.editUserState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
-                when (it) {
-                    is ApiStateUser.Error -> {
-                        binding.root.showErrorSnackBar(requireContext(), it.error)
-                        binding.progressBar.invisible()
-                    }
+        with(binding) {
+            lifecycleScope.launch {
+                viewModel.editUserState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
+                    when (it) {
+                        is ApiStateUser.Error -> {
+                            root.showErrorSnackBar(requireContext(), it.error)
+                            progressBar.invisible()
+                        }
 
-                    ApiStateUser.Initial -> Unit
+                        ApiStateUser.Initial -> Unit
 
-                    ApiStateUser.Loading -> {
-                        binding.progressBar.visible()
-                    }
+                        ApiStateUser.Loading -> {
+                            progressBar.visible()
+                        }
 
-                    is ApiStateUser.Success -> {
-                        navController.navigateUp()
+                        is ApiStateUser.Success -> {
+                            navController.navigateUp()
+                        }
                     }
                 }
             }
@@ -104,12 +115,12 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
         inputsErrors()
         with(binding) {
             imageViewSignUpExtendedMockup.invisible()
-            imageViewSignUpExtendedPhoto.loadImage(args.userData.user.image)
-            textInputEditTextUserName.setText(args.userData.user.name ?: "")
-            textInputEditTextCareer.setText(args.userData.user.career ?: "")
-            textInputEditTextPhone.setText(args.userData.user.phone ?: "")
-            textInputEditTextAddress.setText(args.userData.user.address ?: "")
-            textInputEditTextDate.setText(args.userData.user.birthday?.let {
+            imageViewSignUpExtendedPhoto.loadImage(userData.user.image)
+            textInputEditTextUserName.setText(userData.user.name ?: "")
+            textInputEditTextCareer.setText(userData.user.career ?: "")
+            textInputEditTextPhone.setText(userData.user.phone ?: "")
+            textInputEditTextAddress.setText(userData.user.address ?: "")
+            textInputEditTextDate.setText(userData.user.birthday?.let {
                 Parser.getStringFromData(
                     it.toString()
                 )

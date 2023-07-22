@@ -65,9 +65,7 @@ class AddContactsAdapter(private val listener: UserItemClickListener) :
                         progressBar.visible()
                         imageViewDoneAddContact.invisible()
                     }
-                    is ApiStateUsers.Error -> {
-
-                    }
+                    is ApiStateUsers.Error -> Unit
                 }
             }
         }

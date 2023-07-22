@@ -2,6 +2,7 @@ package com.rhorbachevskyi.viewpager.presentation.ui.fragments.contactprofile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.repository.repositoryimpl.NetworkImpl
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
@@ -22,8 +23,12 @@ class ContactProfileViewModel @Inject constructor(
 
     private var alreadyAdded = false
 
-    fun addContact(userId: Long, contact: Contact, accessToken: String) =
+    fun addContact(userId: Long, contact: Contact, accessToken: String, hasInternet: Boolean) =
         viewModelScope.launch(Dispatchers.IO) {
+            if(!hasInternet) {
+                _usersStateFlow.value = ApiStateUsers.Error(R.string.No_internet_connection)
+                return@launch
+            }
             if (alreadyAdded) return@launch
             alreadyAdded = true
 
@@ -35,4 +40,7 @@ class ContactProfileViewModel @Inject constructor(
                     accessToken
                 )
         }
+    fun changeState() {
+        _usersStateFlow.value = ApiStateUsers.Initial
+    }
 }

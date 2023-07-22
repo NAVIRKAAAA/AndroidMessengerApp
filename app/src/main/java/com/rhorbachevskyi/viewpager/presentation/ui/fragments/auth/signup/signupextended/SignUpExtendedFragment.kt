@@ -12,7 +12,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.UserRequest
-import com.rhorbachevskyi.viewpager.data.model.UserWithTokens
 import com.rhorbachevskyi.viewpager.databinding.FragmentSignUpExtendedBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
 import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
@@ -112,33 +111,29 @@ class SignUpExtendedFragment : BaseFragment<FragmentSignUpExtendedBinding>(Fragm
 
 
     private fun setObservers() {
-        lifecycleScope.launch {
-            viewModel.registerState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
-                when (it) {
-                    is ApiStateUser.Success -> {
-                        if (args.rememberMe) saveData(requireContext(), args.email, args.password)
-                        viewModel.isLogout()
-                        val direction =
-                            SignUpExtendedFragmentDirections.actionSignUpExtendedFragmentToViewPagerFragment(
-                                UserWithTokens(
-                                    it.userData.user,
-                                    it.userData.accessToken,
-                                    it.userData.refreshToken
-                                )
-                            )
-                        navController.navigate(direction)
-                    }
+        with(binding) {
+            lifecycleScope.launch {
+                viewModel.registerState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
+                    when (it) {
+                        is ApiStateUser.Success -> {
+                            if (args.rememberMe) saveData(requireContext(), args.email, args.password)
+                            viewModel.isLogout()
+                            val direction =
+                                SignUpExtendedFragmentDirections.actionSignUpExtendedFragmentToViewPagerFragment()
+                            navController.navigate(direction)
+                        }
 
-                    is ApiStateUser.Loading -> {
-                        binding.progressBar.visible()
-                    }
+                        is ApiStateUser.Loading -> {
+                            progressBar.visible()
+                        }
 
-                    is ApiStateUser.Initial -> Unit
+                        is ApiStateUser.Initial -> Unit
 
-                    is ApiStateUser.Error -> {
-                        binding.root.showErrorSnackBar(requireContext(), it.error)
-                        viewModel.isLogout()
-                        binding.progressBar.invisible()
+                        is ApiStateUser.Error -> {
+                            root.showErrorSnackBar(requireContext(), it.error)
+                            viewModel.isLogout()
+                            progressBar.invisible()
+                        }
                     }
                 }
             }

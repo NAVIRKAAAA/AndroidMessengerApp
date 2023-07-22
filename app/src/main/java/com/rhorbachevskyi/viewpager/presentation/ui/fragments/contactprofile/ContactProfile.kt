@@ -9,11 +9,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.Contact
+import com.rhorbachevskyi.viewpager.data.model.UserResponse
+import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.databinding.FragmentDetailViewBinding
 import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.checkForInternet
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.gone
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.loadImage
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
@@ -24,12 +28,18 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
 
     private val args: ContactProfileArgs by navArgs()
     private val viewModel: ContactProfileViewModel by viewModels()
+    private lateinit var userData: UserResponse.Data
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initUser()
         setListeners()
         setObserver()
         setProfile(args.contact)
         setSharedElementsTransition(args.contact)
+    }
+
+    private fun initUser() {
+        userData = UserDataHolder.getUserData()
     }
 
     private fun setListeners() {
@@ -47,30 +57,33 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
     private fun addToContacts() {
         if (args.isNewUser) {
             binding.buttonMessage.setOnClickListener {
-                viewModel.addContact(args.userData.user.id, args.contact, args.userData.accessToken)
+                viewModel.addContact(userData.user.id, args.contact, userData.accessToken, requireContext().checkForInternet())
             }
         }
     }
 
     private fun setObserver() {
-        lifecycleScope.launch {
-            viewModel.usersState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
-                when (it) {
-                    is ApiStateUsers.Error -> binding.root.showErrorSnackBar(
-                        requireContext(),
-                        it.error
-                    )
+        with(binding) {
+            lifecycleScope.launch {
+                viewModel.usersState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
+                    when (it) {
+                        is ApiStateUsers.Error -> {
+                            progressBar.invisible()
+                            root.showErrorSnackBar(requireContext(), it.error)
+                            viewModel.changeState()
+                        }
 
-                    ApiStateUsers.Initial -> Unit
+                        ApiStateUsers.Initial -> Unit
 
-                    ApiStateUsers.Loading -> {
-                        binding.progressBar.visible()
-                    }
+                        ApiStateUsers.Loading -> {
+                            progressBar.visible()
+                        }
 
-                    is ApiStateUsers.Success -> {
-                        binding.progressBar.gone()
-                        binding.buttonMessageTop.gone()
-                        binding.buttonMessage.text = getString(R.string.message)
+                        is ApiStateUsers.Success -> {
+                            progressBar.gone()
+                            buttonMessageTop.gone()
+                            buttonMessage.text = getString(R.string.message)
+                        }
                     }
                 }
             }

@@ -5,9 +5,7 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.navArgs
-import com.rhorbachevskyi.viewpager.data.model.UserData
-import com.rhorbachevskyi.viewpager.data.model.UserWithTokens
+import com.rhorbachevskyi.viewpager.data.model.UserResponse
 import com.rhorbachevskyi.viewpager.databinding.FragmentProfileBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
 import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
@@ -21,12 +19,12 @@ import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
 @AndroidEntryPoint
 class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding::inflate) {
 
-    private val args: UserProfileArgs by navArgs()
     private val viewModel: UserProfileViewModel by viewModels()
-    private lateinit var user: UserData
+    private lateinit var userData: UserResponse.Data
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initialUser()
@@ -35,8 +33,7 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
     }
 
     private fun initialUser() {
-        viewModel.requestGetUser(args.userData.user.id, args.userData.accessToken)
-        user = args.userData.user
+        viewModel.requestGetUser()
     }
 
     private fun setListeners() {
@@ -64,9 +61,7 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
 
     private fun editProfile() {
         binding.buttonMessageTop.setOnClickListener {
-            val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToEditProfile(
-                UserWithTokens(user, args.userData.accessToken, args.userData.refreshToken)
-            )
+            val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToEditProfile()
             navController.navigate(direction)
         }
     }
@@ -91,7 +86,7 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
                             textViewHomeAddress.visible()
                             progressBar.gone()
                         }
-                        user = it.userData.user
+                        userData = it.userData
                         setUserProfile()
                     }
                 }
@@ -101,9 +96,9 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
 
     private fun setUserProfile() {
         with(binding) {
-            textViewName.text = user.name ?: ""
-            textViewCareer.text = user.career ?: ""
-            textViewHomeAddress.text = user.address ?: ""
+            textViewName.text = userData.user.name ?: ""
+            textViewCareer.text = userData.user.career ?: ""
+            textViewHomeAddress.text = userData.user.address ?: ""
         }
     }
 }

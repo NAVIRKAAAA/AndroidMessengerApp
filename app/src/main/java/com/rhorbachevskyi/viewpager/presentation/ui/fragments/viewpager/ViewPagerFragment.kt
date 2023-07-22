@@ -2,19 +2,16 @@ package com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager
 
 import android.os.Bundle
 import android.view.View
-import androidx.navigation.fragment.navArgs
 import com.google.android.material.tabs.TabLayoutMediator
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.databinding.FragmentViewPagerBinding
 import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.adapter.ViewPagerAdapter
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
-import java.lang.IllegalStateException
 
 class ViewPagerFragment :
     BaseFragment<FragmentViewPagerBinding>(FragmentViewPagerBinding::inflate) {
 
-    private val args: ViewPagerFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -22,8 +19,9 @@ class ViewPagerFragment :
     }
 
     private fun setupViewPager() {
-        val adapter = ViewPagerAdapter(this@ViewPagerFragment, args)
+        val adapter = ViewPagerAdapter(this@ViewPagerFragment)
         with(binding) {
+            viewPager.offscreenPageLimit = 1
             viewPager.adapter = adapter
             TabLayoutMediator(tabLayout, viewPager) { tab, position ->
                 tab.text = when (position) {

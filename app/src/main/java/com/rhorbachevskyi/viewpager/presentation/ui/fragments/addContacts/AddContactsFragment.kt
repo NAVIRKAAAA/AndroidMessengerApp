@@ -8,13 +8,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rhorbachevskyi.viewpager.data.model.Contact
-import com.rhorbachevskyi.viewpager.data.model.UserWithTokens
+import com.rhorbachevskyi.viewpager.data.model.UserResponse
+import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.databinding.FragmentUsersBinding
-import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
+import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapter.AddContactsAdapter
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapter.interfaces.UserItemClickListener
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.checkForInternet
@@ -28,15 +28,15 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBinding::inflate) {
 
-    private val args: AddContactsFragmentArgs by navArgs()
     private val viewModel: AddContactViewModel by viewModels()
+    private lateinit var userData: UserResponse.Data
     private val adapter: AddContactsAdapter by lazy {
         AddContactsAdapter(listener = object : UserItemClickListener {
             override fun onClickAdd(contact: Contact) {
                 viewModel.addContact(
-                    args.userData.user.id,
+                    userData.user.id,
                     contact,
-                    args.userData.accessToken,
+                    userData.accessToken,
                     requireContext().checkForInternet()
                 )
             }
@@ -48,30 +48,29 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
                 val extras = FragmentNavigatorExtras(*transitionPairs)
                 val direction =
                     AddContactsFragmentDirections.actionAddContactsFragmentToContactProfile(
-                        !viewModel.supportList.contains(contact), UserWithTokens(
-                            args.userData.user,
-                            args.userData.accessToken,
-                            args.userData.refreshToken
-                        ), contact
-                    )
+                        !viewModel.supportList.contains(contact), contact)
                 closeSearchView()
                 navController.navigate(direction, extras)
             }
-
         })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getAllUsers(
-            args.userData.accessToken, args.userData.user, requireContext().checkForInternet()
-        )
+        initUser()
         initialRecyclerview()
         setObserves()
         setListeners()
     }
 
+    private fun initUser() {
+        userData = UserDataHolder.getUserData()
+    }
+
     private fun initialRecyclerview() {
+        viewModel.getAllUsers(
+            userData.accessToken, userData.user, requireContext().checkForInternet()
+        )
         binding.recyclerViewUsers.layoutManager = LinearLayoutManager(context)
         binding.recyclerViewUsers.adapter = adapter
     }
@@ -83,24 +82,27 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
                 adapter.submitList(it)
             }
         }
-        lifecycleScope.launch {
-            viewModel.usersState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
-                when (it) {
-                    is ApiStateUsers.Success -> {
-                        binding.progressBar.invisible()
-                    }
+        with(binding) {
+            lifecycleScope.launch {
+                viewModel.usersState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
+                    when (it) {
+                        is ApiStateUsers.Success -> {
+                            progressBar.invisible()
+                        }
 
-                    is ApiStateUsers.Initial -> {
-                        binding.progressBar.invisible()
-                    }
+                        is ApiStateUsers.Initial -> {
+                            progressBar.invisible()
+                        }
 
-                    is ApiStateUsers.Loading -> {
-                        binding.progressBar.visible()
-                    }
+                        is ApiStateUsers.Loading -> {
+                            progressBar.visible()
+                        }
 
-                    is ApiStateUsers.Error -> {
-                        binding.progressBar.invisible()
-                        binding.root.showErrorSnackBar(requireContext(), it.error)
+                        is ApiStateUsers.Error -> {
+                            progressBar.invisible()
+                            root.showErrorSnackBar(requireContext(), it.error)
+                            viewModel.changeState()
+                        }
                     }
                 }
             }

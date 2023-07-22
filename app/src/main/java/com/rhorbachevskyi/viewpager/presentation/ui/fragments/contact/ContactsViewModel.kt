@@ -5,9 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rhorbachevskyi.viewpager.R
-import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
+import com.rhorbachevskyi.viewpager.data.database.repository.repositoryimpl.DatabaseImpl
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.repository.repositoryimpl.NetworkImpl
+import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ContactsViewModel @Inject constructor(
-    private val networkImpl: NetworkImpl
+    private val networkImpl: NetworkImpl,
+    private val databaseImpl: DatabaseImpl
 ) : ViewModel() {
 
     private val _usersStateFlow = MutableStateFlow<ApiStateUsers>(ApiStateUsers.Initial)
@@ -29,38 +31,47 @@ class ContactsViewModel @Inject constructor(
 
     private val _selectContacts = MutableLiveData<List<Contact>>(listOf())
     val selectContacts: LiveData<List<Contact>> = _selectContacts
-
-    val isMultiselect = MutableLiveData(false)
+    private val _isMultiselect = MutableStateFlow(false)
+    val isMultiselect = _isMultiselect
 
     private val _isSelectItem: MutableStateFlow<ArrayList<Pair<Boolean, Int>>> =
         MutableStateFlow(ArrayList())
     val isSelectItem: StateFlow<ArrayList<Pair<Boolean, Int>>> = _isSelectItem
+
     // search helper
     private val startedListContact: ArrayList<Contact> = arrayListOf()
 
-    fun initialContactList(userId: Long, accessToken: String) =
+    fun initialContactList(userId: Long, accessToken: String, hasInternet: Boolean) =
         viewModelScope.launch(Dispatchers.IO) {
             _usersStateFlow.value = ApiStateUsers.Loading
-            _usersStateFlow.value = networkImpl.getContacts(userId, accessToken)
+            _usersStateFlow.value = if (hasInternet) {
+                networkImpl.getContacts(userId, accessToken)
+            } else {
+                databaseImpl.getAllContacts()
+            }
             _contactList.value = UserDataHolder.getContacts()
             startedListContact.clear()
             startedListContact.addAll(_contactList.value)
         }
 
-    private fun addContact(userId: Long, contact: Contact, accessToken: String) =
+    private fun addContact(
+        userId: Long,
+        contact: Contact,
+        accessToken: String
+    ) =
         viewModelScope.launch(Dispatchers.IO) {
             _usersStateFlow.value = ApiStateUsers.Loading
-            _usersStateFlow.value =
-                networkImpl.addContact(userId, contact, accessToken)
+            _usersStateFlow.value = networkImpl.addContact(userId, contact, accessToken)
         }
 
     fun addContactToList(
         userId: Long,
         contact: Contact,
         accessToken: String,
-        position: Int = _contactList.value.size
+        position: Int = _contactList.value.size,
     ): Boolean {
         val contactList = _contactList.value.toMutableList()
+
 
         if (!contactList.contains(contact)) {
             contactList.add(position, contact)
@@ -86,18 +97,29 @@ class ContactsViewModel @Inject constructor(
         return false
     }
 
-    private fun deleteContact(userId: Long, accessToken: String, contactId: Long) =
-        viewModelScope.launch(Dispatchers.IO) {
-            _usersStateFlow.value =
-                networkImpl.deleteContact(userId, accessToken, contactId)
-        }
+    private fun deleteContact(
+        userId: Long,
+        accessToken: String,
+        contact: Contact,
+    ) = viewModelScope.launch(Dispatchers.IO) {
+        _usersStateFlow.value = networkImpl.deleteContact(userId, accessToken, contact.id)
+    }
 
-    fun deleteContactFromList(userId: Long, accessToken: String, contactId: Long): Boolean {
+    fun deleteContactFromList(
+        userId: Long,
+        accessToken: String,
+        contactId: Long,
+        hasInternet: Boolean
+    ): Boolean {
         val contact = _contactList.value.find { it.id == contactId }
         val contactList = _contactList.value.toMutableList()
 
+        if (!hasInternet) {
+            _usersStateFlow.value = ApiStateUsers.Error(R.string.No_internet_connection)
+            return false
+        }
         if (contactList.contains(contact)) {
-            deleteContact(userId, accessToken, contactId)
+            deleteContact(userId, accessToken, contact!!)
             contactList.remove(contact)
             _contactList.value = contactList
             startedListContact.remove(contact)
@@ -107,15 +129,25 @@ class ContactsViewModel @Inject constructor(
         return false
     }
 
-    fun deleteSelectList(userId: Long, accessToken: String) {
-        val contactList = _selectContacts.value?.toMutableList() ?: return
+    fun deleteSelectList(userId: Long, accessToken: String, hasInternet: Boolean) : Boolean {
+        if(!hasInternet) {
+            _usersStateFlow.value = ApiStateUsers.Error(R.string.No_internet_connection)
+            return false
+        }
 
+        val contactList = _selectContacts.value?.toMutableList() ?: return false
         for (contact in contactList) {
-            deleteContactFromList(userId, accessToken, contact.id)
+            deleteContactFromList(
+                userId,
+                accessToken,
+                contact.id,
+                true
+            )
             deleteSelectContact(contact)
         }
 
         _selectContacts.value = contactList
+        return true
     }
 
     fun deleteSelectContact(contact: Contact): Boolean {
@@ -123,9 +155,7 @@ class ContactsViewModel @Inject constructor(
         if (contactList.contains(contact)) {
             contactList.remove(contact)
             _selectContacts.value = contactList
-            val id = contact.id.toInt()
-            val index = _isSelectItem.value.indexOfFirst { it.second == id }
-            _isSelectItem.value.removeAt(index)
+            _isSelectItem.value.removeAt(_isSelectItem.value.indexOfFirst { it.second == contact.id.toInt() })
             return true
         }
 
@@ -133,8 +163,8 @@ class ContactsViewModel @Inject constructor(
     }
 
     fun changeMultiselectMode() {
-        isMultiselect.value = !isMultiselect.value!!
-        if (isMultiselect.value == false) {
+        _isMultiselect.value = !_isMultiselect.value
+        if (!isMultiselect.value) {
             _selectContacts.value = emptyList()
             _isSelectItem.value.clear()
         }
@@ -150,5 +180,8 @@ class ContactsViewModel @Inject constructor(
 
     fun deleteStates() {
         UserDataHolder.deleteStates()
+    }
+    fun changeState() {
+        _usersStateFlow.value = ApiStateUsers.Initial
     }
 }

@@ -24,7 +24,7 @@ class ContactDaoModule {
         return Room.databaseBuilder(
             appContext,
             ContactDatabase::class.java,
-            "contacts_db"
+            "contacts"
         ).build()
     }
 }

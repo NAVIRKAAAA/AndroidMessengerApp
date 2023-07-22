@@ -25,7 +25,7 @@ class UserDaoModule {
         return Room.databaseBuilder(
             appContext,
             UserDatabase::class.java,
-            "users_db"
+            "users"
         ).build()
     }
 }

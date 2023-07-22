@@ -2,6 +2,7 @@ package com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.database.repository.repositoryimpl.DatabaseImpl
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.data.model.Contact
@@ -55,7 +56,7 @@ class AddContactViewModel @Inject constructor(
                 if(hasInternet) {
                     networkImpl.addContact(userId, contact, accessToken)
                 } else {
-                    databaseImpl.addContact(contact)
+                    _usersStateFlow.value = ApiStateUsers.Error(R.string.No_internet_connection)
                 }
                 _states.value = UserDataHolder.getStates()
             }
@@ -67,5 +68,9 @@ class AddContactViewModel @Inject constructor(
         }
         _users.value = filteredList
         return filteredList.size
+    }
+
+    fun changeState() {
+        _usersStateFlow.value = ApiStateUsers.Initial
     }
 }

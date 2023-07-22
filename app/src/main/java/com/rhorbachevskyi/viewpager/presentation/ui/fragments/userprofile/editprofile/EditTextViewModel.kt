@@ -2,6 +2,7 @@ package com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile.editp
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.repository.repositoryimpl.NetworkImpl
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,10 +26,25 @@ class EditTextViewModel @Inject constructor(
         career: String? = null,
         phone: String,
         address: String? = null,
-        date: Date? = null
+        date: Date? = null,
+        refreshToken: String,
+        hasInternet: Boolean
     ) = viewModelScope.launch(Dispatchers.IO) {
         _editUserStateFlow.value = ApiStateUser.Loading
+        if (!hasInternet) {
+            _editUserStateFlow.value = ApiStateUser.Error(R.string.No_internet_connection)
+            return@launch
+        }
         _editUserStateFlow.value =
-            networkImpl.editUser(userId, accessToken, name, career, phone, address, date)
+            networkImpl.editUser(
+                userId,
+                accessToken,
+                name,
+                career,
+                phone,
+                address,
+                date,
+                refreshToken
+            )
     }
 }
