@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.viewpager.presentation.ui
+package com.rhorbachevskyi.viewpager.presentation.ui.base
 
 import android.os.Bundle
 import android.view.LayoutInflater

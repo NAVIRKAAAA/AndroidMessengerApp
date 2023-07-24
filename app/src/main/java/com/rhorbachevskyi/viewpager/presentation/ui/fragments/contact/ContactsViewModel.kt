@@ -1,7 +1,11 @@
 package com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rhorbachevskyi.viewpager.R
@@ -20,7 +24,9 @@ import javax.inject.Inject
 @HiltViewModel
 class ContactsViewModel @Inject constructor(
     private val networkImpl: NetworkImpl,
-    private val databaseImpl: DatabaseImpl
+    private val databaseImpl: DatabaseImpl,
+    private val notificationBuilder: NotificationCompat.Builder,
+    private val notificationManager: NotificationManagerCompat
 ) : ViewModel() {
 
     private val _usersStateFlow = MutableStateFlow<ApiStateUsers>(ApiStateUsers.Initial)
@@ -29,8 +35,8 @@ class ContactsViewModel @Inject constructor(
     private val _contactList = MutableStateFlow(listOf<Contact>())
     val contactList: StateFlow<List<Contact>> = _contactList
 
-    private val _selectContacts = MutableLiveData<List<Contact>>(listOf())
-    val selectContacts: LiveData<List<Contact>> = _selectContacts
+    private val _selectContacts = MutableStateFlow<List<Contact>>(listOf())
+    val selectContacts: StateFlow<List<Contact>> = _selectContacts
     private val _isMultiselect = MutableStateFlow(false)
     val isMultiselect = _isMultiselect
 
@@ -85,7 +91,7 @@ class ContactsViewModel @Inject constructor(
     }
 
     fun addSelectContact(contact: Contact): Boolean {
-        val contactList = _selectContacts.value?.toMutableList() ?: mutableListOf()
+        val contactList = _selectContacts.value.toMutableList()
 
         if (!contactList.contains(contact)) {
             contactList.add(contact)
@@ -129,13 +135,13 @@ class ContactsViewModel @Inject constructor(
         return false
     }
 
-    fun deleteSelectList(userId: Long, accessToken: String, hasInternet: Boolean) : Boolean {
-        if(!hasInternet) {
+    fun deleteSelectList(userId: Long, accessToken: String, hasInternet: Boolean): Boolean {
+        if (!hasInternet) {
             _usersStateFlow.value = ApiStateUsers.Error(R.string.No_internet_connection)
             return false
         }
 
-        val contactList = _selectContacts.value?.toMutableList() ?: return false
+        val contactList = _selectContacts.value.toMutableList()
         for (contact in contactList) {
             deleteContactFromList(
                 userId,
@@ -181,7 +187,16 @@ class ContactsViewModel @Inject constructor(
     fun deleteStates() {
         UserDataHolder.deleteStates()
     }
+
     fun changeState() {
         _usersStateFlow.value = ApiStateUsers.Initial
+    }
+
+    fun showNotification(context: Context) {
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            notificationManager.notify(1, notificationBuilder.build())
+        }
     }
 }

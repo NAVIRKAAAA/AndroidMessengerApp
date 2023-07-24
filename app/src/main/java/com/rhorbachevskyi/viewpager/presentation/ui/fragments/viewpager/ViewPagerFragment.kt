@@ -5,7 +5,7 @@ import android.view.View
 import com.google.android.material.tabs.TabLayoutMediator
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.databinding.FragmentViewPagerBinding
-import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
+import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.adapter.ViewPagerAdapter
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 

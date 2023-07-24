@@ -14,7 +14,7 @@ import com.rhorbachevskyi.viewpager.data.model.UserResponse
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.databinding.FragmentUsersBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
-import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
+import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapter.AddContactsAdapter
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapter.interfaces.UserItemClickListener
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.checkForInternet

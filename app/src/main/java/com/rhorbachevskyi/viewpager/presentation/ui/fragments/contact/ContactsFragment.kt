@@ -2,8 +2,6 @@ package com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact
 
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
-import android.widget.SearchView
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
@@ -17,14 +15,13 @@ import com.rhorbachevskyi.viewpager.data.model.UserResponse
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.databinding.FragmentContactsBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
-import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
+import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.adapter.RecyclerViewAdapter
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.adapter.interfaces.ContactItemClickListener
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.ViewPagerFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.ViewPagerFragmentDirections
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.checkForInternet
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
-import com.rhorbachevskyi.viewpager.presentation.utils.ext.log
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.setupSwipeToDelete
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
@@ -45,12 +42,12 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                 transitionPairs: Array<Pair<View, String>>
             ) {
                 if (adapter.isMultiselectMode) {
-                    if (viewModel.selectContacts.value?.contains(contact) == false) {
+                    if (viewModel.selectContacts.value.contains(contact) == false) {
                         viewModel.addSelectContact(contact)
                     } else {
                         viewModel.deleteSelectContact(contact)
                     }
-                    if (viewModel.selectContacts.value?.isEmpty() == true) {
+                    if (viewModel.selectContacts.value.isEmpty() == true) {
                         viewModel.changeMultiselectMode()
                     }
                 } else {
@@ -59,14 +56,13 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                     val extras = FragmentNavigatorExtras(*transitionPairs)
                     val direction =
                         ViewPagerFragmentDirections.actionViewPagerFragmentToContactProfile(false, contact)
-                    closeSearchView()
                     navController.navigate(direction, extras)
                 }
             }
 
             override fun onLongClick(contact: Contact) {
                 viewModel.changeMultiselectMode()
-                if (viewModel.isMultiselect.value == true) {
+                if (viewModel.isMultiselect.value) {
                     viewModel.addSelectContact(contact)
                 }
 
@@ -88,7 +84,6 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
 
     private fun initUser() {
         userData = UserDataHolder.getUserData()
-        log(userData.toString())
     }
 
     private fun initialRecyclerview() {
@@ -118,7 +113,6 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
             thisScreen = false
             val direction =
                 ViewPagerFragmentDirections.actionViewPagerFragmentToAddContactsFragment()
-            closeSearchView()
             navController.navigate(direction)
         }
     }
@@ -138,7 +132,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
 
     private fun deleteSelectedContacts() {
         binding.imageViewDeleteSelectMode.setOnClickListener {
-            val size = viewModel.selectContacts.value?.size ?: 0
+            val size = viewModel.selectContacts.value.size
             if(viewModel.deleteSelectList(userData.user.id, userData.accessToken, requireContext().checkForInternet())) {
                 binding.root.showErrorSnackBar(
                     requireContext(),
@@ -151,25 +145,9 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
 
     private fun searchView() {
         with(binding) {
-            imageSearchView.setOnCloseListener {
-                imageSearchView.layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
-                textViewContacts.visible()
-                imageViewNavigationBack.visible()
-                false
+            imageSearchView.setOnClickListener {
+                viewModel.showNotification(requireContext())
             }
-            imageSearchView.setOnSearchClickListener {
-                imageSearchView.layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
-                textViewContacts.invisible()
-                imageViewNavigationBack.invisible()
-            }
-            imageSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean = false
-
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    updateSearchView(newText.toString())
-                    return false
-                }
-            })
         }
     }
 
@@ -239,12 +217,6 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
         }
     }
 
-    private fun closeSearchView() {
-        with(binding) {
-            imageSearchView.setQuery("", false)
-            imageSearchView.isIconified = true
-        }
-    }
 
     fun deleteUserWithRestore(contact: Contact) {
         val position = viewModel.contactList.value.indexOfFirst { it == contact }

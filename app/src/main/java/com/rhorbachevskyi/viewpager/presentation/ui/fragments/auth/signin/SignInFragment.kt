@@ -8,7 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.rhorbachevskyi.viewpager.data.model.UserRequest
 import com.rhorbachevskyi.viewpager.databinding.FragmentSignInBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
-import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
+import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.utils.DataStore.saveData
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.gone
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar

@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.widget.doOnTextChanged
 import com.rhorbachevskyi.viewpager.databinding.FragmentSignUpBinding
-import com.rhorbachevskyi.viewpager.presentation.ui.BaseFragment
+import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.utils.Validation
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visibleIf
 import dagger.hilt.android.AndroidEntryPoint
