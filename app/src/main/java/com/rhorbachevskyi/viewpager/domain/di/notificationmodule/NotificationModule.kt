@@ -5,10 +5,10 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.navigation.NavDeepLinkBuilder
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.presentation.ui.activity.MainActivity
 import dagger.Module
@@ -27,17 +27,16 @@ class NotificationModule {
     fun provideNotificationBuilder(
         @ApplicationContext context: Context
     ): NotificationCompat.Builder {
-        val pendingIntent = NavDeepLinkBuilder(context)
-            .setGraph(R.navigation.nav)
-            .setDestination(R.id.searchFragment)
-            .createPendingIntent()
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            data = Uri.parse("myapp://secondF")
+        }
 
-        val clickIntent = Intent(context, MainActivity::class.java)
-        val clickPendingIntent: PendingIntent = PendingIntent.getActivity(
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(
             context,
             0,
-            clickIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            intent,
+            PendingIntent.FLAG_IMMUTABLE
         )
 
         return NotificationCompat.Builder(context, "Main Channel ID")
@@ -51,7 +50,7 @@ class NotificationModule {
                     .setContentText("Unlock to see the message.")
                     .build()
             )
-            .addAction(0, "Search", clickPendingIntent)
+            .addAction(0, "Search", pendingIntent)
             .setContentIntent(pendingIntent)
     }
 

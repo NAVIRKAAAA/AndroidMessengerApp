@@ -58,6 +58,7 @@ class ContactsViewModel @Inject constructor(
             _contactList.value = UserDataHolder.getContacts()
             startedListContact.clear()
             startedListContact.addAll(_contactList.value)
+            databaseImpl.addUsersToSearchList(_contactList.value)
         }
 
     private fun addContact(
@@ -68,6 +69,7 @@ class ContactsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _usersStateFlow.value = ApiStateUsers.Loading
             _usersStateFlow.value = networkImpl.addContact(userId, contact, accessToken)
+            databaseImpl.addToSearchList(contact)
         }
 
     fun addContactToList(
@@ -108,7 +110,8 @@ class ContactsViewModel @Inject constructor(
         accessToken: String,
         contact: Contact,
     ) = viewModelScope.launch(Dispatchers.IO) {
-        _usersStateFlow.value = networkImpl.deleteContact(userId, accessToken, contact.id)
+        _usersStateFlow.value = networkImpl.deleteContact(userId, accessToken, contact)
+        databaseImpl.deleteFromSearchList(contact)
     }
 
     fun deleteContactFromList(
@@ -157,7 +160,7 @@ class ContactsViewModel @Inject constructor(
     }
 
     fun deleteSelectContact(contact: Contact): Boolean {
-        val contactList = _selectContacts.value?.toMutableList() ?: return false
+        val contactList = _selectContacts.value.toMutableList()
         if (contactList.contains(contact)) {
             contactList.remove(contact)
             _selectContacts.value = contactList

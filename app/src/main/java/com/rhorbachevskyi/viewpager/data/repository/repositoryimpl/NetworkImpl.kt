@@ -124,12 +124,12 @@ class NetworkImpl @Inject constructor(
         }
     }
 
-    suspend fun deleteContact(userId: Long, accessToken: String, contactId: Long): ApiStateUsers {
+    suspend fun deleteContact(userId: Long, accessToken: String, contact: Contact): ApiStateUsers {
         return try {
             val response = contactRepository.deleteContact(
                 userId,
                 "$AUTHORIZATION_PREFIX $accessToken",
-                contactId
+                contact.id
             )
             response.data.let { ApiStateUsers.Success(it.users) }
         } catch (e: java.lang.Exception) {

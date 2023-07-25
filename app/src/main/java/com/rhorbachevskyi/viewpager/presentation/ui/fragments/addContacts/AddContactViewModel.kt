@@ -1,5 +1,11 @@
 package com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rhorbachevskyi.viewpager.R
@@ -19,7 +25,9 @@ import javax.inject.Inject
 @HiltViewModel
 class AddContactViewModel @Inject constructor(
     private val networkImpl: NetworkImpl,
-    private val databaseImpl: DatabaseImpl
+    private val databaseImpl: DatabaseImpl,
+    private val notificationBuilder: NotificationCompat.Builder,
+    private val notificationManager: NotificationManagerCompat
 ) : ViewModel() {
     private val _usersStateFlow = MutableStateFlow<ApiStateUsers>(ApiStateUsers.Initial)
     val usersState: StateFlow<ApiStateUsers> = _usersStateFlow
@@ -34,8 +42,6 @@ class AddContactViewModel @Inject constructor(
     // so that it does not always depend on the server
     val supportList: ArrayList<Contact> = arrayListOf()
 
-    // search helper
-    private var startedListContact: List<Contact> = listOf()
     fun getAllUsers(accessToken: String, user: UserData, hasInternet: Boolean) =
         viewModelScope.launch(Dispatchers.Main) {
             _usersStateFlow.value = ApiStateUsers.Loading
@@ -45,7 +51,7 @@ class AddContactViewModel @Inject constructor(
                 databaseImpl.getAllUsers()
             }
             _users.value = UserDataHolder.getServerList()
-            startedListContact = _users.value
+            databaseImpl.addUsersToSearchList(_users.value)
         }
 
     fun addContact(userId: Long, contact: Contact, accessToken: String, hasInternet: Boolean) =
@@ -59,18 +65,20 @@ class AddContactViewModel @Inject constructor(
                     _usersStateFlow.value = ApiStateUsers.Error(R.string.No_internet_connection)
                 }
                 _states.value = UserDataHolder.getStates()
+                databaseImpl.deleteFromSearchList(contact)
             }
         }
 
-    fun updateContactList(newText: String?): Int {
-        val filteredList = startedListContact.filter { contact: Contact ->
-            contact.name?.contains(newText ?: "", true) == true
-        }
-        _users.value = filteredList
-        return filteredList.size
-    }
 
     fun changeState() {
         _usersStateFlow.value = ApiStateUsers.Initial
+    }
+
+    fun showNotification(context: Context) {
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            notificationManager.notify(1, notificationBuilder.build())
+        }
     }
 }

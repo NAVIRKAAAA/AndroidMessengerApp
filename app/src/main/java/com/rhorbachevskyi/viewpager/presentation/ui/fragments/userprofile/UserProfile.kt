@@ -31,7 +31,7 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
         setListeners()
         setObserver()
     }
-
+    
     private fun initialUser() {
         viewModel.requestGetUser()
     }

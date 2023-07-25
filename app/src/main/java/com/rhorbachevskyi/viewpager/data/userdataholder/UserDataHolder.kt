@@ -19,17 +19,19 @@ object UserDataHolder {
         this.serverContacts.value = contacts.value
     }
 
-    fun setStates(state : Pair<Long, ApiStateUsers>) {
+    fun setStates(state: Pair<Long, ApiStateUsers>) {
         states.add(state)
     }
+
     fun setUser(userData: UserResponse.Data) {
         this.userData = userData
     }
 
+
     fun getServerList(): List<Contact> = serverUsers.value
     fun getContacts(): List<Contact> = serverContacts.value
-    fun getStates() : ArrayList<Pair<Long, ApiStateUsers>> = states
-    fun getUserData() : UserResponse.Data = userData
+    fun getStates(): ArrayList<Pair<Long, ApiStateUsers>> = states
+    fun getUserData(): UserResponse.Data = userData
     fun deleteStates() {
         states.clear()
     }

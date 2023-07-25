@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- app name -->
-    <string name="app_name">Clean</string>
+    <string name="app_name">clean</string>
 
     <!-- fragment sign up -->
     <string name="acquainted">Давайте познайомимося</string>
@@ -87,4 +87,5 @@
 
     <!-- splash fragment -->
     <string name="repeat">Повторити</string>
+    <string name="search">Search</string>
 </resources>

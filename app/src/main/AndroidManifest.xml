@@ -21,14 +21,10 @@
         <activity
             android:name=".presentation.ui.activity.MainActivity"
             android:exported="true"
-            android:launchMode="singleTask">
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-                <data
-                    android:host="android"
-                    android:pathPrefix="/deeplink"
-                    android:scheme="tutorial" />
             </intent-filter>
             <nav-graph android:value="@navigation/nav" />
         </activity>

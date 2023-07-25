@@ -2,8 +2,6 @@ package com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts
 
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
-import android.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -21,7 +19,6 @@ import com.rhorbachevskyi.viewpager.presentation.utils.ext.checkForInternet
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
-import com.rhorbachevskyi.viewpager.presentation.utils.ext.visibleIf
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -49,7 +46,6 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
                 val direction =
                     AddContactsFragmentDirections.actionAddContactsFragmentToContactProfile(
                         !viewModel.supportList.contains(contact), contact)
-                closeSearchView()
                 navController.navigate(direction, extras)
             }
         })
@@ -127,35 +123,9 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
 
     private fun searchView() {
         with(binding) {
-            imageSearchView.setOnCloseListener {
-                imageSearchView.layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
-                textViewUsers.visible()
-                imageViewNavigationBack.visible()
-                false
+            imageSearchView.setOnClickListener {
+                viewModel.showNotification(requireContext())
             }
-            imageSearchView.setOnSearchClickListener {
-                imageSearchView.layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
-                textViewUsers.invisible()
-                imageViewNavigationBack.invisible()
-            }
-            imageSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    return false
-                }
-
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    textViewNoResultFound.visibleIf(viewModel.updateContactList(newText) == 0)
-                    if (newText.isNullOrEmpty()) initialRecyclerview()
-                    return false
-                }
-            })
-        }
-    }
-
-    private fun closeSearchView() {
-        with(binding) {
-            imageSearchView.setQuery("", false)
-            imageSearchView.isIconified = true
         }
     }
 }

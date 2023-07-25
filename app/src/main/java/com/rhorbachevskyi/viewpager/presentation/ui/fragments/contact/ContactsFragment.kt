@@ -42,12 +42,12 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                 transitionPairs: Array<Pair<View, String>>
             ) {
                 if (adapter.isMultiselectMode) {
-                    if (viewModel.selectContacts.value.contains(contact) == false) {
+                    if (!viewModel.selectContacts.value.contains(contact)) {
                         viewModel.addSelectContact(contact)
                     } else {
                         viewModel.deleteSelectContact(contact)
                     }
-                    if (viewModel.selectContacts.value.isEmpty() == true) {
+                    if (viewModel.selectContacts.value.isEmpty()) {
                         viewModel.changeMultiselectMode()
                     }
                 } else {
@@ -55,7 +55,10 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                     thisScreen = false
                     val extras = FragmentNavigatorExtras(*transitionPairs)
                     val direction =
-                        ViewPagerFragmentDirections.actionViewPagerFragmentToContactProfile(false, contact)
+                        ViewPagerFragmentDirections.actionViewPagerFragmentToContactProfile(
+                            false,
+                            contact
+                        )
                     navController.navigate(direction, extras)
                 }
             }
@@ -88,7 +91,11 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
 
     private fun initialRecyclerview() {
         viewModel.deleteStates()
-        viewModel.initialContactList(userData.user.id, userData.accessToken, requireContext().checkForInternet())
+        viewModel.initialContactList(
+            userData.user.id,
+            userData.accessToken,
+            requireContext().checkForInternet()
+        )
         with(binding) {
             recyclerViewContacts.layoutManager = LinearLayoutManager(context)
             recyclerViewContacts.adapter = adapter
@@ -133,7 +140,12 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
     private fun deleteSelectedContacts() {
         binding.imageViewDeleteSelectMode.setOnClickListener {
             val size = viewModel.selectContacts.value.size
-            if(viewModel.deleteSelectList(userData.user.id, userData.accessToken, requireContext().checkForInternet())) {
+            if (viewModel.deleteSelectList(
+                    userData.user.id,
+                    userData.accessToken,
+                    requireContext().checkForInternet()
+                )
+            ) {
                 binding.root.showErrorSnackBar(
                     requireContext(),
                     if (size > 1) R.string.contacts_removed else R.string.contact_removed
@@ -148,27 +160,6 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
             imageSearchView.setOnClickListener {
                 viewModel.showNotification(requireContext())
             }
-        }
-    }
-
-    private fun updateSearchView(newText: String?) {
-        if (newText?.isBlank() == true) initialRecyclerview()
-        setContactsText(newText, true)
-    }
-
-    private fun setContactsText(newText: String?, thisScreen: Boolean) {
-        if (!thisScreen) return
-        val isContactListEmpty = viewModel.contactList.value.isEmpty()
-        val isTextEmpty = newText?.isEmpty() == true
-        val isNoResult =
-            !isTextEmpty && viewModel.updateContactList(newText) == 0 && isContactListEmpty
-
-        if (isContactListEmpty && isTextEmpty) {
-            binding.textViewMoreContacts.visible()
-            binding.textViewNoResultFound.visible()
-        } else {
-            binding.textViewMoreContacts.visibleIf(isNoResult)
-            binding.textViewNoResultFound.visibleIf(isNoResult)
         }
     }
 
@@ -198,7 +189,6 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                     when (it) {
                         is ApiStateUsers.Success -> {
                             progressBar.invisible()
-                            setContactsText("", true)
                         }
 
                         is ApiStateUsers.Error -> {
@@ -227,22 +217,18 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                 requireContext().checkForInternet()
             )
         ) {
-            setContactsText("", thisScreen)
             Snackbar.make(
                 binding.recyclerViewContacts,
                 getString(R.string.s_has_been_removed).format(contact.name),
                 Snackbar.LENGTH_LONG
             )
                 .setAction(getString(R.string.restore)) {
-                    if (viewModel.addContactToList(
-                            userData.user.id,
-                            contact,
-                            userData.accessToken,
-                            position
-                        )
-                    ) {
-                        setContactsText("", thisScreen)
-                    }
+                    viewModel.addContactToList(
+                        userData.user.id,
+                        contact,
+                        userData.accessToken,
+                        position
+                    )
                 }.show()
         }
     }

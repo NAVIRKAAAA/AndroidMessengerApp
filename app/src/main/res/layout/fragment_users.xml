@@ -46,16 +46,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <SearchView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageSearchView"
-        style="@style/searchViewTheme"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/normal_margin"
+        android:src="@drawable/ic_find_scope"
         android:queryBackground="@drawable/bc_edit_text_search"
         app:layout_constraintBottom_toBottomOf="@id/textViewUsers"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="1"
         app:layout_constraintTop_toTopOf="@id/textViewUsers" />
 
     <androidx.recyclerview.widget.RecyclerView
