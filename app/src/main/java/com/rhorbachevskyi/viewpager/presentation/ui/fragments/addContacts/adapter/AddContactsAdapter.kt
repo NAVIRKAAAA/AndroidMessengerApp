@@ -55,59 +55,61 @@ class AddContactsAdapter(private val listener: UserItemClickListener) :
                         progressBar.gone()
                         imageViewDoneAddContact.visible()
                     }
+
                     is ApiStateUsers.Initial -> {
                         textViewAdd.visible()
                         progressBar.gone()
                         imageViewDoneAddContact.invisible()
                     }
+
                     is ApiStateUsers.Loading -> {
                         textViewAdd.gone()
                         progressBar.visible()
                         imageViewDoneAddContact.invisible()
                     }
+
                     is ApiStateUsers.Error -> Unit
                 }
             }
         }
 
         private fun setListeners(contact: Contact) {
-            addContact(contact)
-            detailView(contact)
-        }
-
-        private fun detailView(contact: Contact) {
             with(binding) {
-                root.setOnClickListener {
-                    listener.onClickContact(
-                        contact, arrayOf(
-                            setTransitionName(
-                                imageViewUserPhoto,
-                                Constants.TRANSITION_NAME_IMAGE + contact.id
-                            ),
-                            setTransitionName(
-                                textViewName,
-                                Constants.TRANSITION_NAME_CONTACT_NAME + contact.id
-                            ), setTransitionName(
-                                textViewCareer,
-                                Constants.TRANSITION_NAME_CAREER + contact.id
-                            )
-                        )
-                    )
-                }
+                textViewAdd.setOnClickListener { addContact(contact) }
+                root.setOnClickListener { detailView(contact) }
             }
         }
 
         private fun addContact(contact: Contact) {
-            binding.textViewAdd.setOnClickListener {
-                listener.onClickAdd(contact)
+            listener.onClickAdd(contact)
+        }
+        private fun detailView(contact: Contact) {
+            with(binding) {
+                listener.onClickContact(
+                    contact, arrayOf(
+                        setTransitionName(
+                            imageViewUserPhoto,
+                            Constants.TRANSITION_NAME_IMAGE + contact.id
+                        ),
+                        setTransitionName(
+                            textViewName,
+                            Constants.TRANSITION_NAME_CONTACT_NAME + contact.id
+                        ), setTransitionName(
+                            textViewCareer,
+                            Constants.TRANSITION_NAME_CAREER + contact.id
+                        )
+                    )
+                )
             }
         }
+
 
         private fun setTransitionName(view: View, name: String): Pair<View, String> {
             view.transitionName = name
             return view to name
         }
     }
+
     fun setStates(states: ArrayList<Pair<Long, ApiStateUsers>>) {
         if (this.states.size != states.size) {
             this.states = states

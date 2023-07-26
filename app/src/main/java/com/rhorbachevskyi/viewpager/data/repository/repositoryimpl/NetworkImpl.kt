@@ -78,8 +78,7 @@ class NetworkImpl @Inject constructor(
                         it.toContact()
                     )
                 }
-            val users: MutableStateFlow<List<Contact>> =
-                MutableStateFlow(filteredUsers?.map { it.toContact() } ?: emptyList())
+            val users = MutableStateFlow(filteredUsers?.map { it.toContact() } ?: emptyList())
             UserDataHolder.setServerList(users)
             userDatabaseRepository.addUsers(users.value.map { contact -> contact.toEntity() })
             response.data.let { ApiStateUsers.Success(it.users) }
@@ -92,7 +91,7 @@ class NetworkImpl @Inject constructor(
         return try {
             val response =
                 contactRepository.getUserContacts(userId, "$AUTHORIZATION_PREFIX $accessToken")
-            val users: MutableStateFlow<List<Contact>> =
+            val users =
                 MutableStateFlow(response.data.contacts?.map { it.toContact() } ?: emptyList())
             UserDataHolder.setContactList(users)
             contactDatabaseRepository.addContacts(users.value.map { contact -> contact.toEntity() })
@@ -103,8 +102,6 @@ class NetworkImpl @Inject constructor(
     }
 
     suspend fun addContact(userId: Long, contact: Contact, accessToken: String): ApiStateUsers {
-        val states: ArrayList<Pair<Long, ApiStateUsers>> = ArrayList()
-        states.add(Pair(contact.id, ApiStateUsers.Loading))
         return try {
             val response =
                 contactRepository.addContact(
@@ -112,14 +109,15 @@ class NetworkImpl @Inject constructor(
                     "$AUTHORIZATION_PREFIX $accessToken",
                     contact.id
                 )
-            states[states.size - 1] =
-                Pair(contact.id, ApiStateUsers.Success(response.data.users))
-            UserDataHolder.setStates(states[states.size - 1])
+            UserDataHolder.setStates(Pair(contact.id, ApiStateUsers.Success(response.data.users)))
             response.data.let { ApiStateUsers.Success(it.users) }
         } catch (e: Exception) {
-            states[states.size - 1] =
-                Pair(contact.id, ApiStateUsers.Error(R.string.invalid_request))
-            UserDataHolder.setStates(states[states.size - 1])
+            UserDataHolder.setStates(
+                Pair(
+                    contact.id,
+                    ApiStateUsers.Error(R.string.invalid_request)
+                )
+            )
             ApiStateUsers.Error(R.string.invalid_request)
         }
     }
@@ -134,16 +132,6 @@ class NetworkImpl @Inject constructor(
             response.data.let { ApiStateUsers.Success(it.users) }
         } catch (e: java.lang.Exception) {
             ApiStateUsers.Error(R.string.invalid_request)
-        }
-    }
-
-    suspend fun getUser(userId: Long, accessToken: String): ApiStateUser {
-        return try {
-            val response = userRepository.getUser(userId, "$AUTHORIZATION_PREFIX $accessToken")
-            response.data?.let { ApiStateUser.Success(it) }
-                ?: ApiStateUser.Error(R.string.invalid_request)
-        } catch (e: Exception) {
-            ApiStateUser.Error(R.string.invalid_request)
         }
     }
 
@@ -167,7 +155,15 @@ class NetworkImpl @Inject constructor(
                 address,
                 date
             )
-            response.data?.let { UserDataHolder.setUser(UserResponse.Data(it.user, accessToken, refreshToken)) }
+            response.data?.let {
+                UserDataHolder.setUser(
+                    UserResponse.Data(
+                        it.user,
+                        accessToken,
+                        refreshToken
+                    )
+                )
+            }
             response.data?.let { ApiStateUser.Success(it) } ?: ApiStateUser.Error(
                 R.string.invalid_request
             )

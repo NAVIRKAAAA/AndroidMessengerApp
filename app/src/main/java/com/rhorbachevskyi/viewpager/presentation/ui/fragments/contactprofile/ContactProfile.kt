@@ -23,6 +23,7 @@ import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+
 @AndroidEntryPoint
 class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailViewBinding::inflate) {
 
@@ -43,22 +44,25 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
     }
 
     private fun setListeners() {
-        navigationBack()
-        addToContacts()
+        with(binding) {
+            imageViewNavigationBack.setOnClickListener { navigationBack() }
+            buttonMessage.setOnClickListener { addToContacts() }
+        }
     }
 
 
     private fun navigationBack() {
-        binding.imageViewNavigationBack.setOnClickListener {
-            navController.navigateUp()
-        }
+        navController.navigateUp()
     }
 
     private fun addToContacts() {
         if (args.isNewUser) {
-            binding.buttonMessage.setOnClickListener {
-                viewModel.addContact(userData.user.id, args.contact, userData.accessToken, requireContext().checkForInternet())
-            }
+            viewModel.addContact(
+                userData.user.id,
+                args.contact,
+                userData.accessToken,
+                requireContext().checkForInternet()
+            )
         }
     }
 

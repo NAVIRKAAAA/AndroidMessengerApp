@@ -87,5 +87,7 @@
 
     <!-- splash fragment -->
     <string name="repeat">Повторити</string>
-    <string name="search">Search</string>
+
+    <!-- search fragment -->
+    <string name="search">Пошук</string>
 </resources>

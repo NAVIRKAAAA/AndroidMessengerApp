@@ -26,7 +26,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SignUpExtendedFragment : BaseFragment<FragmentSignUpExtendedBinding>(FragmentSignUpExtendedBinding::inflate) {
+class SignUpExtendedFragment :
+    BaseFragment<FragmentSignUpExtendedBinding>(FragmentSignUpExtendedBinding::inflate) {
     private val viewModel: SignUpExtendedViewModel by viewModels()
     private val args: SignUpExtendedFragmentArgs by navArgs()
 
@@ -49,49 +50,50 @@ class SignUpExtendedFragment : BaseFragment<FragmentSignUpExtendedBinding>(Fragm
     }
 
     private fun setListeners() {
-        cancel()
-        forward()
-        setPhoto()
+        with(binding) {
+            buttonCancel.setOnClickListener { cancel() }
+            buttonForward.setOnClickListener { forward() }
+            imageViewAddPhotoSignUpExtended.setOnClickListener { setPhoto() }
+        }
         inputMobilePhone()
     }
 
     private fun cancel() {
-        binding.buttonCancel.setOnClickListener { navController.navigateUp() }
+        navController.navigateUp()
     }
 
     private fun forward() {
         with(binding) {
-            buttonForward.setOnClickListener {
-                if (!Validation.isValidUserName(textInputEditTextUserName.text.toString())) {
-                    root.showErrorSnackBar(requireContext(), R.string.user_name_must_contain_at_least_3_letters)
-                } else if (!Validation.isValidMobilePhone(textInputEditTextMobilePhone.text.toString())) {
-                    root.showErrorSnackBar(requireContext(), R.string.phone_must_be_at_least_10_digits_long)
-                } else {
-                    viewModel.registerUser(
-                        UserRequest(
-                            args.email,
-                            args.password,
-                            textInputEditTextUserName.text.toString(),
-                            textInputEditTextMobilePhone.text.toString()
-                        )
+            if (!Validation.isValidUserName(textInputEditTextUserName.text.toString())) {
+                root.showErrorSnackBar(
+                    requireContext(),
+                    R.string.user_name_must_contain_at_least_3_letters
+                )
+            } else if (!Validation.isValidMobilePhone(textInputEditTextMobilePhone.text.toString())) {
+                root.showErrorSnackBar(
+                    requireContext(),
+                    R.string.phone_must_be_at_least_10_digits_long
+                )
+            } else {
+                viewModel.registerUser(
+                    UserRequest(
+                        args.email,
+                        args.password,
+                        textInputEditTextUserName.text.toString(),
+                        textInputEditTextMobilePhone.text.toString()
                     )
-                }
+                )
             }
         }
     }
 
     private fun setPhoto() {
-        binding.imageViewAddPhotoSignUpExtended.setOnClickListener {
-            val request = PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-            requestImageLauncher.launch(request)
-        }
+        requestImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
     private fun inputMobilePhone() {
         binding.textInputEditTextMobilePhone.addTextChangedListener(
-            PhoneNumberFormattingTextWatcher(
-                Constants.MOBILE_CODE
-            )
+            PhoneNumberFormattingTextWatcher(Constants.MOBILE_CODE)
         )
     }
 
@@ -116,7 +118,11 @@ class SignUpExtendedFragment : BaseFragment<FragmentSignUpExtendedBinding>(Fragm
                 viewModel.registerState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                     when (it) {
                         is ApiStateUser.Success -> {
-                            if (args.rememberMe) saveData(requireContext(), args.email, args.password)
+                            if (args.rememberMe) saveData(
+                                requireContext(),
+                                args.email,
+                                args.password
+                            )
                             viewModel.isLogout()
                             val direction =
                                 SignUpExtendedFragmentDirections.actionSignUpExtendedFragmentToViewPagerFragment()

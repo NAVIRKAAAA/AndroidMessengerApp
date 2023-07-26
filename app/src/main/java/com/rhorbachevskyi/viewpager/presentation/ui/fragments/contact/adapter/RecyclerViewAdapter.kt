@@ -46,8 +46,13 @@ class RecyclerViewAdapter(private val listener: ContactItemClickListener) :
             contact: Contact
         ) {
             if (isMultiselectMode) setSelectList(contact) else deleteItem(contact)
-            itemLongClick(contact)
-            itemClick(contact)
+            with(binding) {
+                itemUser.setOnLongClickListener {
+                    itemLongClick(contact)
+                    true
+                }
+                root.setOnClickListener { itemClick(contact) }
+            }
         }
 
         private fun deleteItem(contact: Contact) {
@@ -58,25 +63,23 @@ class RecyclerViewAdapter(private val listener: ContactItemClickListener) :
 
         private fun itemClick(contact: Contact) {
             with(binding) {
-                root.setOnClickListener {
-                    if (isMultiselectMode) checkboxSelectMode.isChecked =
-                        !checkboxSelectMode.isChecked
-                    listener.onClickContact(
-                        contact, arrayOf(
-                            setTransitionName(
-                                imageViewUserPhoto,
-                                Constants.TRANSITION_NAME_IMAGE + contact.id
-                            ),
-                            setTransitionName(
-                                textViewName,
-                                Constants.TRANSITION_NAME_CONTACT_NAME + contact.id
-                            ), setTransitionName(
-                                textViewCareer,
-                                Constants.TRANSITION_NAME_CAREER + contact.id
-                            )
+                if (isMultiselectMode) checkboxSelectMode.isChecked =
+                    !checkboxSelectMode.isChecked
+                listener.onClickContact(
+                    contact, arrayOf(
+                        setTransitionName(
+                            imageViewUserPhoto,
+                            Constants.TRANSITION_NAME_IMAGE + contact.id
+                        ),
+                        setTransitionName(
+                            textViewName,
+                            Constants.TRANSITION_NAME_CONTACT_NAME + contact.id
+                        ), setTransitionName(
+                            textViewCareer,
+                            Constants.TRANSITION_NAME_CAREER + contact.id
                         )
                     )
-                }
+                )
             }
         }
 
@@ -93,14 +96,8 @@ class RecyclerViewAdapter(private val listener: ContactItemClickListener) :
             }
         }
 
-
-        private fun itemLongClick(
-            contact: Contact
-        ) {
-            binding.itemUser.setOnLongClickListener {
-                listener.onLongClick(contact)
-                true
-            }
+        private fun itemLongClick(contact: Contact) {
+            listener.onLongClick(contact)
         }
 
         private fun setTransitionName(view: View, name: String): Pair<View, String> {

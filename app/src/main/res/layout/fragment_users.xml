@@ -7,20 +7,14 @@
     android:background="@color/white">
 
     <View
+        android:id="@+id/viewBackground"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/background"
-        app:layout_constraintBottom_toBottomOf="@id/guidelineBackground"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineBackground"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.2" />
+        app:layout_constraintHeight_percent="0.2"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageViewNavigationBack"
@@ -38,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/small_margin"
-        android:fontFamily="@font/example9"
+        android:fontFamily="@font/noto_sans"
         android:text="@string/users"
         android:textColor="@color/white"
         android:textSize="@dimen/text_large_size"
@@ -55,7 +49,7 @@
         android:queryBackground="@drawable/bc_edit_text_search"
         app:layout_constraintBottom_toBottomOf="@id/textViewUsers"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/textViewUsers"
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintTop_toTopOf="@id/textViewUsers" />
 
@@ -66,14 +60,14 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/guidelineBackground"
+        app:layout_constraintTop_toBottomOf="@id/viewBackground"
         tools:listitem="@layout/item_add_user"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textViewNoResultFound"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/example9"
+        android:fontFamily="@font/noto_sans"
         android:text="@string/no_results_found"
         android:textColor="@color/black"
         android:textSize="@dimen/text_large_size"
@@ -81,7 +75,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/guidelineBackground"
+        app:layout_constraintTop_toTopOf="@id/viewBackground"
         app:layout_constraintVertical_bias="0.1" />
 
     <ProgressBar
@@ -94,5 +88,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/guidelineBackground" />
+        app:layout_constraintTop_toBottomOf="@id/viewBackground" />
 </androidx.constraintlayout.widget.ConstraintLayout>

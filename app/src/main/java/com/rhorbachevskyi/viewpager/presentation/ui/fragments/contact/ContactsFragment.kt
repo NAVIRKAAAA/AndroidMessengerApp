@@ -25,7 +25,6 @@ import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.setupSwipeToDelete
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
-import com.rhorbachevskyi.viewpager.presentation.utils.ext.visibleIf
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -81,7 +80,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
         super.onViewCreated(view, savedInstanceState)
         initUser()
         initialRecyclerview()
-        setClickListener()
+        setListener()
         setObservers()
     }
 
@@ -108,20 +107,20 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
         }
     }
 
-    private fun setClickListener() {
-        addContacts()
+    private fun setListener() {
+        with(binding) {
+            textViewAddContacts.setOnClickListener { addContacts() }
+            imageViewDeleteSelectMode.setOnClickListener { deleteSelectedContacts() }
+            imageSearchView.setOnClickListener { searchView() }
+        }
         navigationBack()
-        deleteSelectedContacts()
-        searchView()
     }
 
     private fun addContacts() {
-        binding.textViewAddContacts.setOnClickListener {
-            thisScreen = false
-            val direction =
-                ViewPagerFragmentDirections.actionViewPagerFragmentToAddContactsFragment()
-            navController.navigate(direction)
-        }
+        thisScreen = false
+        val direction =
+            ViewPagerFragmentDirections.actionViewPagerFragmentToAddContactsFragment()
+        navController.navigate(direction)
     }
 
     private fun navigationBack() {
@@ -138,29 +137,23 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
 
 
     private fun deleteSelectedContacts() {
-        binding.imageViewDeleteSelectMode.setOnClickListener {
-            val size = viewModel.selectContacts.value.size
-            if (viewModel.deleteSelectList(
-                    userData.user.id,
-                    userData.accessToken,
-                    requireContext().checkForInternet()
-                )
-            ) {
-                binding.root.showErrorSnackBar(
-                    requireContext(),
-                    if (size > 1) R.string.contacts_removed else R.string.contact_removed
-                )
-                viewModel.changeMultiselectMode()
-            }
+        val size = viewModel.selectContacts.value.size
+        if (viewModel.deleteSelectList(
+                userData.user.id,
+                userData.accessToken,
+                requireContext().checkForInternet()
+            )
+        ) {
+            binding.root.showErrorSnackBar(
+                requireContext(),
+                if (size > 1) R.string.contacts_removed else R.string.contact_removed
+            )
+            viewModel.changeMultiselectMode()
         }
     }
 
     private fun searchView() {
-        with(binding) {
-            imageSearchView.setOnClickListener {
-                viewModel.showNotification(requireContext())
-            }
-        }
+        viewModel.showNotification(requireContext())
     }
 
     private fun setObservers() {

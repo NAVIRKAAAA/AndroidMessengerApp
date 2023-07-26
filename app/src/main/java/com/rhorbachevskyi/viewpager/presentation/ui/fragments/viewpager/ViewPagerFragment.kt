@@ -25,8 +25,8 @@ class ViewPagerFragment :
             viewPager.adapter = adapter
             TabLayoutMediator(tabLayout, viewPager) { tab, position ->
                 tab.text = when (position) {
-                    Constants.FIRST_FRAGMENT -> getString(R.string.profile)
-                    Constants.SECOND_FRAGMENT -> getString(R.string.contacts)
+                    Constants.PROFILE_FRAGMENT -> getString(R.string.profile)
+                    Constants.CONTACTS_FRAGMENT -> getString(R.string.contacts)
                     else -> throw IllegalStateException("Unknown tab!")
                 }
             }.attach()

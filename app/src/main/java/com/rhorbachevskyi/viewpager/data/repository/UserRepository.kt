@@ -14,9 +14,6 @@ class UserRepository @Inject constructor(private val service: UserApiService) {
     suspend fun authorizeUser(@Body body: UserRequest): UserResponse =
         service.authorizeUser(body)
 
-    suspend fun getUser(userId: Long, accessToken: String): UserResponse =
-        service.getUser(userId, accessToken)
-
     suspend fun editUser(
         id: Long,
         accessToken: String,

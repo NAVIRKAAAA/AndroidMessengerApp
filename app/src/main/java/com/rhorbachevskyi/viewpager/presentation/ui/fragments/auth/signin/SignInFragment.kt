@@ -27,62 +27,62 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(FragmentSignInBinding
     }
 
     private fun setListeners() {
-        login()
-        signUp()
+        with(binding) {
+            buttonLogin.setOnClickListener { login() }
+            textViewSignUp.setOnClickListener { signUp() }
+        }
     }
+
     private fun login() {
         with(binding) {
-            buttonLogin.setOnClickListener {
-                viewModel.authorizationUser(
-                    UserRequest(
-                        textInputEditTextEmail.text.toString(),
-                        textInputEditTextPassword.text.toString()
-                    )
+            viewModel.authorizationUser(
+                UserRequest(
+                    textInputEditTextEmail.text.toString(),
+                    textInputEditTextPassword.text.toString()
                 )
-            }
+            )
         }
     }
 
     private fun signUp() {
-        binding.textViewSignUp.setOnClickListener {
-            val direction = SignInFragmentDirections.actionSignInFragmentToAuthFragment()
-            navController.navigate(direction)
-        }
+        val direction = SignInFragmentDirections.actionSignInFragmentToAuthFragment()
+        navController.navigate(direction)
     }
-
 
 
     private fun setObserver() {
         with(binding) {
             lifecycleScope.launch {
-                viewModel.authorizationState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
-                    when (it) {
-                        is ApiStateUser.Success -> {
-                            if (checkboxRemember.isChecked) {
-                                lifecycleScope.launch(Dispatchers.IO) {
-                                    saveData(
-                                        requireContext(),
-                                        textInputEditTextEmail.text.toString(), textInputEditTextPassword.text.toString()
-                                    )
+                viewModel.authorizationState.flowWithLifecycle(viewLifecycleOwner.lifecycle)
+                    .collect {
+                        when (it) {
+                            is ApiStateUser.Success -> {
+                                if (checkboxRemember.isChecked) {
+                                    lifecycleScope.launch(Dispatchers.IO) {
+                                        saveData(
+                                            requireContext(),
+                                            textInputEditTextEmail.text.toString(),
+                                            textInputEditTextPassword.text.toString()
+                                        )
+                                    }
                                 }
+                                val direction =
+                                    SignInFragmentDirections.actionSignInFragmentToViewPagerFragment()
+                                navController.navigate(direction)
                             }
-                            val direction =
-                                SignInFragmentDirections.actionSignInFragmentToViewPagerFragment()
-                            navController.navigate(direction)
-                        }
-                        is ApiStateUser.Initial -> {
 
-                        }
-                        is ApiStateUser.Loading -> {
-                            progressBar.visible()
-                        }
+                            is ApiStateUser.Initial -> Unit
 
-                        is ApiStateUser.Error -> {
-                            progressBar.gone()
-                            root.showErrorSnackBar(requireContext(), it.error)
+                            is ApiStateUser.Loading -> {
+                                progressBar.visible()
+                            }
+
+                            is ApiStateUser.Error -> {
+                                progressBar.gone()
+                                root.showErrorSnackBar(requireContext(), it.error)
+                            }
                         }
                     }
-                }
             }
         }
     }

@@ -12,12 +12,10 @@ import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.ViewPagerFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.ViewPagerFragmentDirections
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
-import com.rhorbachevskyi.viewpager.presentation.utils.DataStore
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.gone
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -31,39 +29,32 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
         setListeners()
         setObserver()
     }
-    
+
     private fun initialUser() {
         viewModel.requestGetUser()
     }
 
     private fun setListeners() {
-        viewContact()
-        logout()
-        editProfile()
+        with(binding) {
+            buttonViewContacts.setOnClickListener { viewContact() }
+            textViewLogout.setOnClickListener { logout() }
+            buttonMessageTop.setOnClickListener { editProfile() }
+        }
     }
 
     private fun viewContact() {
-        binding.buttonViewContacts.setOnClickListener {
-            (parentFragment as? ViewPagerFragment)?.openFragment(1)
-        }
+        (parentFragment as? ViewPagerFragment)?.openFragment(Constants.CONTACTS_FRAGMENT)
     }
+
     private fun logout() {
-        binding.textViewLogout.setOnClickListener {
-            lifecycleScope.launch(Dispatchers.IO) {
-                DataStore.deleteDataFromDataStore(requireContext(), Constants.KEY_EMAIL)
-                DataStore.deleteDataFromDataStore(requireContext(), Constants.KEY_PASSWORD)
-                DataStore.deleteDataFromDataStore(requireContext(), Constants.KEY_REMEMBER_ME)
-            }
-            val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToSignInFragment()
-            navController.navigate(direction)
-        }
+        viewModel.toLogout(requireContext())
+        val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToSignInFragment()
+        navController.navigate(direction)
     }
 
     private fun editProfile() {
-        binding.buttonMessageTop.setOnClickListener {
-            val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToEditProfile()
-            navController.navigate(direction)
-        }
+        val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToEditProfile()
+        navController.navigate(direction)
     }
 
     private fun setObserver() {

@@ -25,8 +25,8 @@ object Constants {
 
     // screens in viewpager
     const val FRAGMENT_COUNT = 2
-    const val FIRST_FRAGMENT = 0
-    const val SECOND_FRAGMENT = 1
+    const val PROFILE_FRAGMENT = 0
+    const val CONTACTS_FRAGMENT = 1
 
     // validation
     const val PASSWORD_REGEX =
@@ -43,4 +43,8 @@ object Constants {
 
     // authorization prefix
     const val AUTHORIZATION_PREFIX = "Bearer"
+
+    // notifications
+    const val CHANNEL_ID = "channel id"
+    const val CHANNEL_NAME = "channel name"
 }

@@ -18,31 +18,32 @@ class AuthFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding::
         dataValidation()
 
     }
+
     private fun setListeners() {
-        register()
-        signIn()
+        with(binding) {
+            buttonRegister.setOnClickListener { register() }
+            textViewSignIn.setOnClickListener { signIn() }
+        }
     }
+
     private fun register() {
         with(binding) {
-            buttonRegister.setOnClickListener {
-                if (Validation.isValidEmail(textInputEditTextEmail.text.toString()) &&
-                    Validation.isValidPassword(textInputEditTextPassword.text.toString())
-                ) {
-                    val direction =
-                        AuthFragmentDirections.actionAuthFragmentToSignUpExtendedFragment(
-                            textInputEditTextEmail.text.toString(),
-                            textInputEditTextPassword.text.toString(),
-                            checkboxRemember.isChecked
-                        )
-                    navController.navigate(direction)
-                }
+            if (Validation.isValidEmail(textInputEditTextEmail.text.toString()) &&
+                Validation.isValidPassword(textInputEditTextPassword.text.toString())
+            ) {
+                val direction =
+                    AuthFragmentDirections.actionAuthFragmentToSignUpExtendedFragment(
+                        textInputEditTextEmail.text.toString(),
+                        textInputEditTextPassword.text.toString(),
+                        checkboxRemember.isChecked
+                    )
+                navController.navigate(direction)
             }
         }
     }
+
     private fun signIn() {
-        binding.textViewSignIn.setOnClickListener {
-            navController.navigateUp()
-        }
+        navController.navigateUp()
     }
 
     private fun dataValidation() {

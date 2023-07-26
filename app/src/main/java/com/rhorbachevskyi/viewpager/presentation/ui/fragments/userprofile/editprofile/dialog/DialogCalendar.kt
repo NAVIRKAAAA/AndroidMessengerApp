@@ -30,17 +30,18 @@ class DialogCalendar : AppCompatDialogFragment() {
     private fun setListeners() {
         val calendar = Calendar.getInstance()
         var date = "${calendar.get(Calendar.DAY_OF_MONTH)}/${calendar.get(Calendar.MONTH) + 1}/${calendar.get(Calendar.YEAR)}"
+        with(binding) {
+            calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
+                date = "$dayOfMonth/${(month + 1)}/$year"
+            }
+            textViewSave.setOnClickListener {
+                listener?.onDateSelected(date)
+                dismiss()
+            }
 
-        binding.calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
-            date = "$dayOfMonth/${(month + 1)}/$year"
-        }
-        binding.textViewSave.setOnClickListener {
-            listener?.onDateSelected(date)
-            dismiss()
-        }
-
-        binding.textViewCancel.setOnClickListener {
-            dismiss()
+            textViewCancel.setOnClickListener {
+                dismiss()
+            }
         }
     }
 }

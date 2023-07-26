@@ -45,7 +45,8 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
                 val extras = FragmentNavigatorExtras(*transitionPairs)
                 val direction =
                     AddContactsFragmentDirections.actionAddContactsFragmentToContactProfile(
-                        !viewModel.supportList.contains(contact), contact)
+                        !viewModel.supportList.contains(contact), contact
+                    )
                 navController.navigate(direction, extras)
             }
         })
@@ -111,21 +112,17 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
     }
 
     private fun setListeners() {
-        navigateBack()
-        searchView()
+        with(binding) {
+            imageViewNavigationBack.setOnClickListener { navigationBack() }
+            imageSearchView.setOnClickListener { searchView() }
+        }
     }
 
-    private fun navigateBack() {
-        binding.imageViewNavigationBack.setOnClickListener {
-            navController.navigateUp()
-        }
+    private fun navigationBack() {
+        navController.navigateUp()
     }
 
     private fun searchView() {
-        with(binding) {
-            imageSearchView.setOnClickListener {
-                viewModel.showNotification(requireContext())
-            }
-        }
+        viewModel.showNotification(requireContext())
     }
 }

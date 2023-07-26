@@ -41,7 +41,7 @@
         android:id="@+id/textViewProfileData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/example6"
+        android:fontFamily="@font/josefin_sans"
         android:text="@string/your_profile_data"
         android:textColor="@color/white"
         android:textSize="@dimen/text_large_size"
@@ -57,7 +57,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/small_margin"
-        android:fontFamily="@font/example5"
+        android:fontFamily="@font/wix_madefor_regular"
         android:text="@string/fill_out_the_profile_and_go_to_the_application"
         android:textColor="@color/gray"
         android:textSize="@dimen/text_normal_size"
@@ -91,7 +91,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/edit_text_height"
             android:inputType="textEmailAddress"
-            android:maxLength="25"
+            android:maxLength="20"
             android:textColor="@color/white"
             android:textSize="@dimen/edit_text_size" />
 

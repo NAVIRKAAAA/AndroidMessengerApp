@@ -44,30 +44,30 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
     }
 
     private fun setListeners() {
-        save()
+        with(binding) {
+            buttonSave.setOnClickListener { save() }
+            imageViewNavigationBack.setOnClickListener { navigationBack() }
+        }
         inputPhone()
-        navigationBack()
     }
 
     private fun save() {
         with(binding) {
-            buttonSave.setOnClickListener {
-                if (Validation.isValidUserName(textInputEditTextUserName.text.toString()) && Validation.isValidMobilePhone(
-                        textInputEditTextPhone.text.toString()
-                    )
-                ) {
-                    viewModel.requestEditUser(
-                        userData.user.id,
-                        userData.accessToken,
-                        textInputEditTextUserName.text.toString(),
-                        textInputEditTextCareer.text.toString(),
-                        textInputEditTextPhone.text.toString(),
-                        textInputEditTextAddress.text.toString(),
-                        Parser.getDataFromString(textInputEditTextDate.text.toString()),
-                        userData.refreshToken,
-                        requireContext().checkForInternet()
-                    )
-                }
+            if (Validation.isValidUserName(textInputEditTextUserName.text.toString()) && Validation.isValidMobilePhone(
+                    textInputEditTextPhone.text.toString()
+                )
+            ) {
+                viewModel.requestEditUser(
+                    userData.user.id,
+                    userData.accessToken,
+                    textInputEditTextUserName.text.toString(),
+                    textInputEditTextCareer.text.toString(),
+                    textInputEditTextPhone.text.toString(),
+                    textInputEditTextAddress.text.toString(),
+                    Parser.getDataFromString(textInputEditTextDate.text.toString()),
+                    userData.refreshToken,
+                    requireContext().checkForInternet()
+                )
             }
         }
     }
@@ -81,9 +81,7 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
     }
 
     private fun navigationBack() {
-        binding.imageViewNavigationBack.setOnClickListener {
-            navController.navigateUp()
-        }
+        navController.navigateUp()
     }
 
     private fun setObserver() {

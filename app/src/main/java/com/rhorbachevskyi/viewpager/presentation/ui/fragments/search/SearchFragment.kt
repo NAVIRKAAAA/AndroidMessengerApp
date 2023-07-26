@@ -23,6 +23,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
     private val adapter: SearchAdapter by lazy {
         SearchAdapter()
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initialRecyclerview()
@@ -33,11 +34,13 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
 
     private fun initialRecyclerview() {
         viewModel.initSearchList()
+        viewModel.cancelSimpleNotification()
         with(binding) {
             recyclerViewContacts.layoutManager = LinearLayoutManager(context)
             recyclerViewContacts.adapter = adapter
         }
     }
+
     private fun setObserver() {
         lifecycleScope.launch {
             viewModel.currentList.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
@@ -47,10 +50,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
     }
 
     private fun setListeners() {
-        viewModel.cancelSimpleNotification()
-        with(binding) {
-            imageViewNavigationBack.setOnClickListener { navigationBack() }
-        }
+        binding.imageViewNavigationBack.setOnClickListener { navigationBack() }
     }
 
     private fun navigationBack() {
@@ -80,10 +80,12 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
             })
         }
     }
+
     private fun updateSearchView(newText: String?) {
         if (newText?.isBlank() == true) initialRecyclerview()
         setContactsText(newText)
     }
+
     private fun setContactsText(newText: String?) {
         val isContactListEmpty = viewModel.currentList.value.isEmpty()
         val isTextEmpty = newText?.isEmpty() == true

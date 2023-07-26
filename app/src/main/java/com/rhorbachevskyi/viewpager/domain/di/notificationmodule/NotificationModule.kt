@@ -11,6 +11,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.presentation.ui.activity.MainActivity
+import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,7 +30,7 @@ class NotificationModule {
     ): NotificationCompat.Builder {
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            data = Uri.parse("myapp://secondF")
+            data = Uri.parse("")
         }
 
         val pendingIntent: PendingIntent = PendingIntent.getActivity(
@@ -39,18 +40,12 @@ class NotificationModule {
             PendingIntent.FLAG_IMMUTABLE
         )
 
-        return NotificationCompat.Builder(context, "Main Channel ID")
+        return NotificationCompat.Builder(context, Constants.CHANNEL_ID)
             .setContentTitle(context.getString(R.string.app_name))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-            .setPublicVersion(
-                NotificationCompat.Builder(context, "Main Channel ID")
-                    .setContentTitle("Hidden")
-                    .setContentText("Unlock to see the message.")
-                    .build()
-            )
-            .addAction(0, "Search", pendingIntent)
+            .addAction(0,  context.getString(R.string.search), pendingIntent)
             .setContentIntent(pendingIntent)
     }
 
@@ -64,8 +59,8 @@ class NotificationModule {
         val notificationManager = NotificationManagerCompat.from(context)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                "Main Channel ID",
-                "Main Channel",
+                Constants.CHANNEL_ID,
+                Constants.CHANNEL_NAME,
                 NotificationManager.IMPORTANCE_DEFAULT
             )
             notificationManager.createNotificationChannel(channel)

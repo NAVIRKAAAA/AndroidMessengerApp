@@ -12,22 +12,14 @@
         android:background="@color/white">
 
         <View
+            android:id="@+id/viewBackground"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@color/background"
-            app:layout_constraintBottom_toBottomOf="@id/guidelineBackground"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/guidelineBackground" />
+            app:layout_constraintHeight_percent="0.3"
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imageViewNavigationBack"
@@ -45,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/small_margin"
-            android:fontFamily="@font/example5"
+            android:fontFamily="@font/wix_madefor_regular"
             android:text="@string/edit_profile"
             android:textColor="@color/white"
             android:textSize="@dimen/text_large_size"
@@ -58,7 +50,7 @@
             android:layout_width="@dimen/photo_size"
             android:layout_height="@dimen/photo_size"
             android:src="@drawable/bc_photo"
-            app:layout_constraintBottom_toBottomOf="@id/guidelineBackground"
+            app:layout_constraintBottom_toBottomOf="@id/viewBackground"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textViewAddContacts" />
@@ -92,7 +84,7 @@
             android:text="@string/username"
             android:textColor="@color/gray"
             app:layout_constraintStart_toStartOf="@id/textInputUserName"
-            app:layout_constraintTop_toTopOf="@id/guidelineBackground" />
+            app:layout_constraintTop_toBottomOf="@id/viewBackground" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputUserName"
@@ -294,12 +286,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textInputDate" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guidelineBackground"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.3" />
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -311,7 +297,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/guidelineBackground" />
+            app:layout_constraintTop_toBottomOf="@id/viewBackground" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

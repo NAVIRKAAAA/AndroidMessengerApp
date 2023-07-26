@@ -8,13 +8,14 @@
     tools:context=".presentation.ui.activity.MainActivity">
 
     <View
+        android:id="@+id/viewBackground"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/background"
-        app:layout_constraintBottom_toBottomOf="@id/guidelineBackground"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintHeight_percent="0.2"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageViewNavigationBack"
@@ -32,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/small_margin"
-        android:fontFamily="@font/example9"
+        android:fontFamily="@font/noto_sans"
         android:text="@string/contacts"
         android:textColor="@color/white"
         android:textSize="@dimen/text_large_size"
@@ -49,7 +50,7 @@
         android:queryBackground="@drawable/bc_edit_text_search"
         app:layout_constraintBottom_toBottomOf="@id/textViewContacts"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/textViewContacts"
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintTop_toTopOf="@id/textViewContacts" />
 
@@ -58,11 +59,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/normal_margin"
-        android:fontFamily="@font/example9"
+        android:fontFamily="@font/noto_sans"
         android:text="@string/add_contacts"
         android:textColor="@color/white"
         android:textSize="@dimen/text_normal_size"
-        app:layout_constraintBottom_toBottomOf="@id/guidelineBackground"
+        app:layout_constraintBottom_toBottomOf="@id/viewBackground"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/imageViewNavigationBack"
         app:layout_constraintVertical_bias="0.75" />
@@ -75,7 +76,7 @@
         app:layout_constraintBottom_toTopOf="@id/imageViewDeleteSelectMode"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/guidelineBackground"
+        app:layout_constraintTop_toBottomOf="@id/viewBackground"
         tools:listitem="@layout/item_user" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -100,13 +101,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/guidelineBackground" />
+        app:layout_constraintTop_toBottomOf="@id/viewBackground" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textViewNoResultFound"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/example9"
+        android:fontFamily="@font/noto_sans"
         android:text="@string/no_results_found"
         android:textColor="@color/black"
         android:textSize="@dimen/text_large_size"
@@ -114,14 +115,14 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/guidelineBackground"
+        app:layout_constraintTop_toTopOf="@id/viewBackground"
         app:layout_constraintVertical_bias="0.1" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textViewMoreContacts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/example9"
+        android:fontFamily="@font/noto_sans"
         android:text="@string/you_can_see_more_contacts_in_the_recommendation"
         android:textColor="@color/black"
         android:gravity="center"
@@ -130,10 +131,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewNoResultFound" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineBackground"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.2" />
 </androidx.constraintlayout.widget.ConstraintLayout>
