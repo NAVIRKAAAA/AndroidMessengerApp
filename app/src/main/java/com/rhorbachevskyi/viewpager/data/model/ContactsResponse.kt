@@ -1,12 +1,12 @@
 package com.rhorbachevskyi.viewpager.data.model
 
-data class UserResponseContacts(
+data class ContactsResponse(
     val status: String,
     val code: String,
     val message: String?,
     val data: Data
 ) {
-    data class Data(val contacts: ArrayList<UserData>?)
+    data class Data(val contacts: List<UserData>?)
 }
 
 

@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.viewpager.domain.useCases
+package com.rhorbachevskyi.viewpager.domain.usecases
 
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.repository.ContactRepositoryImpl

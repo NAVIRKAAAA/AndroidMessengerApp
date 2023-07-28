@@ -6,7 +6,8 @@ import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
-import com.rhorbachevskyi.viewpager.domain.useCases.EditUserUseCase
+import com.rhorbachevskyi.viewpager.domain.usecases.EditUserUseCase
+import com.rhorbachevskyi.viewpager.presentation.utils.Validation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,4 +52,11 @@ class EditTextViewModel @Inject constructor(
     }
 
     fun requestGetUser(): UserResponse.Data = UserDataHolder.userData
+
+    fun isValidInputs(name: String, phone: String): Boolean =
+        Validation.isValidUserName(name) && Validation.isValidMobilePhone(phone)
+
+    fun isNotValidUserName(name: String): Boolean = !Validation.isValidUserName(name)
+
+    fun isNotValidMobilePhone(phone: String): Boolean = !Validation.isValidMobilePhone(phone)
 }

@@ -19,13 +19,12 @@ class ContactRepositoryImpl @Inject constructor(
 ) {
     suspend fun getAllUsers(accessToken: String, user: UserData): ApiStateUser {
         return try {
-            val response = contactService.getAllUsers("${Constants.AUTHORIZATION_PREFIX} $accessToken")
+            val response =
+                contactService.getAllUsers("${Constants.AUTHORIZATION_PREFIX} $accessToken")
             val contacts = UserDataHolder.serverContacts
             val filteredUsers =
                 response.data.users?.filter {
-                    it.name != null && it.email != user.email && !contacts.contains(
-                        it.toContact()
-                    )
+                    it.name != null && it.email != user.email && !contacts.contains(it.toContact())
                 }
             val users = filteredUsers?.map { it.toContact() } ?: emptyList()
             UserDataHolder.serverUsers = users
@@ -39,7 +38,10 @@ class ContactRepositoryImpl @Inject constructor(
     suspend fun getContacts(userId: Long, accessToken: String): ApiStateUser {
         return try {
             val response =
-                contactService.getUserContacts(userId, "${Constants.AUTHORIZATION_PREFIX} $accessToken")
+                contactService.getUserContacts(
+                    userId,
+                    "${Constants.AUTHORIZATION_PREFIX} $accessToken"
+                )
             val users = response.data.contacts?.map { it.toContact() } ?: emptyList()
             UserDataHolder.serverContacts = users
             contactDatabaseRepository.deleteAllContacts()
@@ -58,14 +60,11 @@ class ContactRepositoryImpl @Inject constructor(
                     "${Constants.AUTHORIZATION_PREFIX} $accessToken",
                     contact.id
                 )
-            UserDataHolder.states.add(Pair(contact.id, ApiStateUser.Success(response.data.users)))
+            UserDataHolder.states.add(contact.id to ApiStateUser.Success(response.data.users))
             response.data.let { ApiStateUser.Success(it.users) }
         } catch (e: Exception) {
             UserDataHolder.states.add(
-                Pair(
-                    contact.id,
-                    ApiStateUser.Error(R.string.invalid_request)
-                )
+                contact.id to ApiStateUser.Error(R.string.invalid_request)
             )
             ApiStateUser.Error(R.string.invalid_request)
         }
@@ -77,7 +76,7 @@ class ContactRepositoryImpl @Inject constructor(
                 userId,
                 contact.id,
                 "${Constants.AUTHORIZATION_PREFIX} $accessToken",
-                )
+            )
             response.data.let { ApiStateUser.Success(it.users) }
         } catch (e: java.lang.Exception) {
             ApiStateUser.Error(R.string.invalid_request)

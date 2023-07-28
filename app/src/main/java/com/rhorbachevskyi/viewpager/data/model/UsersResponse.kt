@@ -7,5 +7,5 @@ data class UsersResponse(
     val message: String?,
     val data: Data
 ) {
-    data class Data(val users: ArrayList<UserData>?)
+    data class Data(val users: List<UserData>?)
 }

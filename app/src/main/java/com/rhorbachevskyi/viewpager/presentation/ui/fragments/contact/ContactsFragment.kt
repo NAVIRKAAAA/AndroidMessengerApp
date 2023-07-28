@@ -29,7 +29,6 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsBinding::inflate) {
-    private var thisScreen = true
     private val viewModel: ContactsViewModel by viewModels()
     private val userData: UserResponse.Data by lazy {
         viewModel.requestGetUser()
@@ -41,7 +40,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                 contact: Contact,
                 transitionPairs: Array<Pair<View, String>>
             ) {
-                if (adapter.isMultiselectMode) {
+                if (viewModel.isMultiselect.value) {
                     if (!viewModel.selectContacts.value.contains(contact)) {
                         viewModel.addSelectContact(contact)
                     } else {
@@ -52,7 +51,6 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                     }
                 } else {
                     if (!viewModel.contactList.value.contains(contact)) return
-                    thisScreen = false
                     val extras = FragmentNavigatorExtras(*transitionPairs)
                     val direction =
                         ViewPagerFragmentDirections.actionViewPagerFragmentToContactProfile(
@@ -68,7 +66,6 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                 if (viewModel.isMultiselect.value) {
                     viewModel.addSelectContact(contact)
                 }
-
             }
 
             override fun onClickDelete(contact: Contact) {
@@ -106,15 +103,14 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
 
     private fun setListener() {
         with(binding) {
-            textViewAddContacts.setOnClickListener { addContacts() }
+            textViewAddContacts.setOnClickListener { toAddContactsScreen() }
             imageViewDeleteSelectMode.setOnClickListener { deleteSelectedContacts() }
-            imageSearchView.setOnClickListener { searchView() }
+            imageSearchView.setOnClickListener { toSearchViewScreen() }
         }
         navigationBack()
     }
 
-    private fun addContacts() {
-        thisScreen = false
+    private fun toAddContactsScreen() {
         val direction =
             ViewPagerFragmentDirections.actionViewPagerFragmentToAddContactsFragment()
         navController.navigate(direction)
@@ -149,7 +145,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
         }
     }
 
-    private fun searchView() {
+    private fun toSearchViewScreen() {
         viewModel.showNotification(requireContext())
     }
 
@@ -163,7 +159,6 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
             lifecycleScope.launch {
                 viewModel.isMultiselect.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                     recyclerViewContacts.adapter = adapter
-                    adapter.isMultiselectMode = it
                     textViewAddContacts.visibility = if (it) View.GONE else View.VISIBLE
                     imageViewDeleteSelectMode.visibility = if (it) View.VISIBLE else View.GONE
                 }
@@ -212,13 +207,13 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                 getString(R.string.s_has_been_removed).format(contact.name),
                 Snackbar.LENGTH_LONG
             ).setAction(getString(R.string.restore)) {
-                    viewModel.addContactToList(
-                        userData.user.id,
-                        contact,
-                        userData.accessToken,
-                        position
-                    )
-                }.show()
+                viewModel.addContactToList(
+                    userData.user.id,
+                    contact,
+                    userData.accessToken,
+                    position
+                )
+            }.show()
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.viewpager.domain.useCases
+package com.rhorbachevskyi.viewpager.domain.usecases
 
 import android.content.Context
 import com.rhorbachevskyi.viewpager.data.repository.UserRepositoryImpl

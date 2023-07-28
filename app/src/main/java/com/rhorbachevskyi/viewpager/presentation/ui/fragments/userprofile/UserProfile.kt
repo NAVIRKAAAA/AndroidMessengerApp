@@ -18,7 +18,6 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
     private val viewModel: UserProfileViewModel by viewModels()
     private lateinit var userData: UserResponse.Data
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initialUser()
@@ -32,23 +31,23 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
 
     private fun setListeners() {
         with(binding) {
-            buttonViewContacts.setOnClickListener { viewContact() }
-            textViewLogout.setOnClickListener { logout() }
-            buttonMessageTop.setOnClickListener { editProfile() }
+            buttonViewContacts.setOnClickListener { toContactList() }
+            textViewLogout.setOnClickListener { logoutFromAccount() }
+            buttonMessageTop.setOnClickListener { toEditProfileScreen() }
         }
     }
 
-    private fun viewContact() {
+    private fun toContactList() {
         (parentFragment as? ViewPagerFragment)?.openFragment(Constants.CONTACTS_FRAGMENT)
     }
 
-    private fun logout() {
+    private fun logoutFromAccount() {
         viewModel.toLogout(requireContext())
         val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToSignInFragment()
         navController.navigate(direction)
     }
 
-    private fun editProfile() {
+    private fun toEditProfileScreen() {
         val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToEditProfile()
         navController.navigate(direction)
     }

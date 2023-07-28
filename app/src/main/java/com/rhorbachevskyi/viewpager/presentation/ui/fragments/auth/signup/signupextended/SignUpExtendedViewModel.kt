@@ -1,9 +1,13 @@
 package com.rhorbachevskyi.viewpager.presentation.ui.fragments.auth.signup.signupextended
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
-import com.rhorbachevskyi.viewpager.domain.useCases.RegisterUserUseCase
+import com.rhorbachevskyi.viewpager.domain.usecases.RegisterUserUseCase
+import com.rhorbachevskyi.viewpager.presentation.utils.DataStore
+import com.rhorbachevskyi.viewpager.presentation.utils.Parser
+import com.rhorbachevskyi.viewpager.presentation.utils.Validation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,4 +29,15 @@ class SignUpExtendedViewModel @Inject constructor(
         _registerStateFlow.value = ApiStateUser.Loading
         _registerStateFlow.value = registerUserUseCase(email, password, name, phone)
     }
+
+    fun isNotValidUserName(name: String): Boolean = !Validation.isValidUserName(name)
+
+    fun isNotValidMobilePhone(phone: String): Boolean = !Validation.isValidMobilePhone(phone)
+
+    fun saveUserDataToDataStore(context: Context, email: String, password: String) =
+        viewModelScope.launch(Dispatchers.IO) {
+            DataStore.saveData(context, email, password)
+        }
+
+    fun getNameFromEmail(email: String) : String = Parser.parsingEmail(email)
 }

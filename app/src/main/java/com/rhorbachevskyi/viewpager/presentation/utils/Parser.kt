@@ -17,7 +17,7 @@ object Parser {
     }
     fun parsingEmail(email: String): String {
         val elements = email.split("@")[0].replace(".", " ").split(" ")
-        return if (elements.size >= 2) {
+        return if (elements.size >= Constants.NUMBER_OF_HALVES_OF_NAME) {
             "${elements[0].replaceFirstChar { it.uppercase() }} ${elements[1].replaceFirstChar { it.titlecase() }}"
         } else {
             elements[0]

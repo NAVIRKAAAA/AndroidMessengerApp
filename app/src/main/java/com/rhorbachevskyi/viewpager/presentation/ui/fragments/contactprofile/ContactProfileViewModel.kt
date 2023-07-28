@@ -7,7 +7,7 @@ import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
-import com.rhorbachevskyi.viewpager.domain.useCases.AddContactUseCase
+import com.rhorbachevskyi.viewpager.domain.usecases.AddContactUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

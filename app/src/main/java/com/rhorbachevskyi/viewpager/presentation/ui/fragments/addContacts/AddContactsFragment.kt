@@ -16,7 +16,6 @@ import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapte
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapter.interfaces.UserItemClickListener
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.checkForInternet
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
-import com.rhorbachevskyi.viewpager.presentation.utils.ext.log
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 import dagger.hilt.android.AndroidEntryPoint
@@ -63,7 +62,6 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
     }
 
     private fun initialRecyclerview() {
-        log(userData.toString())
         viewModel.getAllUsers(userData.accessToken, userData.user, requireContext().checkForInternet())
         binding.recyclerViewUsers.layoutManager = LinearLayoutManager(context)
         binding.recyclerViewUsers.adapter = adapter

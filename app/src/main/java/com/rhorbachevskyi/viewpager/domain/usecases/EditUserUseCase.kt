@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.viewpager.domain.useCases
+package com.rhorbachevskyi.viewpager.domain.usecases
 
 import com.rhorbachevskyi.viewpager.data.repository.UserRepositoryImpl
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser

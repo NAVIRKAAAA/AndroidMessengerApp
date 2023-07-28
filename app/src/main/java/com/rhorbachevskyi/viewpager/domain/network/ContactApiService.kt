@@ -1,6 +1,6 @@
 package com.rhorbachevskyi.viewpager.domain.network
 
-import com.rhorbachevskyi.viewpager.data.model.UserResponseContacts
+import com.rhorbachevskyi.viewpager.data.model.ContactsResponse
 import com.rhorbachevskyi.viewpager.data.model.UsersResponse
 import retrofit2.http.DELETE
 import retrofit2.http.Field
@@ -18,7 +18,7 @@ interface ContactApiService {
     suspend fun getUserContacts(
         @Path("userId") userId: Long,
         @Header("Authorization") accessToken: String
-    ): UserResponseContacts
+    ): ContactsResponse
 
     @FormUrlEncoded
     @PUT("users/{userId}/contacts")

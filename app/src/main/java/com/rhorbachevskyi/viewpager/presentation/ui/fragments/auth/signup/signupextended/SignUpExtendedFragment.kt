@@ -1,7 +1,6 @@
 package com.rhorbachevskyi.viewpager.presentation.ui.fragments.auth.signup.signupextended
 
 import android.os.Bundle
-import android.telephony.PhoneNumberFormattingTextWatcher
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
@@ -11,10 +10,6 @@ import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.databinding.FragmentSignUpExtendedBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
-import com.rhorbachevskyi.viewpager.presentation.utils.Constants
-import com.rhorbachevskyi.viewpager.presentation.utils.DataStore.saveData
-import com.rhorbachevskyi.viewpager.presentation.utils.Parser
-import com.rhorbachevskyi.viewpager.presentation.utils.Validation
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
@@ -36,48 +31,40 @@ class SignUpExtendedFragment :
 
     private fun setListeners() {
         with(binding) {
-            buttonCancel.setOnClickListener { cancel() }
-            buttonForward.setOnClickListener { forward() }
+            buttonCancel.setOnClickListener { toSignUpScreen() }
+            buttonForward.setOnClickListener { toUserProfile() }
         }
-        inputMobilePhone()
     }
 
-    private fun cancel() {
+    private fun toSignUpScreen() {
         navController.navigateUp()
     }
 
-    private fun forward() {
+    private fun toUserProfile() {
         with(binding) {
-            if (!Validation.isValidUserName(textInputEditTextUserName.text.toString())) {
+            if (viewModel.isNotValidUserName(textInputEditTextUserName.text.toString())) {
                 root.showErrorSnackBar(
                     requireContext(),
                     R.string.user_name_must_contain_at_least_3_letters
                 )
-            } else if (!Validation.isValidMobilePhone(textInputEditTextMobilePhone.text.toString())) {
+            } else if (viewModel.isNotValidMobilePhone(textInputEditTextMobilePhone.text.toString())) {
                 root.showErrorSnackBar(
                     requireContext(),
                     R.string.phone_must_be_at_least_10_digits_long
                 )
             } else {
                 viewModel.registerUser(
-                        args.email,
-                        args.password,
-                        textInputEditTextUserName.text.toString(),
-                        textInputEditTextMobilePhone.text.toString()
+                    args.email,
+                    args.password,
+                    textInputEditTextUserName.text.toString(),
+                    textInputEditTextMobilePhone.text.toString()
                 )
             }
         }
     }
 
-
-    private fun inputMobilePhone() {
-        binding.textInputEditTextMobilePhone.addTextChangedListener(
-            PhoneNumberFormattingTextWatcher(Constants.MOBILE_CODE)
-        )
-    }
-
     private fun setSignUpExtended() {
-        binding.textInputEditTextUserName.setText(Parser.parsingEmail(args.email))
+        binding.textInputEditTextUserName.setText(viewModel.getNameFromEmail(args.email))
     }
 
     private fun setObservers() {
@@ -86,11 +73,13 @@ class SignUpExtendedFragment :
                 viewModel.registerState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                     when (it) {
                         is ApiStateUser.Success<*> -> {
-                            if (args.rememberMe) saveData(
-                                requireContext(),
-                                args.email,
-                                args.password
-                            )
+                            if (args.rememberMe) {
+                                viewModel.saveUserDataToDataStore(
+                                    requireContext(),
+                                    args.email,
+                                    args.password
+                                )
+                            }
                             viewModel.isLogout()
                             val direction =
                                 SignUpExtendedFragmentDirections.actionSignUpExtendedFragmentToViewPagerFragment()
@@ -101,7 +90,7 @@ class SignUpExtendedFragment :
                             progressBar.visible()
                         }
 
-                        is ApiStateUser.Initial -> Unit
+                        is ApiStateUser.Initial -> {}
 
                         is ApiStateUser.Error -> {
                             root.showErrorSnackBar(requireContext(), it.error)

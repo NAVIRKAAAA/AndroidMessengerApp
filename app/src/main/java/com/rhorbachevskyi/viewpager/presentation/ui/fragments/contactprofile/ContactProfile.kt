@@ -41,13 +41,13 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
 
     private fun setListeners() {
         with(binding) {
-            imageViewNavigationBack.setOnClickListener { navigationBack() }
+            imageViewNavigationBack.setOnClickListener { backToList() }
             buttonMessage.setOnClickListener { addToContacts() }
         }
     }
 
 
-    private fun navigationBack() {
+    private fun backToList() {
         navController.navigateUp()
     }
 

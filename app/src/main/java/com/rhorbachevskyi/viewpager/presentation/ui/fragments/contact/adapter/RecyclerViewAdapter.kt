@@ -19,7 +19,6 @@ import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 class RecyclerViewAdapter(private val listener: ContactItemClickListener) :
     ListAdapter<Contact, RecyclerViewAdapter.UsersViewHolder>(ContactDiffUtil()) {
     private var isSelectItems: ArrayList<Pair<Boolean, Int>> = ArrayList()
-    var isMultiselectMode = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UsersViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -45,7 +44,7 @@ class RecyclerViewAdapter(private val listener: ContactItemClickListener) :
         private fun setListeners(
             contact: Contact
         ) {
-            if (isMultiselectMode) setSelectList(contact) else deleteItem(contact)
+            if (isSelectItems.isNotEmpty()) setSelectList(contact) else deleteItem(contact)
             with(binding) {
                 itemUser.setOnLongClickListener {
                     itemLongClick(contact)
@@ -63,7 +62,7 @@ class RecyclerViewAdapter(private val listener: ContactItemClickListener) :
 
         private fun itemClick(contact: Contact) {
             with(binding) {
-                if (isMultiselectMode) checkboxSelectMode.isChecked =
+                if (isSelectItems.isNotEmpty()) checkboxSelectMode.isChecked =
                     !checkboxSelectMode.isChecked
                 listener.onClickContact(
                     contact, arrayOf(
@@ -106,7 +105,7 @@ class RecyclerViewAdapter(private val listener: ContactItemClickListener) :
         }
     }
 
-    fun setMultiselectData(isMultiselectItem: ArrayList<Pair<Boolean, Int>>) {
-        this.isSelectItems = isMultiselectItem
+    fun setMultiselectData(isSelectItems: ArrayList<Pair<Boolean, Int>>) {
+        this.isSelectItems = isSelectItems
     }
 }

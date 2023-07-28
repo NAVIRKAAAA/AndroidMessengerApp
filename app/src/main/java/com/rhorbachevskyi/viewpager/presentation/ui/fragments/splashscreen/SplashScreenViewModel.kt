@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
-import com.rhorbachevskyi.viewpager.domain.useCases.AutoSignInUseCase
+import com.rhorbachevskyi.viewpager.domain.usecases.AutoSignInUseCase
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.DataStore
 import dagger.hilt.android.lifecycle.HiltViewModel

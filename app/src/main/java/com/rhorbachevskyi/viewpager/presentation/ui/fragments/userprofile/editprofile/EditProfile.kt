@@ -1,7 +1,6 @@
 package com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile.editprofile
 
 import android.os.Bundle
-import android.telephony.PhoneNumberFormattingTextWatcher
 import android.view.View
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
@@ -15,7 +14,6 @@ import com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile.editpr
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile.interfaces.DialogCalendarListener
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.Parser
-import com.rhorbachevskyi.viewpager.presentation.utils.Validation
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.checkForInternet
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.loadImage
@@ -31,8 +29,10 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
     private val userData: UserResponse.Data by lazy {
         viewModel.requestGetUser()
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         setListeners()
         setObserver()
         setInputs()
@@ -41,15 +41,15 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
 
     private fun setListeners() {
         with(binding) {
-            buttonSave.setOnClickListener { save() }
-            imageViewNavigationBack.setOnClickListener { navigationBack() }
+            buttonSave.setOnClickListener { saveUserData() }
+            imageViewNavigationBack.setOnClickListener { toUserProfile() }
         }
-        inputPhone()
     }
 
-    private fun save() {
+    private fun saveUserData() {
         with(binding) {
-            if (Validation.isValidUserName(textInputEditTextUserName.text.toString()) && Validation.isValidMobilePhone(
+            if (viewModel.isValidInputs(
+                    textInputEditTextUserName.text.toString(),
                     textInputEditTextPhone.text.toString()
                 )
             ) {
@@ -68,15 +68,7 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
         }
     }
 
-    private fun inputPhone() {
-        binding.textInputEditTextPhone.addTextChangedListener(
-            PhoneNumberFormattingTextWatcher(
-                Constants.MOBILE_CODE
-            )
-        )
-    }
-
-    private fun navigationBack() {
+    private fun toUserProfile() {
         navController.navigateUp()
     }
 
@@ -85,6 +77,10 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
             lifecycleScope.launch {
                 viewModel.editUserState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                     when (it) {
+                        is ApiStateUser.Success<*> -> {
+                            navController.navigateUp()
+                        }
+
                         is ApiStateUser.Error -> {
                             root.showErrorSnackBar(requireContext(), it.error)
                             progressBar.invisible()
@@ -94,10 +90,6 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
 
                         ApiStateUser.Loading -> {
                             progressBar.visible()
-                        }
-
-                        is ApiStateUser.Success<*> -> {
-                            navController.navigateUp()
                         }
                     }
                 }
@@ -115,9 +107,7 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
             textInputEditTextPhone.setText(userData.user.phone ?: "")
             textInputEditTextAddress.setText(userData.user.address ?: "")
             textInputEditTextDate.setText(userData.user.birthday?.let {
-                Parser.getStringFromData(
-                    it.toString()
-                )
+                Parser.getStringFromData(it.toString())
             } ?: "")
         }
     }
@@ -125,12 +115,11 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
     private fun inputsErrors() {
         with(binding) {
             textInputEditTextUserName.doOnTextChanged { text, _, _, _ ->
-                textViewInvalidUserName.visibleIf(
-                    !Validation.isValidUserName(text.toString())
+                textViewInvalidUserName.visibleIf(viewModel.isNotValidUserName(text.toString())
                 )
             }
             textInputEditTextPhone.doOnTextChanged { text, _, _, _ ->
-                textViewInvalidPhone.visibleIf(!Validation.isValidMobilePhone(text.toString()))
+                textViewInvalidPhone.visibleIf(viewModel.isNotValidMobilePhone(text.toString()))
             }
         }
     }

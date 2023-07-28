@@ -14,9 +14,9 @@ import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
-import com.rhorbachevskyi.viewpager.domain.useCases.AddContactUseCase
-import com.rhorbachevskyi.viewpager.domain.useCases.ContactsUseCase
-import com.rhorbachevskyi.viewpager.domain.useCases.DeleteContactUseCase
+import com.rhorbachevskyi.viewpager.domain.usecases.AddContactUseCase
+import com.rhorbachevskyi.viewpager.domain.usecases.ContactsUseCase
+import com.rhorbachevskyi.viewpager.domain.usecases.DeleteContactUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -97,7 +97,7 @@ class ContactsViewModel @Inject constructor(
         if (!contactList.contains(contact)) {
             contactList.add(contact)
             _selectContacts.value = contactList
-            _isSelectItem.value.add(Pair(true, contact.id.toInt()))
+            _isSelectItem.value.add(true to contact.id.toInt())
             return true
         }
 

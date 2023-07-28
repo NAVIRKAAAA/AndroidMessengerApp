@@ -1,9 +1,11 @@
 package com.rhorbachevskyi.viewpager.presentation.ui.fragments.auth.signin
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
-import com.rhorbachevskyi.viewpager.domain.useCases.SignInUseCase
+import com.rhorbachevskyi.viewpager.domain.usecases.SignInUseCase
+import com.rhorbachevskyi.viewpager.presentation.utils.DataStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,4 +24,9 @@ class SignInViewModel @Inject constructor(
         _authorizationStateFlow.value = ApiStateUser.Loading
         _authorizationStateFlow.value = signInUseCase(email, password)
     }
+
+    fun saveUserDataToDataStore(context: Context, email: String, password: String) =
+        viewModelScope.launch(Dispatchers.IO) {
+            DataStore.saveData(context, email, password)
+        }
 }

@@ -15,8 +15,8 @@ import com.rhorbachevskyi.viewpager.data.model.UserData
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
-import com.rhorbachevskyi.viewpager.domain.useCases.AddContactUseCase
-import com.rhorbachevskyi.viewpager.domain.useCases.AllUsersUseCase
+import com.rhorbachevskyi.viewpager.domain.usecases.AddContactUseCase
+import com.rhorbachevskyi.viewpager.domain.usecases.AllUsersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -61,7 +61,7 @@ class AddContactViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             if (!supportList.contains(contact)) {
                 supportList.add(contact)
-                _states.value = arrayListOf(Pair(contact.id, ApiStateUser.Loading))
+                _states.value = arrayListOf(contact.id to ApiStateUser.Loading)
                 if(hasInternet) {
                     addContactUseCase(userId, contact, accessToken)
                 } else {

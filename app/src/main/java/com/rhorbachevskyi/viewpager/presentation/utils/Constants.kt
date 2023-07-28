@@ -20,9 +20,6 @@ object Constants {
     // api base url
     const val BASE_URL = "http://178.63.9.114:7777/api/"
 
-    // country mobile code
-    const val MOBILE_CODE = "US"
-
     // screens in viewpager
     const val FRAGMENT_COUNT = 2
     const val PROFILE_FRAGMENT = 0
@@ -36,6 +33,7 @@ object Constants {
                 "(?=\\S+\$).{8,}\$"
     const val NUMBER_OF_MIN_USERNAME_SIZE = 3
     const val NUMBER_OF_MIN_MOBILE_SIZE = 10
+    const val NUMBER_OF_HALVES_OF_NAME = 2
 
     // date
     const val OUTPUT_DATE_FORMAT = "dd/MM/yyyy"
