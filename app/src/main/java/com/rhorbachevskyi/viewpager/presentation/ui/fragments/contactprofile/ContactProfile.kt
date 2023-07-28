@@ -10,10 +10,9 @@ import androidx.navigation.fragment.navArgs
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
-import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.databinding.FragmentDetailViewBinding
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
+import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.checkForInternet
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.gone
@@ -29,18 +28,15 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
 
     private val args: ContactProfileArgs by navArgs()
     private val viewModel: ContactProfileViewModel by viewModels()
-    private lateinit var userData: UserResponse.Data
+    private val userData: UserResponse.Data by lazy {
+        viewModel.requestGetUser()
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initUser()
         setListeners()
         setObserver()
         setProfile(args.contact)
         setSharedElementsTransition(args.contact)
-    }
-
-    private fun initUser() {
-        userData = UserDataHolder.getUserData()
     }
 
     private fun setListeners() {
@@ -71,19 +67,19 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
             lifecycleScope.launch {
                 viewModel.usersState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                     when (it) {
-                        is ApiStateUsers.Error -> {
+                        is ApiStateUser.Error -> {
                             progressBar.invisible()
                             root.showErrorSnackBar(requireContext(), it.error)
                             viewModel.changeState()
                         }
 
-                        ApiStateUsers.Initial -> Unit
+                        ApiStateUser.Initial -> Unit
 
-                        ApiStateUsers.Loading -> {
+                        ApiStateUser.Loading -> {
                             progressBar.visible()
                         }
 
-                        is ApiStateUsers.Success -> {
+                        is ApiStateUser.Success<*> -> {
                             progressBar.gone()
                             buttonMessageTop.gone()
                             buttonMessage.text = getString(R.string.message)

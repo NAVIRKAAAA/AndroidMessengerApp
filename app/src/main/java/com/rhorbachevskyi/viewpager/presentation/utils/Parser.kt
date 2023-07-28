@@ -15,4 +15,12 @@ object Parser {
             Locale.getDefault()
         ).parse(input) else null
     }
+    fun parsingEmail(email: String): String {
+        val elements = email.split("@")[0].replace(".", " ").split(" ")
+        return if (elements.size >= 2) {
+            "${elements[0].replaceFirstChar { it.uppercase() }} ${elements[1].replaceFirstChar { it.titlecase() }}"
+        } else {
+            elements[0]
+        }
+    }
 }

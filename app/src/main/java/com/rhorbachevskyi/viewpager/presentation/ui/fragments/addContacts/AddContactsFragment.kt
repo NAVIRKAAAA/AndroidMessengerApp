@@ -9,14 +9,14 @@ import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
-import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.databinding.FragmentUsersBinding
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
+import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapter.AddContactsAdapter
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapter.interfaces.UserItemClickListener
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.checkForInternet
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.log
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,7 +26,9 @@ import kotlinx.coroutines.launch
 class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBinding::inflate) {
 
     private val viewModel: AddContactViewModel by viewModels()
-    private lateinit var userData: UserResponse.Data
+    private val userData: UserResponse.Data by lazy {
+        viewModel.requestGetUser()
+    }
     private val adapter: AddContactsAdapter by lazy {
         AddContactsAdapter(listener = object : UserItemClickListener {
             override fun onClickAdd(contact: Contact) {
@@ -54,20 +56,15 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initUser()
+
         initialRecyclerview()
         setObserves()
         setListeners()
     }
 
-    private fun initUser() {
-        userData = UserDataHolder.getUserData()
-    }
-
     private fun initialRecyclerview() {
-        viewModel.getAllUsers(
-            userData.accessToken, userData.user, requireContext().checkForInternet()
-        )
+        log(userData.toString())
+        viewModel.getAllUsers(userData.accessToken, userData.user, requireContext().checkForInternet())
         binding.recyclerViewUsers.layoutManager = LinearLayoutManager(context)
         binding.recyclerViewUsers.adapter = adapter
     }
@@ -83,19 +80,19 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
             lifecycleScope.launch {
                 viewModel.usersState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                     when (it) {
-                        is ApiStateUsers.Success -> {
+                        is ApiStateUser.Success<*> -> {
                             progressBar.invisible()
                         }
 
-                        is ApiStateUsers.Initial -> {
+                        is ApiStateUser.Initial -> {
                             progressBar.invisible()
                         }
 
-                        is ApiStateUsers.Loading -> {
+                        is ApiStateUser.Loading -> {
                             progressBar.visible()
                         }
 
-                        is ApiStateUsers.Error -> {
+                        is ApiStateUser.Error -> {
                             progressBar.invisible()
                             root.showErrorSnackBar(requireContext(), it.error)
                             viewModel.changeState()

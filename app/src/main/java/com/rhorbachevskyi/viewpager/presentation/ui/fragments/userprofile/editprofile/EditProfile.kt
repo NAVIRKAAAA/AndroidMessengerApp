@@ -8,7 +8,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
-import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.databinding.FragmentEditProfileBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
@@ -29,18 +28,15 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfileBinding::inflate) {
     private val viewModel: EditTextViewModel by viewModels()
-    private lateinit var userData: UserResponse.Data
+    private val userData: UserResponse.Data by lazy {
+        viewModel.requestGetUser()
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initUser()
         setListeners()
         setObserver()
         setInputs()
         setCalendar()
-    }
-
-    private fun initUser() {
-        userData = UserDataHolder.getUserData()
     }
 
     private fun setListeners() {
@@ -65,8 +61,8 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
                     textInputEditTextPhone.text.toString(),
                     textInputEditTextAddress.text.toString(),
                     Parser.getDataFromString(textInputEditTextDate.text.toString()),
-                    userData.refreshToken,
-                    requireContext().checkForInternet()
+                    requireContext().checkForInternet(),
+                    userData.refreshToken
                 )
             }
         }
@@ -94,13 +90,13 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
                             progressBar.invisible()
                         }
 
-                        ApiStateUser.Initial -> Unit
+                        ApiStateUser.Initial -> {}
 
                         ApiStateUser.Loading -> {
                             progressBar.visible()
                         }
 
-                        is ApiStateUser.Success -> {
+                        is ApiStateUser.Success<*> -> {
                             navController.navigateUp()
                         }
                     }

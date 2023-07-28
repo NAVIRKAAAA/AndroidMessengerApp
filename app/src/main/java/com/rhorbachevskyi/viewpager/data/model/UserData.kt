@@ -1,10 +1,7 @@
 package com.rhorbachevskyi.viewpager.data.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
 import java.util.Date
 
-@Parcelize
 data class UserData(
     val id: Long,
     val name: String? = null,
@@ -20,6 +17,6 @@ data class UserData(
     val image: String? = null,
     val created_at: String? = null,
     val updated_at: String? = null
-) : Parcelable {
+)  {
     fun toContact(): Contact = Contact(name, career, image, address, id)
 }

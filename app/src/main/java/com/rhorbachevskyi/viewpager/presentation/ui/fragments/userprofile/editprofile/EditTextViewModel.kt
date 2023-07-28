@@ -3,8 +3,10 @@ package com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile.editp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rhorbachevskyi.viewpager.R
-import com.rhorbachevskyi.viewpager.data.repository.repositoryimpl.NetworkImpl
+import com.rhorbachevskyi.viewpager.data.model.UserResponse
+import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
+import com.rhorbachevskyi.viewpager.domain.useCases.EditUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditTextViewModel @Inject constructor(
-    private val networkImpl: NetworkImpl
+    private val editUserUseCase: EditUserUseCase
 ) : ViewModel() {
     private val _editUserStateFlow = MutableStateFlow<ApiStateUser>(ApiStateUser.Initial)
     val editUserState: StateFlow<ApiStateUser> = _editUserStateFlow
@@ -27,8 +29,8 @@ class EditTextViewModel @Inject constructor(
         phone: String,
         address: String? = null,
         date: Date? = null,
-        refreshToken: String,
-        hasInternet: Boolean
+        hasInternet: Boolean,
+        refreshToken: String
     ) = viewModelScope.launch(Dispatchers.IO) {
         _editUserStateFlow.value = ApiStateUser.Loading
         if (!hasInternet) {
@@ -36,7 +38,7 @@ class EditTextViewModel @Inject constructor(
             return@launch
         }
         _editUserStateFlow.value =
-            networkImpl.editUser(
+            editUserUseCase(
                 userId,
                 accessToken,
                 name,
@@ -47,4 +49,6 @@ class EditTextViewModel @Inject constructor(
                 refreshToken
             )
     }
+
+    fun requestGetUser(): UserResponse.Data = UserDataHolder.userData
 }

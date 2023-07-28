@@ -11,9 +11,12 @@ import androidx.lifecycle.viewModelScope
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.database.repository.repositoryimpl.DatabaseImpl
 import com.rhorbachevskyi.viewpager.data.model.Contact
-import com.rhorbachevskyi.viewpager.data.repository.repositoryimpl.NetworkImpl
+import com.rhorbachevskyi.viewpager.data.model.UserResponse
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
+import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
+import com.rhorbachevskyi.viewpager.domain.useCases.AddContactUseCase
+import com.rhorbachevskyi.viewpager.domain.useCases.ContactsUseCase
+import com.rhorbachevskyi.viewpager.domain.useCases.DeleteContactUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,20 +26,23 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ContactsViewModel @Inject constructor(
-    private val networkImpl: NetworkImpl,
+    private val contactsUseCase: ContactsUseCase,
+    private val addContactUseCase: AddContactUseCase,
+    private val deleteContactUseCase: DeleteContactUseCase,
     private val databaseImpl: DatabaseImpl,
     private val notificationBuilder: NotificationCompat.Builder,
     private val notificationManager: NotificationManagerCompat
 ) : ViewModel() {
 
-    private val _usersStateFlow = MutableStateFlow<ApiStateUsers>(ApiStateUsers.Initial)
-    val usersState: StateFlow<ApiStateUsers> = _usersStateFlow
+    private val _usersStateFlow = MutableStateFlow<ApiStateUser>(ApiStateUser.Initial)
+    val usersStateFlow: StateFlow<ApiStateUser> = _usersStateFlow
 
     private val _contactList = MutableStateFlow(listOf<Contact>())
     val contactList: StateFlow<List<Contact>> = _contactList
 
     private val _selectContacts = MutableStateFlow<List<Contact>>(listOf())
     val selectContacts: StateFlow<List<Contact>> = _selectContacts
+
     private val _isMultiselect = MutableStateFlow(false)
     val isMultiselect = _isMultiselect
 
@@ -46,13 +52,13 @@ class ContactsViewModel @Inject constructor(
 
     fun initialContactList(userId: Long, accessToken: String, hasInternet: Boolean) =
         viewModelScope.launch(Dispatchers.IO) {
-            _usersStateFlow.value = ApiStateUsers.Loading
+            _usersStateFlow.value = ApiStateUser.Loading
             _usersStateFlow.value = if (hasInternet) {
-                networkImpl.getContacts(userId, accessToken)
+                contactsUseCase(userId, accessToken)
             } else {
                 databaseImpl.getAllContacts()
             }
-            _contactList.value = UserDataHolder.getContacts()
+            _contactList.value = UserDataHolder.serverContacts
             databaseImpl.addUsersToSearchList(_contactList.value)
         }
 
@@ -62,8 +68,8 @@ class ContactsViewModel @Inject constructor(
         accessToken: String
     ) =
         viewModelScope.launch(Dispatchers.IO) {
-            _usersStateFlow.value = ApiStateUsers.Loading
-            _usersStateFlow.value = networkImpl.addContact(userId, contact, accessToken)
+            _usersStateFlow.value = ApiStateUser.Loading
+            _usersStateFlow.value = addContactUseCase(userId, contact, accessToken)
             databaseImpl.addToSearchList(contact)
         }
 
@@ -74,7 +80,6 @@ class ContactsViewModel @Inject constructor(
         position: Int = _contactList.value.size,
     ): Boolean {
         val contactList = _contactList.value.toMutableList()
-
 
         if (!contactList.contains(contact)) {
             contactList.add(position, contact)
@@ -104,25 +109,24 @@ class ContactsViewModel @Inject constructor(
         accessToken: String,
         contact: Contact,
     ) = viewModelScope.launch(Dispatchers.IO) {
-        _usersStateFlow.value = networkImpl.deleteContact(userId, accessToken, contact)
+        _usersStateFlow.value = deleteContactUseCase(userId, contact, accessToken)
         databaseImpl.deleteFromSearchList(contact)
     }
 
     fun deleteContactFromList(
         userId: Long,
         accessToken: String,
-        contactId: Long,
+        contact: Contact,
         hasInternet: Boolean
     ): Boolean {
-        val contact = _contactList.value.find { it.id == contactId }
         val contactList = _contactList.value.toMutableList()
 
         if (!hasInternet) {
-            _usersStateFlow.value = ApiStateUsers.Error(R.string.No_internet_connection)
+            _usersStateFlow.value = ApiStateUser.Error(R.string.No_internet_connection)
             return false
         }
         if (contactList.contains(contact)) {
-            deleteContact(userId, accessToken, contact!!)
+            deleteContact(userId, accessToken, contact)
             contactList.remove(contact)
             _contactList.value = contactList
             return true
@@ -144,7 +148,7 @@ class ContactsViewModel @Inject constructor(
 
     fun deleteSelectList(userId: Long, accessToken: String, hasInternet: Boolean): Boolean {
         if (!hasInternet) {
-            _usersStateFlow.value = ApiStateUsers.Error(R.string.No_internet_connection)
+            _usersStateFlow.value = ApiStateUser.Error(R.string.No_internet_connection)
             return false
         }
 
@@ -153,7 +157,7 @@ class ContactsViewModel @Inject constructor(
             deleteContactFromList(
                 userId,
                 accessToken,
-                contact.id,
+                contact,
                 true
             )
             deleteSelectContact(contact)
@@ -173,11 +177,11 @@ class ContactsViewModel @Inject constructor(
     }
 
     fun deleteStates() {
-        UserDataHolder.deleteStates()
+        UserDataHolder.states.clear()
     }
 
     fun changeState() {
-        _usersStateFlow.value = ApiStateUsers.Initial
+        _usersStateFlow.value = ApiStateUser.Initial
     }
 
     fun showNotification(context: Context) {
@@ -189,4 +193,6 @@ class ContactsViewModel @Inject constructor(
             notificationManager.notify(1, notificationBuilder.build())
         }
     }
+
+    fun requestGetUser(): UserResponse.Data = UserDataHolder.userData
 }

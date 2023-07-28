@@ -8,7 +8,7 @@ class ContactDatabaseRepository @Inject constructor(private val contactDao: Cont
     ContactDao {
 
     override suspend fun addContacts(contacts: List<ContactEntity>) {
-        deleteAllContacts()
+
         contactDao.addContacts(contacts)
     }
 

@@ -10,11 +10,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.database.repository.repositoryimpl.DatabaseImpl
-import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserData
-import com.rhorbachevskyi.viewpager.data.repository.repositoryimpl.NetworkImpl
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
+import com.rhorbachevskyi.viewpager.data.model.UserResponse
+import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
+import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
+import com.rhorbachevskyi.viewpager.domain.useCases.AddContactUseCase
+import com.rhorbachevskyi.viewpager.domain.useCases.AllUsersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,33 +26,34 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddContactViewModel @Inject constructor(
-    private val networkImpl: NetworkImpl,
+    private val allUsersUseCase: AllUsersUseCase,
+    private val addContactUseCase: AddContactUseCase,
     private val databaseImpl: DatabaseImpl,
     private val notificationBuilder: NotificationCompat.Builder,
     private val notificationManager: NotificationManagerCompat
 ) : ViewModel() {
-    private val _usersStateFlow = MutableStateFlow<ApiStateUsers>(ApiStateUsers.Initial)
-    val usersState: StateFlow<ApiStateUsers> = _usersStateFlow
+    private val _usersStateFlow = MutableStateFlow<ApiStateUser>(ApiStateUser.Initial)
+    val usersState: StateFlow<ApiStateUser> = _usersStateFlow
 
     private val _users = MutableStateFlow<List<Contact>>(listOf())
     val users: StateFlow<List<Contact>> = _users
 
-    private val _states: MutableStateFlow<ArrayList<Pair<Long, ApiStateUsers>>> =
+    private val _states: MutableStateFlow<ArrayList<Pair<Long, ApiStateUser>>> =
         MutableStateFlow(ArrayList())
-    val states: StateFlow<ArrayList<Pair<Long, ApiStateUsers>>> = _states
+    val states: StateFlow<ArrayList<Pair<Long, ApiStateUser>>> = _states
 
     // so that it does not always depend on the server
     val supportList: ArrayList<Contact> = arrayListOf()
 
     fun getAllUsers(accessToken: String, user: UserData, hasInternet: Boolean) =
         viewModelScope.launch(Dispatchers.Main) {
-            _usersStateFlow.value = ApiStateUsers.Loading
+            _usersStateFlow.value = ApiStateUser.Loading
             _usersStateFlow.value = if (hasInternet) {
-                networkImpl.getAllUsers(accessToken, user)
+                allUsersUseCase(accessToken, user)
             } else {
                 databaseImpl.getAllUsers()
             }
-            _users.value = UserDataHolder.getServerList()
+            _users.value = UserDataHolder.serverUsers
             databaseImpl.addUsersToSearchList(_users.value)
         }
 
@@ -58,20 +61,20 @@ class AddContactViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             if (!supportList.contains(contact)) {
                 supportList.add(contact)
-                _states.value = arrayListOf(Pair(contact.id, ApiStateUsers.Loading))
+                _states.value = arrayListOf(Pair(contact.id, ApiStateUser.Loading))
                 if(hasInternet) {
-                    networkImpl.addContact(userId, contact, accessToken)
+                    addContactUseCase(userId, contact, accessToken)
                 } else {
-                    _usersStateFlow.value = ApiStateUsers.Error(R.string.No_internet_connection)
+                    _usersStateFlow.value = ApiStateUser.Error(R.string.No_internet_connection)
                 }
-                _states.value = UserDataHolder.getStates()
+                _states.value = UserDataHolder.states
                 databaseImpl.deleteFromSearchList(contact)
             }
         }
 
 
     fun changeState() {
-        _usersStateFlow.value = ApiStateUsers.Initial
+        _usersStateFlow.value = ApiStateUser.Initial
     }
 
     fun showNotification(context: Context) {
@@ -81,4 +84,5 @@ class AddContactViewModel @Inject constructor(
             notificationManager.notify(1, notificationBuilder.build())
         }
     }
+    fun requestGetUser(): UserResponse.Data = UserDataHolder.userData
 }

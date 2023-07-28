@@ -12,9 +12,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
-import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.databinding.FragmentContactsBinding
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUsers
+import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.adapter.RecyclerViewAdapter
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.adapter.interfaces.ContactItemClickListener
@@ -32,7 +31,9 @@ import kotlinx.coroutines.launch
 class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsBinding::inflate) {
     private var thisScreen = true
     private val viewModel: ContactsViewModel by viewModels()
-    private lateinit var userData: UserResponse.Data
+    private val userData: UserResponse.Data by lazy {
+        viewModel.requestGetUser()
+    }
     private val adapter: RecyclerViewAdapter by lazy {
         RecyclerViewAdapter(listener = object : ContactItemClickListener {
 
@@ -78,14 +79,10 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initUser()
+
         initialRecyclerview()
         setListener()
         setObservers()
-    }
-
-    private fun initUser() {
-        userData = UserDataHolder.getUserData()
     }
 
     private fun initialRecyclerview() {
@@ -178,22 +175,22 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                 }
             }
             lifecycleScope.launch {
-                viewModel.usersState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
+                viewModel.usersStateFlow.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                     when (it) {
-                        is ApiStateUsers.Success -> {
+                        is ApiStateUser.Success<*> -> {
                             progressBar.invisible()
                         }
 
-                        is ApiStateUsers.Error -> {
+                        is ApiStateUser.Error -> {
                             root.showErrorSnackBar(requireContext(), it.error)
                             viewModel.changeState()
                         }
 
-                        is ApiStateUsers.Loading -> {
+                        is ApiStateUser.Loading -> {
                             progressBar.visible()
                         }
 
-                        is ApiStateUsers.Initial -> Unit
+                        is ApiStateUser.Initial -> Unit
                     }
                 }
             }
@@ -206,7 +203,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
         if (viewModel.deleteContactFromList(
                 userData.user.id,
                 userData.accessToken,
-                contact.id,
+                contact,
                 requireContext().checkForInternet()
             )
         ) {
@@ -214,8 +211,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                 binding.recyclerViewContacts,
                 getString(R.string.s_has_been_removed).format(contact.name),
                 Snackbar.LENGTH_LONG
-            )
-                .setAction(getString(R.string.restore)) {
+            ).setAction(getString(R.string.restore)) {
                     viewModel.addContactToList(
                         userData.user.id,
                         contact,

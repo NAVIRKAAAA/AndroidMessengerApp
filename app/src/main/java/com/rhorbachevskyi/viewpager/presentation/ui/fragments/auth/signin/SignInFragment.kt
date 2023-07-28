@@ -5,7 +5,6 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import com.rhorbachevskyi.viewpager.data.model.UserRequest
 import com.rhorbachevskyi.viewpager.databinding.FragmentSignInBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
@@ -36,10 +35,8 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(FragmentSignInBinding
     private fun login() {
         with(binding) {
             viewModel.authorizationUser(
-                UserRequest(
-                    textInputEditTextEmail.text.toString(),
-                    textInputEditTextPassword.text.toString()
-                )
+                textInputEditTextEmail.text.toString(),
+                textInputEditTextPassword.text.toString()
             )
         }
     }
@@ -56,7 +53,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(FragmentSignInBinding
                 viewModel.authorizationState.flowWithLifecycle(viewLifecycleOwner.lifecycle)
                     .collect {
                         when (it) {
-                            is ApiStateUser.Success -> {
+                            is ApiStateUser.Success<*> -> {
                                 if (checkboxRemember.isChecked) {
                                     lifecycleScope.launch(Dispatchers.IO) {
                                         saveData(
