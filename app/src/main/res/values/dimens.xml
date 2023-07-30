@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- most often used -->
+    <dimen name="small_margin">8dp</dimen>
+    <dimen name="normal_margin">16dp</dimen>
+    <dimen name="large_margin">24dp</dimen>
+    <dimen name="largest_margin">32dp</dimen>
+
+    <!-- most often used fot text -->
+    <dimen name="text_small_size">8sp</dimen>
+    <dimen name="text_normal_size">16sp</dimen>
+    <dimen name="text_large_size">24sp</dimen>
+    <dimen name="text_largest_size">32sp</dimen>
+
+    <!-- something specific -->
+    <dimen name="edit_text_height">57dp</dimen>
+    <dimen name="edit_text_height_land">47dp</dimen>
+    <dimen name="google_text_start">36dp</dimen>
+    <dimen name="register_height">55dp</dimen>
+    <dimen name="google_text_height_land">35dp</dimen>
+    <dimen name="register_height_land">40dp</dimen>
+    <dimen name="view_contacts_height">60dp</dimen>
+    <dimen name="photo_size">140dp</dimen>
+    <dimen name="edit_text_size">18sp</dimen>
+    <dimen name="custom_padding">120dp</dimen>
+    <dimen name="recycler_view_padding">170dp</dimen>
+    <dimen name="item_user_height">66dp</dimen>
+    <dimen name="user_career_size">12sp</dimen>
+    <dimen name="mockup_size">50dp</dimen>
+    <dimen name="forward_size">18sp</dimen>
+    <dimen name="view_pager_height">40dp</dimen>
+    <dimen name="photo_size_dialog">120dp</dimen>
+    <dimen name="input_dialog_height">40dp</dimen>
+    <dimen name="progressbar">35dp</dimen>
+    <dimen name="edit_text_search_height">30dp</dimen>
+</resources>
