@@ -1,7 +1,7 @@
 package com.rhorbachevskyi.viewpager.domain.usecases
 
-import com.rhorbachevskyi.viewpager.data.repository.ContactRepositoryImpl
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
+import com.rhorbachevskyi.viewpager.data.repositories.ContactRepositoryImpl
+import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import javax.inject.Inject
 
 class ContactsUseCase  @Inject constructor(
@@ -10,5 +10,5 @@ class ContactsUseCase  @Inject constructor(
     suspend operator fun invoke(
         userId: Long,
         accessToken: String
-    ): ApiStateUser = contactRepository.getContacts(userId, accessToken)
+    ): ApiState = contactRepository.getContacts(userId, accessToken)
 }

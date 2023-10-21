@@ -1,8 +1,8 @@
 package com.rhorbachevskyi.viewpager.domain.usecases
 
 import android.content.Context
-import com.rhorbachevskyi.viewpager.data.repository.UserRepositoryImpl
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
+import com.rhorbachevskyi.viewpager.data.repositories.UserRepositoryImpl
+import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import javax.inject.Inject
 
 class AutoSignInUseCase @Inject constructor(
@@ -10,5 +10,5 @@ class AutoSignInUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         context: Context
-    ): ApiStateUser = userRepository.autoLogin(context)
+    ): ApiState = userRepository.autoLogin(context)
 }

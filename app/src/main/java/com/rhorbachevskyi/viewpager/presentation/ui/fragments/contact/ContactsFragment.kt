@@ -13,13 +13,13 @@ import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
 import com.rhorbachevskyi.viewpager.databinding.FragmentContactsBinding
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
+import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
-import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.adapter.RecyclerViewAdapter
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.adapter.ContactsAdapter
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.adapter.interfaces.ContactItemClickListener
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.ViewPagerFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.ViewPagerFragmentDirections
-import com.rhorbachevskyi.viewpager.presentation.utils.ext.checkForInternet
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.hasInternet
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.setupSwipeToDelete
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
@@ -33,8 +33,8 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
     private val userData: UserResponse.Data by lazy {
         viewModel.requestGetUser()
     }
-    private val adapter: RecyclerViewAdapter by lazy {
-        RecyclerViewAdapter(listener = object : ContactItemClickListener {
+    private val adapter: ContactsAdapter by lazy {
+        ContactsAdapter(listener = object : ContactItemClickListener {
 
             override fun onClickContact(
                 contact: Contact,
@@ -87,7 +87,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
         viewModel.initialContactList(
             userData.user.id,
             userData.accessToken,
-            requireContext().checkForInternet()
+            requireContext().hasInternet()
         )
         with(binding) {
             recyclerViewContacts.layoutManager = LinearLayoutManager(context)
@@ -96,7 +96,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                 deleteFunction = {
                     deleteUserWithRestore(viewModel.contactList.value.getOrNull(it)!!)
                 },
-                isSwipeEnabled = { !viewModel.isMultiselect.value && requireContext().checkForInternet() }
+                isSwipeEnabled = { !viewModel.isMultiselect.value && requireContext().hasInternet() }
             )
         }
     }
@@ -134,7 +134,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
         if (viewModel.deleteSelectList(
                 userData.user.id,
                 userData.accessToken,
-                requireContext().checkForInternet()
+                requireContext().hasInternet()
             )
         ) {
             binding.root.showErrorSnackBar(
@@ -172,20 +172,20 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
             lifecycleScope.launch {
                 viewModel.usersStateFlow.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                     when (it) {
-                        is ApiStateUser.Success<*> -> {
+                        is ApiState.Success<*> -> {
                             progressBar.invisible()
                         }
 
-                        is ApiStateUser.Error -> {
+                        is ApiState.Error -> {
                             root.showErrorSnackBar(requireContext(), it.error)
                             viewModel.changeState()
                         }
 
-                        is ApiStateUser.Loading -> {
+                        is ApiState.Loading -> {
                             progressBar.visible()
                         }
 
-                        is ApiStateUser.Initial -> Unit
+                        is ApiState.Initial -> Unit
                     }
                 }
             }
@@ -199,7 +199,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                 userData.user.id,
                 userData.accessToken,
                 contact,
-                requireContext().checkForInternet()
+                requireContext().hasInternet()
             )
         ) {
             Snackbar.make(

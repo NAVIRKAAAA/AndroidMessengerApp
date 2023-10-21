@@ -1,11 +1,11 @@
-package com.rhorbachevskyi.viewpager.data.repository
+package com.rhorbachevskyi.viewpager.data.repositories
 
 import android.content.Context
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.domain.network.UserApiService
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
+import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.DataStore
 import java.util.Date
@@ -19,25 +19,25 @@ class UserRepositoryImpl @Inject constructor(
         password: String,
         name: String,
         phone: String
-    ) : ApiStateUser {
+    ) : ApiState {
         return try {
             val response = userService.registerUser(email, password, name, phone)
             response.data?.let { UserDataHolder.userData = it }
-            response.data?.let { ApiStateUser.Success(it) }
-                ?: ApiStateUser.Error(R.string.invalid_request)
+            response.data?.let { ApiState.Success(it) }
+                ?: ApiState.Error(R.string.invalid_request)
         } catch (e: Exception) {
-            ApiStateUser.Error(R.string.register_error_user_exist)
+            ApiState.Error(R.string.register_error_user_exist)
         }
     }
 
-    suspend fun authorizeUser(email: String, password: String): ApiStateUser {
+    suspend fun authorizeUser(email: String, password: String): ApiState {
         return try {
             val response = userService.authorizeUser(email, password)
             response.data?.let { UserDataHolder.userData = it }
-            response.data?.let { ApiStateUser.Success(it) }
-                ?: ApiStateUser.Error(R.string.invalid_request)
+            response.data?.let { ApiState.Success(it) }
+                ?: ApiState.Error(R.string.invalid_request)
         } catch (e: Exception) {
-            ApiStateUser.Error(R.string.register_error_user_exist)
+            ApiState.Error(R.string.register_error_user_exist)
         }
     }
 
@@ -50,7 +50,7 @@ class UserRepositoryImpl @Inject constructor(
         address: String?,
         date: Date?,
         refreshToken: String
-    ): ApiStateUser {
+    ): ApiState {
         return try {
             val response = userService.editUser(
                 userId,
@@ -64,14 +64,14 @@ class UserRepositoryImpl @Inject constructor(
             response.data?.let {
                 UserDataHolder.userData = UserResponse.Data(it.user, accessToken, refreshToken)
             }
-            response.data?.let { ApiStateUser.Success(it) } ?: ApiStateUser.Error(
+            response.data?.let { ApiState.Success(it) } ?: ApiState.Error(
                 R.string.invalid_request
             )
         } catch (e: Exception) {
-            ApiStateUser.Error(R.string.invalid_request)
+            ApiState.Error(R.string.invalid_request)
         }
     }
-    suspend fun autoLogin(context: Context): ApiStateUser {
+    suspend fun autoLogin(context: Context): ApiState {
         return try {
             val response = userService.authorizeUser(
                 DataStore.getDataFromKey(
@@ -80,10 +80,10 @@ class UserRepositoryImpl @Inject constructor(
                 ).toString(), DataStore.getDataFromKey(context, Constants.KEY_PASSWORD).toString()
             )
             response.data?.let { UserDataHolder.userData = it }
-            response.data?.let { ApiStateUser.Success(it) }
-                ?: ApiStateUser.Error(R.string.invalid_request)
+            response.data?.let { ApiState.Success(it) }
+                ?: ApiState.Error(R.string.invalid_request)
         } catch (e: Exception) {
-            ApiStateUser.Error(R.string.automatic_login_error)
+            ApiState.Error(R.string.automatic_login_error)
         }
     }
 }

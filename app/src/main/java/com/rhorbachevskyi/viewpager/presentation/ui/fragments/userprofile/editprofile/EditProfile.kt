@@ -8,13 +8,13 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
 import com.rhorbachevskyi.viewpager.databinding.FragmentEditProfileBinding
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
+import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile.editprofile.dialog.DialogCalendar
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile.interfaces.DialogCalendarListener
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.Parser
-import com.rhorbachevskyi.viewpager.presentation.utils.ext.checkForInternet
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.hasInternet
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.loadImage
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
@@ -61,7 +61,7 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
                     textInputEditTextPhone.text.toString(),
                     textInputEditTextAddress.text.toString(),
                     Parser.getDataFromString(textInputEditTextDate.text.toString()),
-                    requireContext().checkForInternet(),
+                    requireContext().hasInternet(),
                     userData.refreshToken
                 )
             }
@@ -77,18 +77,18 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
             lifecycleScope.launch {
                 viewModel.editUserState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                     when (it) {
-                        is ApiStateUser.Success<*> -> {
+                        is ApiState.Success<*> -> {
                             navController.navigateUp()
                         }
 
-                        is ApiStateUser.Error -> {
+                        is ApiState.Error -> {
                             root.showErrorSnackBar(requireContext(), it.error)
                             progressBar.invisible()
                         }
 
-                        ApiStateUser.Initial -> {}
+                        ApiState.Initial -> {}
 
-                        ApiStateUser.Loading -> {
+                        ApiState.Loading -> {
                             progressBar.visible()
                         }
                     }

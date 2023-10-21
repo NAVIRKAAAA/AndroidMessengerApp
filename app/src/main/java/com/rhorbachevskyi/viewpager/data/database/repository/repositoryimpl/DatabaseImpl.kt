@@ -7,7 +7,7 @@ import com.rhorbachevskyi.viewpager.data.database.repository.UserDatabaseReposit
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserData
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
+import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.fromEntity
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.toEntity
 import javax.inject.Inject
@@ -17,23 +17,23 @@ class DatabaseImpl @Inject constructor(
     private val contactDatabaseRepository: ContactDatabaseRepository,
     private val searchDatabaseRepository: SearchDatabaseRepository
 ) {
-    suspend fun getAllUsers(): ApiStateUser {
+    suspend fun getAllUsers(): ApiState {
         return try {
             val response = userDatabaseRepository.getUsers()
             UserDataHolder.serverUsers = response.map { contactEntity -> contactEntity.fromEntity() }
-            ApiStateUser.Success<ArrayList<UserData>>(arrayListOf())
+            ApiState.Success<ArrayList<UserData>>(arrayListOf())
         } catch (e: Exception) {
-            ApiStateUser.Error(R.string.invalid_request)
+            ApiState.Error(R.string.invalid_request)
         }
     }
 
-    suspend fun getAllContacts(): ApiStateUser {
+    suspend fun getAllContacts(): ApiState {
         return try {
             val response = contactDatabaseRepository.getContacts()
             UserDataHolder.serverContacts = response.map { contactEntity -> contactEntity.fromEntity() }
-            ApiStateUser.Success<ArrayList<UserData>>(arrayListOf())
+            ApiState.Success<ArrayList<UserData>>(arrayListOf())
         } catch (e: Exception) {
-            ApiStateUser.Error(R.string.invalid_request)
+            ApiState.Error(R.string.invalid_request)
         }
     }
 

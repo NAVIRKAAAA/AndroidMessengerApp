@@ -3,7 +3,7 @@ package com.rhorbachevskyi.viewpager.presentation.ui.fragments.splashscreen
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
+import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.domain.usecases.AutoSignInUseCase
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.DataStore
@@ -19,14 +19,14 @@ import javax.inject.Inject
 class SplashScreenViewModel @Inject constructor(
     private val autoSignInUseCase: AutoSignInUseCase
 ) : ViewModel() {
-    private val _authorizationState = MutableStateFlow<ApiStateUser>(ApiStateUser.Initial)
-    val authorizationState: StateFlow<ApiStateUser> = _authorizationState
+    private val _authorizationState = MutableStateFlow<ApiState>(ApiState.Initial)
+    val authorizationState: StateFlow<ApiState> = _authorizationState
 
 
 
     fun autoLogin(context: Context) =
         viewModelScope.launch(Dispatchers.IO) {
-            _authorizationState.value = ApiStateUser.Loading
+            _authorizationState.value = ApiState.Loading
             _authorizationState.value = autoSignInUseCase(context)
         }
 

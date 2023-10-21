@@ -1,7 +1,7 @@
 package com.rhorbachevskyi.viewpager.domain.usecases
 
-import com.rhorbachevskyi.viewpager.data.repository.UserRepositoryImpl
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
+import com.rhorbachevskyi.viewpager.data.repositories.UserRepositoryImpl
+import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import javax.inject.Inject
 
 class RegisterUserUseCase @Inject constructor(
@@ -12,5 +12,5 @@ class RegisterUserUseCase @Inject constructor(
         password: String,
         name: String,
         phone: String
-    ): ApiStateUser = userRepository.registerUser(email, password, name, phone)
+    ): ApiState = userRepository.registerUser(email, password, name, phone)
 }

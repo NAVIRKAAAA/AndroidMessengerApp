@@ -16,8 +16,8 @@ import com.rhorbachevskyi.viewpager.presentation.utils.ext.gone
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.loadImage
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 
-class RecyclerViewAdapter(private val listener: ContactItemClickListener) :
-    ListAdapter<Contact, RecyclerViewAdapter.UsersViewHolder>(ContactDiffUtil()) {
+class ContactsAdapter(private val listener: ContactItemClickListener) :
+    ListAdapter<Contact, ContactsAdapter.UsersViewHolder>(ContactDiffUtil()) {
     private var isSelectItems: ArrayList<Pair<Boolean, Int>> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UsersViewHolder {

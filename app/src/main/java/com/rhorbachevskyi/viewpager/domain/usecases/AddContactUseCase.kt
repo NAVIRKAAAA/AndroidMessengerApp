@@ -1,8 +1,8 @@
 package com.rhorbachevskyi.viewpager.domain.usecases
 
 import com.rhorbachevskyi.viewpager.data.model.Contact
-import com.rhorbachevskyi.viewpager.data.repository.ContactRepositoryImpl
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
+import com.rhorbachevskyi.viewpager.data.repositories.ContactRepositoryImpl
+import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import javax.inject.Inject
 
 class AddContactUseCase @Inject constructor(
@@ -12,5 +12,5 @@ class AddContactUseCase @Inject constructor(
         userId: Long,
         contact: Contact,
         accessToken: String
-    ): ApiStateUser = contactRepository.addContact(userId, contact, accessToken)
+    ): ApiState = contactRepository.addContact(userId, contact, accessToken)
 }

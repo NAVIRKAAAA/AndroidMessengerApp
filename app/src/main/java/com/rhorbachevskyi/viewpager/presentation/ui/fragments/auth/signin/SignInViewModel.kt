@@ -3,7 +3,7 @@ package com.rhorbachevskyi.viewpager.presentation.ui.fragments.auth.signin
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
+import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.domain.usecases.SignInUseCase
 import com.rhorbachevskyi.viewpager.presentation.utils.DataStore
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,11 +17,11 @@ import javax.inject.Inject
 class SignInViewModel @Inject constructor(
     private val signInUseCase: SignInUseCase
 ) : ViewModel() {
-    private val _authorizationStateFlow = MutableStateFlow<ApiStateUser>(ApiStateUser.Initial)
-    val authorizationState: StateFlow<ApiStateUser> = _authorizationStateFlow
+    private val _authorizationStateFlow = MutableStateFlow<ApiState>(ApiState.Initial)
+    val authorizationState: StateFlow<ApiState> = _authorizationStateFlow
 
     fun authorizationUser(email: String, password: String) = viewModelScope.launch(Dispatchers.IO) {
-        _authorizationStateFlow.value = ApiStateUser.Loading
+        _authorizationStateFlow.value = ApiState.Loading
         _authorizationStateFlow.value = signInUseCase(email, password)
     }
 

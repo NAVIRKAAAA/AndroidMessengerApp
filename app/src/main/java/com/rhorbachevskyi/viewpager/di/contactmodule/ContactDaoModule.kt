@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.viewpager.domain.di.contactmodule
+package com.rhorbachevskyi.viewpager.di.contactmodule
 
 import android.content.Context
 import androidx.room.Room

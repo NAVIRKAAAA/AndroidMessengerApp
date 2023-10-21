@@ -6,7 +6,7 @@ import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
+import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.domain.usecases.AddContactUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -20,21 +20,21 @@ class ContactProfileViewModel @Inject constructor(
     private val addContactUseCase: AddContactUseCase
 ) : ViewModel() {
 
-    private val _usersStateFlow = MutableStateFlow<ApiStateUser>(ApiStateUser.Initial)
-    val usersState: StateFlow<ApiStateUser> = _usersStateFlow
+    private val _usersStateFlow = MutableStateFlow<ApiState>(ApiState.Initial)
+    val usersState: StateFlow<ApiState> = _usersStateFlow
 
     private var alreadyAdded = false
 
     fun addContact(userId: Long, contact: Contact, accessToken: String, hasInternet: Boolean) =
         viewModelScope.launch(Dispatchers.IO) {
             if(!hasInternet) {
-                _usersStateFlow.value = ApiStateUser.Error(R.string.No_internet_connection)
+                _usersStateFlow.value = ApiState.Error(R.string.No_internet_connection)
                 return@launch
             }
             if (alreadyAdded) return@launch
             alreadyAdded = true
 
-            _usersStateFlow.value = ApiStateUser.Loading
+            _usersStateFlow.value = ApiState.Loading
             _usersStateFlow.value =
                 addContactUseCase(
                     userId,
@@ -43,7 +43,7 @@ class ContactProfileViewModel @Inject constructor(
                 )
         }
     fun changeState() {
-        _usersStateFlow.value = ApiStateUser.Initial
+        _usersStateFlow.value = ApiState.Initial
     }
 
     fun requestGetUser(): UserResponse.Data = UserDataHolder.userData

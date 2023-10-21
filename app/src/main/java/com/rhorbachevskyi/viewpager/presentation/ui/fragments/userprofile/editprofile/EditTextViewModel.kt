@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
+import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.domain.usecases.EditUserUseCase
 import com.rhorbachevskyi.viewpager.presentation.utils.Validation
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,8 +20,8 @@ import javax.inject.Inject
 class EditTextViewModel @Inject constructor(
     private val editUserUseCase: EditUserUseCase
 ) : ViewModel() {
-    private val _editUserStateFlow = MutableStateFlow<ApiStateUser>(ApiStateUser.Initial)
-    val editUserState: StateFlow<ApiStateUser> = _editUserStateFlow
+    private val _editUserStateFlow = MutableStateFlow<ApiState>(ApiState.Initial)
+    val editUserState: StateFlow<ApiState> = _editUserStateFlow
     fun requestEditUser(
         userId: Long,
         accessToken: String,
@@ -33,9 +33,9 @@ class EditTextViewModel @Inject constructor(
         hasInternet: Boolean,
         refreshToken: String
     ) = viewModelScope.launch(Dispatchers.IO) {
-        _editUserStateFlow.value = ApiStateUser.Loading
+        _editUserStateFlow.value = ApiState.Loading
         if (!hasInternet) {
-            _editUserStateFlow.value = ApiStateUser.Error(R.string.No_internet_connection)
+            _editUserStateFlow.value = ApiState.Error(R.string.No_internet_connection)
             return@launch
         }
         _editUserStateFlow.value =

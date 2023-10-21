@@ -3,7 +3,7 @@ package com.rhorbachevskyi.viewpager.presentation.ui.fragments.auth.signup.signu
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
+import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.domain.usecases.RegisterUserUseCase
 import com.rhorbachevskyi.viewpager.presentation.utils.DataStore
 import com.rhorbachevskyi.viewpager.presentation.utils.Parser
@@ -19,14 +19,14 @@ import javax.inject.Inject
 class SignUpExtendedViewModel @Inject constructor(
     private val registerUserUseCase: RegisterUserUseCase
 ) : ViewModel() {
-    private val _registerStateFlow = MutableStateFlow<ApiStateUser>(ApiStateUser.Initial)
-    val registerState: StateFlow<ApiStateUser> = _registerStateFlow
+    private val _registerStateFlow = MutableStateFlow<ApiState>(ApiState.Initial)
+    val registerState: StateFlow<ApiState> = _registerStateFlow
     fun isLogout() {
-        _registerStateFlow.value = ApiStateUser.Initial
+        _registerStateFlow.value = ApiState.Initial
     }
 
     fun registerUser(email: String, password: String, name: String, phone: String) = viewModelScope.launch(Dispatchers.IO) {
-        _registerStateFlow.value = ApiStateUser.Loading
+        _registerStateFlow.value = ApiState.Loading
         _registerStateFlow.value = registerUserUseCase(email, password, name, phone)
     }
 

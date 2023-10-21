@@ -6,7 +6,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.rhorbachevskyi.viewpager.databinding.FragmentSignInBinding
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
+import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.gone
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
@@ -52,7 +52,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(FragmentSignInBinding
                 viewModel.authorizationState.flowWithLifecycle(viewLifecycleOwner.lifecycle)
                     .collect {
                         when (it) {
-                            is ApiStateUser.Success<*> -> {
+                            is ApiState.Success<*> -> {
                                 if (checkboxRemember.isChecked) {
                                     viewModel.saveUserDataToDataStore(
                                         requireContext(),
@@ -65,13 +65,13 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(FragmentSignInBinding
                                 navController.navigate(direction)
                             }
 
-                            is ApiStateUser.Initial -> {}
+                            is ApiState.Initial -> {}
 
-                            is ApiStateUser.Loading -> {
+                            is ApiState.Loading -> {
                                 progressBar.visible()
                             }
 
-                            is ApiStateUser.Error -> {
+                            is ApiState.Error -> {
                                 progressBar.gone()
                                 root.showErrorSnackBar(requireContext(), it.error)
                             }

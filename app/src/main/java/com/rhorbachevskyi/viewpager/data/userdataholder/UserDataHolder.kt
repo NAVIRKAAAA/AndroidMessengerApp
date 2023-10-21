@@ -2,10 +2,10 @@ package com.rhorbachevskyi.viewpager.data.userdataholder
 
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
+import com.rhorbachevskyi.viewpager.domain.states.ApiState
 
 object UserDataHolder {
-    var states: ArrayList<Pair<Long, ApiStateUser>> = ArrayList()
+    var states: ArrayList<Pair<Long, ApiState>> = ArrayList()
 
     var serverUsers: List<Contact> = listOf()
 

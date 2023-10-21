@@ -20,12 +20,11 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding::inflate) {
     private val viewModel: SearchViewModel by viewModels()
-    private val adapter: SearchAdapter by lazy {
-        SearchAdapter()
-    }
+    private val adapter: SearchAdapter = SearchAdapter()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initialRecyclerview()
         searchView()
         setListeners()
@@ -50,11 +49,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
     }
 
     private fun setListeners() {
-        binding.imageViewNavigationBack.setOnClickListener { navigationBack() }
-    }
-
-    private fun navigationBack() {
-        navController.navigateUp()
+        binding.imageViewNavigationBack.setOnClickListener { navController.navigateUp() }
     }
 
     private fun searchView() {
@@ -92,12 +87,14 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
         val isNoResult =
             !isTextEmpty && viewModel.updateContactList(newText) == 0 && isContactListEmpty
 
-        if (isContactListEmpty && isTextEmpty) {
-            binding.textViewMoreContacts.visible()
-            binding.textViewNoResultFound.visible()
-        } else {
-            binding.textViewMoreContacts.visibleIf(isNoResult)
-            binding.textViewNoResultFound.visibleIf(isNoResult)
+        with(binding) {
+            if (isContactListEmpty && isTextEmpty) {
+                textViewMoreContacts.visible()
+                textViewNoResultFound.visible()
+            } else {
+                textViewMoreContacts.visibleIf(isNoResult)
+                textViewNoResultFound.visibleIf(isNoResult)
+            }
         }
     }
 }

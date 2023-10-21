@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.viewpager.domain.di.notificationmodule
+package com.rhorbachevskyi.viewpager.di.notificationmodule
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

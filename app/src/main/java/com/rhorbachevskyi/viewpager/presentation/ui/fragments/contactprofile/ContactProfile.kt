@@ -12,9 +12,9 @@ import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
 import com.rhorbachevskyi.viewpager.databinding.FragmentDetailViewBinding
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
+import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
-import com.rhorbachevskyi.viewpager.presentation.utils.ext.checkForInternet
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.hasInternet
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.gone
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.loadImage
@@ -31,6 +31,7 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
     private val userData: UserResponse.Data by lazy {
         viewModel.requestGetUser()
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setListeners()
@@ -57,7 +58,7 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
                 userData.user.id,
                 args.contact,
                 userData.accessToken,
-                requireContext().checkForInternet()
+                requireContext().hasInternet()
             )
         }
     }
@@ -67,19 +68,19 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
             lifecycleScope.launch {
                 viewModel.usersState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                     when (it) {
-                        is ApiStateUser.Error -> {
+                        is ApiState.Error -> {
                             progressBar.invisible()
                             root.showErrorSnackBar(requireContext(), it.error)
                             viewModel.changeState()
                         }
 
-                        ApiStateUser.Initial -> Unit
+                        ApiState.Initial -> Unit
 
-                        ApiStateUser.Loading -> {
+                        ApiState.Loading -> {
                             progressBar.visible()
                         }
 
-                        is ApiStateUser.Success<*> -> {
+                        is ApiState.Success<*> -> {
                             progressBar.gone()
                             buttonMessageTop.gone()
                             buttonMessage.text = getString(R.string.message)
@@ -110,9 +111,7 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
             textViewName.transitionName = Constants.TRANSITION_NAME_CONTACT_NAME + contact.id
             textViewCareer.transitionName = Constants.TRANSITION_NAME_CAREER + contact.id
         }
-        val animation = TransitionInflater.from(context).inflateTransition(
-            R.transition.custom_move
-        )
+        val animation = TransitionInflater.from(context).inflateTransition(R.transition.custom_move)
         sharedElementEnterTransition = animation
         sharedElementReturnTransition = animation
     }

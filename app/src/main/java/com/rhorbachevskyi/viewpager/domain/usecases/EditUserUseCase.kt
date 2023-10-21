@@ -1,7 +1,7 @@
 package com.rhorbachevskyi.viewpager.domain.usecases
 
-import com.rhorbachevskyi.viewpager.data.repository.UserRepositoryImpl
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
+import com.rhorbachevskyi.viewpager.data.repositories.UserRepositoryImpl
+import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import java.util.Date
 import javax.inject.Inject
 
@@ -17,5 +17,5 @@ class EditUserUseCase @Inject constructor(
         address: String?,
         date: Date?,
         refreshToken: String
-    ): ApiStateUser = userRepository.editUser(userId, accessToken, name, career, phone, address, date, refreshToken)
+    ): ApiState = userRepository.editUser(userId, accessToken, name, career, phone, address, date, refreshToken)
 }

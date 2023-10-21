@@ -8,7 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.databinding.FragmentSignUpExtendedBinding
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
+import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
@@ -24,6 +24,7 @@ class SignUpExtendedFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         setListeners()
         setSignUpExtended()
         setObservers()
@@ -31,16 +32,12 @@ class SignUpExtendedFragment :
 
     private fun setListeners() {
         with(binding) {
-            buttonCancel.setOnClickListener { toSignUpScreen() }
-            buttonForward.setOnClickListener { toUserProfile() }
+            buttonCancel.setOnClickListener { navController.navigateUp() }
+            buttonForward.setOnClickListener { toUserProfileScreen() }
         }
     }
 
-    private fun toSignUpScreen() {
-        navController.navigateUp()
-    }
-
-    private fun toUserProfile() {
+    private fun toUserProfileScreen() {
         with(binding) {
             if (viewModel.isNotValidUserName(textInputEditTextUserName.text.toString())) {
                 root.showErrorSnackBar(
@@ -72,7 +69,7 @@ class SignUpExtendedFragment :
             lifecycleScope.launch {
                 viewModel.registerState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                     when (it) {
-                        is ApiStateUser.Success<*> -> {
+                        is ApiState.Success<*> -> {
                             if (args.rememberMe) {
                                 viewModel.saveUserDataToDataStore(
                                     requireContext(),
@@ -86,13 +83,13 @@ class SignUpExtendedFragment :
                             navController.navigate(direction)
                         }
 
-                        is ApiStateUser.Loading -> {
+                        is ApiState.Loading -> {
                             progressBar.visible()
                         }
 
-                        is ApiStateUser.Initial -> {}
+                        is ApiState.Initial -> {}
 
-                        is ApiStateUser.Error -> {
+                        is ApiState.Error -> {
                             root.showErrorSnackBar(requireContext(), it.error)
                             viewModel.isLogout()
                             progressBar.invisible()

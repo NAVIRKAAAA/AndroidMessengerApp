@@ -3,11 +3,11 @@ package com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapt
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.ListAdapter
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.databinding.ItemAddUserBinding
-import com.rhorbachevskyi.viewpager.domain.states.ApiStateUser
+import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapter.interfaces.UserItemClickListener
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.adapter.utils.ContactDiffUtil
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
@@ -17,8 +17,8 @@ import com.rhorbachevskyi.viewpager.presentation.utils.ext.loadImage
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 
 class AddContactsAdapter(private val listener: UserItemClickListener) :
-    ListAdapter<Contact, AddContactsAdapter.UsersViewHolder>(ContactDiffUtil()) {
-    private var states: ArrayList<Pair<Long, ApiStateUser>> = ArrayList()
+    PagingDataAdapter<Contact, AddContactsAdapter.UsersViewHolder>(ContactDiffUtil()) {
+    private var states: ArrayList<Pair<Long, ApiState>> = ArrayList()
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -30,14 +30,14 @@ class AddContactsAdapter(private val listener: UserItemClickListener) :
 
     override fun onBindViewHolder(holder: UsersViewHolder, position: Int) {
         holder.bind(
-            currentList[position],
-            states.find { it.first == currentList[position].id }?.second ?: ApiStateUser.Initial
+            getItem(position)?:return,
+            states.find { it.first == getItem(position)?.id }?.second ?: ApiState.Initial
         )
     }
 
     inner class UsersViewHolder(private val binding: ItemAddUserBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(contact: Contact, state: ApiStateUser) {
+        fun bind(contact: Contact, state: ApiState) {
             with(binding) {
                 textViewName.text = contact.name
                 textViewCareer.text = contact.career
@@ -47,28 +47,28 @@ class AddContactsAdapter(private val listener: UserItemClickListener) :
             setListeners(contact)
         }
 
-        private fun setState(state: ApiStateUser) {
+        private fun setState(state: ApiState) {
             with(binding) {
                 when (state) {
-                    is ApiStateUser.Success<*> -> {
+                    is ApiState.Success<*> -> {
                         textViewAdd.gone()
                         progressBar.gone()
                         imageViewDoneAddContact.visible()
                     }
 
-                    is ApiStateUser.Initial -> {
+                    is ApiState.Initial -> {
                         textViewAdd.visible()
                         progressBar.gone()
                         imageViewDoneAddContact.invisible()
                     }
 
-                    is ApiStateUser.Loading -> {
+                    is ApiState.Loading -> {
                         textViewAdd.gone()
                         progressBar.visible()
                         imageViewDoneAddContact.invisible()
                     }
 
-                    is ApiStateUser.Error -> Unit
+                    is ApiState.Error -> Unit
                 }
             }
         }
@@ -111,7 +111,8 @@ class AddContactsAdapter(private val listener: UserItemClickListener) :
         }
     }
 
-    fun setStates(states: ArrayList<Pair<Long, ApiStateUser>>) {
+    fun setStates(states: ArrayList<Pair<Long, ApiState>>) {
+        val currentList = snapshot().items
         if (this.states.size != states.size) {
             this.states = states
             val lastIndex = currentList.indexOfLast { it.id == states.lastOrNull()?.first }

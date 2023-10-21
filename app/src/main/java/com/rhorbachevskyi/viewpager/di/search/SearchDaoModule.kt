@@ -1,9 +1,9 @@
-package com.rhorbachevskyi.viewpager.domain.di.usermodule
+package com.rhorbachevskyi.viewpager.di.search
 
 import android.content.Context
 import androidx.room.Room
-import com.rhorbachevskyi.viewpager.data.database.UserDatabase
-import com.rhorbachevskyi.viewpager.data.database.interfaces.UserDao
+import com.rhorbachevskyi.viewpager.data.database.SearchDatabase
+import com.rhorbachevskyi.viewpager.data.database.interfaces.SearchDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,18 +13,18 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class UserDaoModule {
+class SearchDaoModule {
     @Provides
-    fun provideChannelDao(UserDatabase: UserDatabase): UserDao {
-        return UserDatabase.userDao()
+    fun provideChannelDao(searchDatabase: SearchDatabase): SearchDao {
+        return searchDatabase.searchDao()
     }
 
     @Provides
     @Singleton
-    fun provideAppDatabase(@ApplicationContext appContext: Context): UserDatabase {
+    fun provideAppDatabase(@ApplicationContext appContext: Context): SearchDatabase {
         return Room.databaseBuilder(
             appContext,
-            UserDatabase::class.java,
+            SearchDatabase::class.java,
             "users"
         ).build()
     }
