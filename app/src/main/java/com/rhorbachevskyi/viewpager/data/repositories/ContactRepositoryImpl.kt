@@ -4,18 +4,18 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.rhorbachevskyi.viewpager.R
-import com.rhorbachevskyi.viewpager.data.UsersPagingLoader
-import com.rhorbachevskyi.viewpager.data.UsersPagingSource
 import com.rhorbachevskyi.viewpager.data.database.repository.ContactDatabaseRepository
 import com.rhorbachevskyi.viewpager.data.database.repository.UserDatabaseRepository
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserData
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.domain.network.ContactApiService
-import com.rhorbachevskyi.viewpager.domain.network.UsersRepository
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
+import com.rhorbachevskyi.viewpager.paging.ContactsPagingSource
+import com.rhorbachevskyi.viewpager.paging.UsersPageLoader
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.toEntity
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -23,7 +23,8 @@ class ContactRepositoryImpl @Inject constructor(
     private val contactService: ContactApiService,
     private val userDatabaseRepository: UserDatabaseRepository,
     private val contactDatabaseRepository: ContactDatabaseRepository,
-) : UsersRepository {
+    private val ioDispatcher: CoroutineDispatcher,
+) {
     suspend fun getUsers(
         accessToken: String,
         user: UserData,
@@ -35,8 +36,8 @@ class ContactRepositoryImpl @Inject constructor(
             val response =
                 contactService.getUsers(
                     accessToken = "${Constants.AUTHORIZATION_PREFIX} $accessToken",
-                    limit = pageIndex,
-                    offset = offset
+                    pageSize,
+                    offset
                 )
             val contacts = UserDataHolder.serverContacts
             val filteredUsers =
@@ -46,12 +47,12 @@ class ContactRepositoryImpl @Inject constructor(
             val users = filteredUsers?.map { it.toContact() } ?: emptyList()
             UserDataHolder.serverUsers = users
             userDatabaseRepository.addUsers(users.map { contact -> contact.toEntity() })
-            response.data.let { ApiState.Success(it.users) }
+            filteredUsers?.takeLast(10)
+            filteredUsers.let { ApiState.Success(it) }
         } catch (e: Exception) {
             ApiState.Error(R.string.invalid_request)
         }
     }
-
     suspend fun getContacts(userId: Long, accessToken: String): ApiState {
         return try {
             val response =
@@ -100,23 +101,44 @@ class ContactRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getPagedUsers(accessToken: String, user: UserData): Flow<PagingData<Contact>> {
-
-        val loader: UsersPagingLoader = { pageIndex, pageSize ->
-            when (val usersResult = getUsers(accessToken, user, pageIndex, pageSize)) {
-                is ApiState.Success<*> -> usersResult.data as List<Contact>
+    fun getPagedUsers(): Flow<PagingData<UserData>> {
+        val loader: UsersPageLoader = { pageIndex, pageSize ->
+            val response = getUsers(
+                UserDataHolder.userData.accessToken,
+                UserDataHolder.userData.user,
+                pageIndex,
+                pageSize
+            )
+            when (response) {
+                is ApiState.Success<*> -> { response.data as List<UserData> }
                 else -> emptyList()
             }
         }
         return Pager(
             config = PagingConfig(
-                pageSize = PAGE_SIZE,
-                enablePlaceholders = false
+                pageSize = 1
             ),
-            pagingSourceFactory = {UsersPagingSource(loader, PAGE_SIZE)}
+            pagingSourceFactory = { ContactsPagingSource(loader) }
         ).flow
     }
-    companion object{
-        const val PAGE_SIZE = 20
-    }
+
+
+//    override fun getPageUsers(accessToken: String, user: UserData): Flow<PagingData<Contact>> {
+//
+//        val loader: UsersPagingLoader = { pageIndex, pageSize ->
+//            when (val usersResult = getUsers(accessToken, user, pageIndex, pageSize)) {
+//                is ApiState.Success<*> -> {
+//                    if (usersResult.data is List<*>) usersResult.data.filterIsInstance<Contact>() else emptyList()
+//                }
+//                else -> emptyList()
+//            }
+//        }
+//        return Pager(
+//            config = PagingConfig(
+//                pageSize = PAGE_SIZE,
+//                enablePlaceholders = false
+//            ),
+//            pagingSourceFactory = { UsersPagingSource(loader, PAGE_SIZE) }
+//        ).flow
+//    }
 }

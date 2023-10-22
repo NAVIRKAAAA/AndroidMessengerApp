@@ -92,6 +92,8 @@ dependencies {
     implementation "androidx.room:room-ktx:2.6.0"
     // paging library v3
     implementation "androidx.paging:paging-runtime-ktx:3.2.1"
+    implementation "androidx.paging:paging-common-ktx:3.2.1"
     // pull-to-refresh
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+
 }

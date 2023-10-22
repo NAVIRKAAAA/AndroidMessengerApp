@@ -5,6 +5,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -13,7 +15,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class RetrofitModule{
+class RetrofitModule {
 
     @Singleton
     @Provides
@@ -25,11 +27,13 @@ class RetrofitModule{
             .addInterceptor(providesHttpLoggingInterceptor())
             .build()
     }
+
     @Singleton
     @Provides
     fun providesHttpLoggingInterceptor(): HttpLoggingInterceptor =
         HttpLoggingInterceptor()
             .setLevel(HttpLoggingInterceptor.Level.BODY)
+
     @Provides
     @Singleton
     fun providesRetrofit(
@@ -48,4 +52,7 @@ class RetrofitModule{
     fun providesGsonConverterFactory(): retrofit2.Converter.Factory {
         return GsonConverterFactory.create()
     }
+
+    @Provides
+    fun provideCoroutineDispatcher(): CoroutineDispatcher = Dispatchers.IO
 }

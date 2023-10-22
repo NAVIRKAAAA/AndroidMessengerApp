@@ -1,7 +1,7 @@
 package com.rhorbachevskyi.viewpager.di.usermodule
 
 import com.rhorbachevskyi.viewpager.domain.network.UserApiService
-import com.rhorbachevskyi.viewpager.domain.network.UsersRepository
+import com.rhorbachevskyi.viewpager.paging.alt.Service
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,7 +20,7 @@ class UserModule {
 
     @Provides
     @Singleton
-    fun providesUsers(retrofit: Retrofit): UsersRepository {
-        return retrofit.create(UsersRepository::class.java)
+    fun providesUsers(retrofit: Retrofit): Service {
+        return retrofit.create(Service::class.java)
     }
 }
