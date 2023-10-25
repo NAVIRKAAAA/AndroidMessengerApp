@@ -28,37 +28,40 @@ class ContactRepositoryImpl @Inject constructor(
     suspend fun getUsers(
         accessToken: String,
         user: UserData,
-        pageIndex: Int,
-        pageSize: Int
+        from: Int = 0,
+        to: Int = 0
     ): ApiState {
         return try {
-            val offset = pageIndex * pageSize
-            val response =
-                contactService.getUsers(
-                    accessToken = "${Constants.AUTHORIZATION_PREFIX} $accessToken",
-                    pageSize,
-                    offset
-                )
-            val contacts = UserDataHolder.serverContacts
-            val filteredUsers =
-                response.data.users?.filter {
-                    it.name != null && it.email != user.email && !contacts.contains(it.toContact())
-                }
-            val users = filteredUsers?.map { it.toContact() } ?: emptyList()
-            UserDataHolder.serverUsers = users
-            userDatabaseRepository.addUsers(users.map { contact -> contact.toEntity() })
-            filteredUsers?.takeLast(10)
-            filteredUsers.let { ApiState.Success(it) }
+            val response = contactService.getUsers("${Constants.AUTH_PREFIX} $accessToken")
+            if(response.data.users == null) return ApiState.Error(0)
+
+            val serverContacts = UserDataHolder.serverContacts
+            val currentContacts = response.data.users.map { it.toContact() }
+
+            val filteredUsers = response.data.users.filter {
+                it.name != null && it.email != user.email && !serverContacts.contains(it.toContact())
+            }
+            val users = if (from == 0 && to == 0) {
+                // holder, database
+                UserDataHolder.serverUsers = filteredUsers.map { it.toContact() }
+                userDatabaseRepository.addUsers(currentContacts.map { contact -> contact.toEntity() })
+                filteredUsers
+            } else {
+                getUsersInRange(filteredUsers, from, to)
+            }
+            // result
+            users.let { ApiState.Success(it) }
         } catch (e: Exception) {
             ApiState.Error(R.string.invalid_request)
         }
     }
+
     suspend fun getContacts(userId: Long, accessToken: String): ApiState {
         return try {
             val response =
                 contactService.getUserContacts(
                     userId,
-                    "${Constants.AUTHORIZATION_PREFIX} $accessToken"
+                    "${Constants.AUTH_PREFIX} $accessToken"
                 )
             val users = response.data.contacts?.map { it.toContact() } ?: emptyList()
             UserDataHolder.serverContacts = users
@@ -70,19 +73,19 @@ class ContactRepositoryImpl @Inject constructor(
         }
     }
 
-    suspend fun addContact(userId: Long, contact: Contact, accessToken: String): ApiState {
+    suspend fun addContact(userId: Long, contactId: Long, accessToken: String): ApiState {
         return try {
             val response =
                 contactService.addContact(
                     userId,
-                    "${Constants.AUTHORIZATION_PREFIX} $accessToken",
-                    contact.id
+                    "${Constants.AUTH_PREFIX} $accessToken",
+                    contactId
                 )
-            UserDataHolder.states.add(contact.id to ApiState.Success(response.data.users))
+            UserDataHolder.states.add(contactId to ApiState.Success(response.data.users))
             response.data.let { ApiState.Success(it.users) }
         } catch (e: Exception) {
             UserDataHolder.states.add(
-                contact.id to ApiState.Error(R.string.invalid_request)
+                contactId to ApiState.Error(R.string.invalid_request)
             )
             ApiState.Error(R.string.invalid_request)
         }
@@ -93,7 +96,7 @@ class ContactRepositoryImpl @Inject constructor(
             val response = contactService.deleteContact(
                 userId,
                 contact.id,
-                "${Constants.AUTHORIZATION_PREFIX} $accessToken",
+                "${Constants.AUTH_PREFIX} $accessToken",
             )
             response.data.let { ApiState.Success(it.users) }
         } catch (e: java.lang.Exception) {
@@ -101,44 +104,41 @@ class ContactRepositoryImpl @Inject constructor(
         }
     }
 
-    fun getPagedUsers(): Flow<PagingData<UserData>> {
-        val loader: UsersPageLoader = { pageIndex, pageSize ->
+    suspend fun getPagedUsers(): Flow<PagingData<UserData>> {
+        val loader: UsersPageLoader = { from, to ->
             val response = getUsers(
                 UserDataHolder.userData.accessToken,
                 UserDataHolder.userData.user,
-                pageIndex,
-                pageSize
+                from,
+                to
             )
             when (response) {
-                is ApiState.Success<*> -> { response.data as List<UserData> }
+                is ApiState.Success<*> -> {
+                    response.data as List<UserData>
+                }
+
                 else -> emptyList()
             }
         }
+
+
+        val allUsers = when (val response =
+            getUsers(UserDataHolder.userData.accessToken, UserDataHolder.userData.user)) {
+            is ApiState.Success<*> -> {
+                response.data as List<UserData>
+            }
+
+            else -> emptyList()
+        }
         return Pager(
             config = PagingConfig(
-                pageSize = 1
+                pageSize = Constants.PAGINATION_LIST_RANGE,
+                enablePlaceholders = false
             ),
-            pagingSourceFactory = { ContactsPagingSource(loader) }
+            pagingSourceFactory = { ContactsPagingSource(loader, Constants.PAGINATION_LIST_RANGE, allUsers) }
         ).flow
     }
 
-
-//    override fun getPageUsers(accessToken: String, user: UserData): Flow<PagingData<Contact>> {
-//
-//        val loader: UsersPagingLoader = { pageIndex, pageSize ->
-//            when (val usersResult = getUsers(accessToken, user, pageIndex, pageSize)) {
-//                is ApiState.Success<*> -> {
-//                    if (usersResult.data is List<*>) usersResult.data.filterIsInstance<Contact>() else emptyList()
-//                }
-//                else -> emptyList()
-//            }
-//        }
-//        return Pager(
-//            config = PagingConfig(
-//                pageSize = PAGE_SIZE,
-//                enablePlaceholders = false
-//            ),
-//            pagingSourceFactory = { UsersPagingSource(loader, PAGE_SIZE) }
-//        ).flow
-//    }
+    private fun getUsersInRange(users: List<UserData>, from: Int, to: Int): List<UserData> =
+        users.subList(from.coerceAtMost(users.size), to.coerceAtMost(users.size))
 }

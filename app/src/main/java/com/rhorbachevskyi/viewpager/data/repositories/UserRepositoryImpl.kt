@@ -54,7 +54,7 @@ class UserRepositoryImpl @Inject constructor(
         return try {
             val response = userService.editUser(
                 userId,
-                "${Constants.AUTHORIZATION_PREFIX} $accessToken",
+                "${Constants.AUTH_PREFIX} $accessToken",
                 name,
                 career,
                 phone,

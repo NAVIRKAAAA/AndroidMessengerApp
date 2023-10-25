@@ -24,16 +24,11 @@ class LoadMoreAdapter(private val retry: () -> Unit) :
 
     inner class ViewHolder(retry: () -> Unit) : RecyclerView.ViewHolder(binding.root) {
 
-        init {
-            binding.btnLoadMoreRetry.setOnClickListener { retry() }
-        }
 
         fun setData(state: LoadState) {
-            binding.apply {
-                prgBarLoadMore.isVisible = state is LoadState.Loading
-                tvLoadMore.isVisible = state is LoadState.Error
-                btnLoadMoreRetry.isVisible = state is LoadState.Error
-            }
+
+            binding.prgBarLoadMore.isVisible = state is LoadState.Loading
+
         }
     }
 }

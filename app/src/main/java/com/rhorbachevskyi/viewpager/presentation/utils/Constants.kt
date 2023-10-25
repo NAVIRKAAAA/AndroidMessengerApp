@@ -40,9 +40,12 @@ object Constants {
     const val INPUT_DATE_FORMAT = "EEE MMM dd HH:mm:ss zzz yyyy"
 
     // authorization prefix
-    const val AUTHORIZATION_PREFIX = "Bearer"
+    const val AUTH_PREFIX = "Bearer"
 
     // notifications
     const val CHANNEL_ID = "channel id"
     const val CHANNEL_NAME = "channel name"
+
+    // pagination
+    const val PAGINATION_LIST_RANGE = 20
 }

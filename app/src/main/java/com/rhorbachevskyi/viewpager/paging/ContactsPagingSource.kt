@@ -3,29 +3,35 @@ package com.rhorbachevskyi.viewpager.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.rhorbachevskyi.viewpager.data.model.UserData
-import com.rhorbachevskyi.viewpager.presentation.utils.ext.log
+import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 
-typealias UsersPageLoader = suspend (pageIndex: Int, pageSize: Int) -> List<UserData>
+typealias UsersPageLoader = suspend (from: Int, to: Int) -> List<UserData>
 
 class ContactsPagingSource(
-    private val loader: UsersPageLoader
+    private val loader: UsersPageLoader,
+    private val pageSize: Int,
+    private val allUsers: List<UserData>
 ) : PagingSource<Int, UserData>() {
-    override fun getRefreshKey(state: PagingState<Int, UserData>): Int? {
-        return null
-    }
+    private var from: Int = 0
+    private var to: Int = Constants.PAGINATION_LIST_RANGE
+    override fun getRefreshKey(state: PagingState<Int, UserData>): Int? = null
+
+
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, UserData> {
-        log("start load()")
         return try {
-            val currentPage = params.key ?: 0
-            val response = loader.invoke(currentPage, params.loadSize)
+            val pageNumber = params.key ?: 0
+
+            val response = loader.invoke(from, to)
+
+            from = to
+            to += Constants.PAGINATION_LIST_RANGE
 
             LoadResult.Page(
                 data = response,
-                prevKey = if (currentPage == 0) null else currentPage - 1,
-                nextKey = currentPage.plus(1)
+                prevKey = null,
+                nextKey = if (pageNumber + 1 == pageSize || to - Constants.PAGINATION_LIST_RANGE > allUsers.size) null else pageNumber + 1
             )
         } catch (e: Exception) {
-
             LoadResult.Error(e)
         }
     }

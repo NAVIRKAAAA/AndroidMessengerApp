@@ -69,7 +69,7 @@ class ContactsViewModel @Inject constructor(
     ) =
         viewModelScope.launch(Dispatchers.IO) {
             _usersStateFlow.value = ApiState.Loading
-            _usersStateFlow.value = addContactUseCase(userId, contact, accessToken)
+            _usersStateFlow.value = addContactUseCase(userId, contact.id, accessToken)
             databaseImpl.addToSearchList(contact)
         }
 

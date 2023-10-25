@@ -56,7 +56,7 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
         if (args.isNewUser) {
             viewModel.addContact(
                 userData.user.id,
-                args.contact,
+                args.contact.id,
                 userData.accessToken,
                 requireContext().hasInternet()
             )
