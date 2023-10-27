@@ -6,7 +6,6 @@ import androidx.paging.PagingData
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.database.repository.ContactDatabaseRepository
 import com.rhorbachevskyi.viewpager.data.database.repository.UserDatabaseRepository
-import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserData
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.domain.network.ContactApiService
@@ -33,7 +32,7 @@ class ContactRepositoryImpl @Inject constructor(
     ): ApiState {
         return try {
             val response = contactService.getUsers("${Constants.AUTH_PREFIX} $accessToken")
-            if(response.data.users == null) return ApiState.Error(0)
+            if (response.data.users == null) return ApiState.Error(0)
 
             val serverContacts = UserDataHolder.serverContacts
             val currentContacts = response.data.users.map { it.toContact() }
@@ -56,18 +55,29 @@ class ContactRepositoryImpl @Inject constructor(
         }
     }
 
-    suspend fun getContacts(userId: Long, accessToken: String): ApiState {
+    suspend fun getContacts(
+        userId: Long,
+        accessToken: String,
+        from: Int = 0,
+        to: Int = 0
+    ): ApiState {
         return try {
             val response =
-                contactService.getUserContacts(
-                    userId,
-                    "${Constants.AUTH_PREFIX} $accessToken"
-                )
-            val users = response.data.contacts?.map { it.toContact() } ?: emptyList()
-            UserDataHolder.serverContacts = users
-            contactDatabaseRepository.deleteAllContacts()
-            contactDatabaseRepository.addContacts(users.map { contact -> contact.toEntity() })
-            response.data.let { ApiState.Success(it.contacts) }
+                contactService.getUserContacts(userId, "${Constants.AUTH_PREFIX} $accessToken")
+            if (response.data.contacts == null) return ApiState.Error(0)
+
+//            UserDataHolder.serverContacts = users
+//            contactDatabaseRepository.deleteAllContacts()
+//            contactDatabaseRepository.addContacts(users.map { contact -> contact.toEntity() })
+
+            val users = if (from == 0 && to == 0) {
+                // holder, database
+                response.data.contacts.map { it.toContact() }
+            } else {
+                getUsersInRange(response.data.contacts, from, to)
+            }
+
+            users.let { ApiState.Success(it) }
         } catch (e: Exception) {
             ApiState.Error(R.string.invalid_request)
         }
@@ -91,11 +101,11 @@ class ContactRepositoryImpl @Inject constructor(
         }
     }
 
-    suspend fun deleteContact(userId: Long, accessToken: String, contact: Contact): ApiState {
+    suspend fun deleteContact(userId: Long, accessToken: String, contactId: Long): ApiState {
         return try {
             val response = contactService.deleteContact(
                 userId,
-                contact.id,
+                contactId,
                 "${Constants.AUTH_PREFIX} $accessToken",
             )
             response.data.let { ApiState.Success(it.users) }
@@ -135,7 +145,52 @@ class ContactRepositoryImpl @Inject constructor(
                 pageSize = Constants.PAGINATION_LIST_RANGE,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { ContactsPagingSource(loader, Constants.PAGINATION_LIST_RANGE, allUsers) }
+            pagingSourceFactory = {
+                ContactsPagingSource(
+                    loader,
+                    Constants.PAGINATION_LIST_RANGE,
+                    allUsers
+                )
+            }
+        ).flow
+    }
+
+    suspend fun getPagedContacts(): Flow<PagingData<UserData>> {
+        val loader: UsersPageLoader = { from, to ->
+            val response = getContacts(
+                UserDataHolder.userData.user.id,
+                UserDataHolder.userData.accessToken
+            )
+            when (response) {
+                is ApiState.Success<*> -> {
+                    response.data as List<UserData>
+                }
+
+                else -> emptyList()
+            }
+        }
+
+
+        val allUsers = when (val response =
+            getUsers(UserDataHolder.userData.accessToken, UserDataHolder.userData.user)) {
+            is ApiState.Success<*> -> {
+                response.data as List<UserData>
+            }
+
+            else -> emptyList()
+        }
+        return Pager(
+            config = PagingConfig(
+                pageSize = Constants.PAGINATION_LIST_RANGE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                ContactsPagingSource(
+                    loader,
+                    Constants.PAGINATION_LIST_RANGE,
+                    allUsers
+                )
+            }
         ).flow
     }
 

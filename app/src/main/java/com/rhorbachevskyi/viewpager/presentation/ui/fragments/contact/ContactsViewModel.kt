@@ -109,7 +109,7 @@ class ContactsViewModel @Inject constructor(
         accessToken: String,
         contact: Contact,
     ) = viewModelScope.launch(Dispatchers.IO) {
-        _usersStateFlow.value = deleteContactUseCase(userId, contact, accessToken)
+        _usersStateFlow.value = deleteContactUseCase(userId, contact.id, accessToken)
         databaseImpl.deleteFromSearchList(contact)
     }
 

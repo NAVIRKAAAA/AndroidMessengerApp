@@ -4,11 +4,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.ListAdapter
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.rhorbachevskyi.viewpager.R
-import com.rhorbachevskyi.viewpager.databinding.ItemUserBinding
 import com.rhorbachevskyi.viewpager.data.model.Contact
+import com.rhorbachevskyi.viewpager.databinding.ItemUserBinding
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.adapter.interfaces.ContactItemClickListener
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.adapter.utils.ContactDiffUtil
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
@@ -17,7 +17,7 @@ import com.rhorbachevskyi.viewpager.presentation.utils.ext.loadImage
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 
 class ContactsAdapter(private val listener: ContactItemClickListener) :
-    ListAdapter<Contact, ContactsAdapter.UsersViewHolder>(ContactDiffUtil()) {
+    PagingDataAdapter<Contact, ContactsAdapter.UsersViewHolder>(ContactDiffUtil()) {
     private var isSelectItems: ArrayList<Pair<Boolean, Int>> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UsersViewHolder {
@@ -27,7 +27,7 @@ class ContactsAdapter(private val listener: ContactItemClickListener) :
     }
 
     override fun onBindViewHolder(holder: UsersViewHolder, position: Int) {
-        holder.bind(currentList[position])
+        holder.bind(getItem(position) ?: return)
     }
 
     inner class UsersViewHolder(private val binding: ItemUserBinding) :
@@ -56,7 +56,7 @@ class ContactsAdapter(private val listener: ContactItemClickListener) :
 
         private fun deleteItem(contact: Contact) {
             binding.imageViewDelete.setOnClickListener {
-                listener.onClickDelete(contact)
+                listener.onDeleteClick(contact)
             }
         }
 
@@ -64,7 +64,7 @@ class ContactsAdapter(private val listener: ContactItemClickListener) :
             with(binding) {
                 if (isSelectItems.isNotEmpty()) checkboxSelectMode.isChecked =
                     !checkboxSelectMode.isChecked
-                listener.onClickContact(
+                listener.onContactClick(
                     contact, arrayOf(
                         setTransitionName(
                             imageViewUserPhoto,
