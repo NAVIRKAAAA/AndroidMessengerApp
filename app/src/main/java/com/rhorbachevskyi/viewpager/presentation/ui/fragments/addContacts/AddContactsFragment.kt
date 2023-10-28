@@ -6,25 +6,25 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
-import androidx.paging.map
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.databinding.FragmentUsersBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.paging.DefaultLoadStateAdapter
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
-import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapter.AddContactsAdapter
-import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapter.interfaces.UserItemClickListener
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapters.AddContactsAdapterDefault
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapters.AddContactsAdapterWithPagination
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapters.interfaces.UserItemListenerDefault
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapters.interfaces.UserItemListenerWithPagination
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.hasInternet
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.showSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -32,14 +32,13 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
 
     private lateinit var mainLoadStateHolder: DefaultLoadStateAdapter.Holder
     private val viewModel: AddContactViewModel by viewModels()
-    private val adapter: AddContactsAdapter by lazy {
-        AddContactsAdapter(listener = object : UserItemClickListener {
+    private val adapterDefault: AddContactsAdapterDefault by lazy {
+        AddContactsAdapterDefault(listener = object : UserItemListenerDefault {
             override fun onClickAdd(contact: Contact) {
                 viewModel.addContact(
                     UserDataHolder.userData.user.id,
                     contact,
-                    UserDataHolder.userData.accessToken,
-                    requireContext().hasInternet()
+                    UserDataHolder.userData.accessToken
                 )
             }
 
@@ -57,6 +56,18 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
         })
     }
 
+    private val adapterWithPagination: AddContactsAdapterWithPagination by lazy {
+        AddContactsAdapterWithPagination(listener = object : UserItemListenerWithPagination {
+            override fun onClickAdd(contact: Contact) {
+                requireContext().showSnackBar(
+                    binding.root,
+                    getString(R.string.No_internet_connection)
+                )
+            }
+
+        })
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -66,19 +77,34 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
     }
 
     private fun setUsersList() {
-        val adapterWithLoadState = adapter.withLoadStateFooter(DefaultLoadStateAdapter())
+        val hasInternet = requireContext().hasInternet()
 
         binding.recyclerViewUsers.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerViewUsers.adapter = adapterWithLoadState
-        (binding.recyclerViewUsers.itemAnimator as? DefaultItemAnimator)?.supportsChangeAnimations =
-            false
 
-        mainLoadStateHolder = DefaultLoadStateAdapter.Holder(binding.loadStateView)
+        binding.recyclerViewUsers.adapter = if (hasInternet) {
+            viewModel.getAllUsers(UserDataHolder.userData.accessToken, UserDataHolder.userData.user)
+            binding.loadStateView.prgBarLoadMore.invisible()
+            adapterDefault
+        } else {
+            val footerAdapter = DefaultLoadStateAdapter()
+
+            // combined adapter which shows both the list of users + footer indicator when loading pages
+            val adapterWithLoadState = adapterWithPagination.withLoadStateFooter(footerAdapter)
+            mainLoadStateHolder = DefaultLoadStateAdapter.Holder(
+                binding.loadStateView
+            )
+            adapterWithLoadState
+        }
     }
 
 
-    @OptIn(FlowPreview::class)
     private fun setObserves() {
+        val hasInternet = requireContext().hasInternet()
+        if (hasInternet) setDefaultObservers() else setPaginationObservers()
+    }
+
+
+    private fun setDefaultObservers() {
         with(binding) {
             lifecycleScope.launch {
                 viewModel.usersState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
@@ -105,18 +131,25 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
         }
         lifecycleScope.launch {
             viewModel.states.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
-                adapter.setStates(it)
+                adapterDefault.setStates(it)
             }
         }
         // list
         lifecycleScope.launch {
-            viewModel.usersList.collectLatest { pagingData ->
-                adapter.submitData(pagingData.map { it.toContact() })
+            viewModel.users.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
+                adapterDefault.submitList(it)
             }
         }
-        // load state
+    }
+
+    private fun setPaginationObservers() {
         lifecycleScope.launch {
-            adapter.loadStateFlow.debounce(200).collectLatest { state ->
+            viewModel.usersFlow.collectLatest { pagingData ->
+                adapterWithPagination.submitData(pagingData)
+            }
+        }
+        lifecycleScope.launch {
+            adapterWithPagination.loadStateFlow.collectLatest { state ->
                 mainLoadStateHolder.bind(state.refresh)
             }
         }
@@ -124,16 +157,8 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
 
     private fun setListeners() {
         with(binding) {
-            imageViewNavigationBack.setOnClickListener { navigationBack() }
-            imageSearchView.setOnClickListener { searchView() }
+            imageViewNavigationBack.setOnClickListener { navController.navigateUp() }
+            imageSearchView.setOnClickListener { viewModel.showNotification(requireContext()) }
         }
-    }
-
-    private fun navigationBack() {
-        navController.navigateUp()
-    }
-
-    private fun searchView() {
-        viewModel.showNotification(requireContext())
     }
 }

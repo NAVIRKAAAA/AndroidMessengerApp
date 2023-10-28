@@ -11,5 +11,5 @@ class UsersUseCase @Inject constructor( // TODO: think
     suspend operator fun invoke(
         accessToken: String,
         user: UserData
-    ): ApiState  = contactRepository.getUsers(accessToken, user, 0,0)
+    ): ApiState  = contactRepository.getUsers(accessToken, user)
 }

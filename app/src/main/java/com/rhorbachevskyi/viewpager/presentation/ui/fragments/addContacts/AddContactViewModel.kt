@@ -12,41 +12,37 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.database.repository.repositoryimpl.DatabaseImpl
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserData
-import com.rhorbachevskyi.viewpager.data.repositories.ContactRepositoryImpl
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.domain.usecases.AddContactUseCase
+import com.rhorbachevskyi.viewpager.domain.usecases.UsersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @HiltViewModel
 class AddContactViewModel @Inject constructor(
+    private val allUsersUseCase: UsersUseCase,
     private val addContactUseCase: AddContactUseCase,
     private val databaseImpl: DatabaseImpl,
     private val notificationBuilder: NotificationCompat.Builder,
-    private val notificationManager: NotificationManagerCompat,
-    private val contactRepository: ContactRepositoryImpl
+    private val notificationManager: NotificationManagerCompat
 ) : ViewModel() {
     private val _usersStateFlow = MutableStateFlow<ApiState>(ApiState.Initial)
-    val usersState: StateFlow<ApiState> = _usersStateFlow
+    val usersState = _usersStateFlow.asStateFlow()
 
     private val _users = MutableStateFlow<List<Contact>>(listOf())
     val users: StateFlow<List<Contact>> = _users
-
 
     private val _states: MutableStateFlow<ArrayList<Pair<Long, ApiState>>> =
         MutableStateFlow(ArrayList())
@@ -55,27 +51,41 @@ class AddContactViewModel @Inject constructor(
     // so that it does not always depend on the server
     val supportList: ArrayList<Contact> = arrayListOf()
 
-    val usersList: Flow<PagingData<UserData>> = MutableLiveData("").asFlow()
-        .debounce(500)
-        .flatMapLatest {
-            contactRepository.getPagedUsers()
-        }
-        .cachedIn(viewModelScope)
+    val usersFlow: Flow<PagingData<Contact>>
 
-    fun addContact(userId: Long, contact: Contact, accessToken: String, hasInternet: Boolean) =
+    private val searchBy = MutableLiveData("")
+
+    init {
+        usersFlow = searchBy.asFlow()
+            // if user types text too quickly -> filtering intermediate values to avoid excess loads
+            .debounce(500)
+            .flatMapLatest {
+                databaseImpl.getPagedUsers()
+            }
+            // always use cacheIn operator for flows returned by Pager. Otherwise exception may be thrown
+            // when 1) refreshing/invalidating or 2) subscribing to the flow more than once.
+            .cachedIn(viewModelScope)
+    }
+
+    fun getAllUsers(accessToken: String, user: UserData) =
+        viewModelScope.launch(Dispatchers.Main) {
+            _usersStateFlow.value = ApiState.Loading
+            _usersStateFlow.value = allUsersUseCase(accessToken, user)
+            _users.value = UserDataHolder.serverUsers
+//            databaseImpl.addUsersToSearchList(_users.value)
+        }
+
+    fun addContact(userId: Long, contact: Contact, accessToken: String) =
         viewModelScope.launch(Dispatchers.IO) {
             if (!supportList.contains(contact)) {
                 supportList.add(contact)
-                _states.value = arrayListOf(contact.id to ApiState.Loading)
-                if (hasInternet) {
-                    addContactUseCase(userId, contact.id, accessToken)
-                } else {
-                    _usersStateFlow.value = ApiState.Error(R.string.No_internet_connection)
-                }
+                _states.value = arrayListOf(Pair(contact.id, ApiState.Loading))
+                addContactUseCase(userId, contact.id, accessToken)
                 _states.value = UserDataHolder.states
-                databaseImpl.deleteFromSearchList(contact)
+//                databaseImpl.deleteFromSearchList(contact)
             }
         }
+
 
     fun showNotification(context: Context) {
         if (ActivityCompat.checkSelfPermission(

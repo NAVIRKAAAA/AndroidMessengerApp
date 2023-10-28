@@ -12,10 +12,15 @@ interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addUsers(users: List<ContactEntity>)
+
     @Update
     suspend fun updateUsers(users: List<ContactEntity>)
-    @Query("SELECT * FROM users")
-    suspend fun getUsers(): List<ContactEntity>
+
+    @Query(
+        "SELECT * FROM users " +
+                "LIMIT :limit OFFSET :offset"
+    )
+    suspend fun getUsers(limit: Int, offset: Int): List<ContactEntity>
 
     @Query("DELETE FROM users")
     suspend fun deleteAllContacts()

@@ -1,14 +1,14 @@
-package com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapter
+package com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.databinding.ItemAddUserBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
-import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapter.interfaces.UserItemClickListener
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapters.interfaces.UserItemListenerDefault
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.adapter.utils.ContactDiffUtil
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.gone
@@ -16,8 +16,8 @@ import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.loadImage
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 
-class AddContactsAdapter(private val listener: UserItemClickListener) :
-    PagingDataAdapter<Contact, AddContactsAdapter.UsersViewHolder>(ContactDiffUtil()) {
+class AddContactsAdapterDefault(private val listener: UserItemListenerDefault) :
+    ListAdapter<Contact, AddContactsAdapterDefault.UsersViewHolder>(ContactDiffUtil()) {
     private var states: ArrayList<Pair<Long, ApiState>> = ArrayList()
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -112,7 +112,7 @@ class AddContactsAdapter(private val listener: UserItemClickListener) :
     }
 
     fun setStates(states: ArrayList<Pair<Long, ApiState>>) {
-        val currentList = snapshot().items
+
         if (this.states.size != states.size) {
             this.states = states
             val lastIndex = currentList.indexOfLast { it.id == states.lastOrNull()?.first }

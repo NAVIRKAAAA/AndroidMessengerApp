@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.Contact
@@ -14,10 +14,11 @@ import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.adapter.ut
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.gone
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.loadImage
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.log
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 
 class ContactsAdapter(private val listener: ContactItemClickListener) :
-    PagingDataAdapter<Contact, ContactsAdapter.UsersViewHolder>(ContactDiffUtil()) {
+    ListAdapter<Contact, ContactsAdapter.UsersViewHolder>(ContactDiffUtil()) {
     private var isSelectItems: ArrayList<Pair<Boolean, Int>> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UsersViewHolder {
@@ -56,6 +57,7 @@ class ContactsAdapter(private val listener: ContactItemClickListener) :
 
         private fun deleteItem(contact: Contact) {
             binding.imageViewDelete.setOnClickListener {
+                log("click on delete")
                 listener.onDeleteClick(contact)
             }
         }

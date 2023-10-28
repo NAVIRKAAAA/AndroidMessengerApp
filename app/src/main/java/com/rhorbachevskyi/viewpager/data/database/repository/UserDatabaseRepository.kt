@@ -1,23 +1,24 @@
 package com.rhorbachevskyi.viewpager.data.database.repository
 
+import android.nfc.tech.MifareUltralight
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.rhorbachevskyi.viewpager.data.database.entity.ContactEntity
 import com.rhorbachevskyi.viewpager.data.database.interfaces.UserDao
 import javax.inject.Inject
 
-class UserDatabaseRepository @Inject constructor(private val userDao: UserDao) : UserDao {
+class UserDatabaseRepository @Inject constructor(
 
-    override suspend fun addUsers(users: List<ContactEntity>) {
-        deleteAllContacts()
-        userDao.addUsers(users)
+) {
+
+    suspend fun addUsers(users: List<ContactEntity>) {
+
     }
 
-    override suspend fun updateUsers(users: List<ContactEntity>) {
-        userDao.updateUsers(users)
+    private suspend fun deleteAllContacts() {
+
     }
 
-    override suspend fun getUsers(): List<ContactEntity> = userDao.getUsers()
-    override suspend fun deleteAllContacts() {
-        userDao.deleteAllContacts()
-    }
 
 }

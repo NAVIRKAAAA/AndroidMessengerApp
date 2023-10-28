@@ -7,7 +7,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.rhorbachevskyi.viewpager.R
@@ -15,7 +14,6 @@ import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
 import com.rhorbachevskyi.viewpager.databinding.FragmentContactsBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
-import com.rhorbachevskyi.viewpager.paging.DefaultLoadStateAdapter
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.adapter.ContactsAdapter
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.adapter.interfaces.ContactItemClickListener
@@ -27,8 +25,6 @@ import com.rhorbachevskyi.viewpager.presentation.utils.ext.setupSwipeToDelete
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -37,8 +33,6 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
     private val userData: UserResponse.Data by lazy {
         viewModel.requestGetUser()
     }
-
-    private lateinit var mainLoadStateHolder: DefaultLoadStateAdapter.Holder
     private val adapter: ContactsAdapter by lazy {
         ContactsAdapter(listener = object : ContactItemClickListener {
 
@@ -56,7 +50,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                         viewModel.changeMultiselectMode()
                     }
                 } else {
-                    // if (!viewModel.getPagingDataAsList().contains(contact)) return
+                    if (!viewModel.contactList.value.contains(contact)) return
                     val extras = FragmentNavigatorExtras(*transitionPairs)
                     val direction =
                         ViewPagerFragmentDirections.actionViewPagerFragmentToContactProfile(
@@ -90,23 +84,20 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
 
     private fun initialRecyclerview() {
         viewModel.deleteStates()
-
+        viewModel.initialContactList(
+            userData.user.id,
+            userData.accessToken,
+            requireContext().hasInternet()
+        )
         with(binding) {
-            val adapterWithLoadState = adapter.withLoadStateFooter(DefaultLoadStateAdapter())
-
+            recyclerViewContacts.layoutManager = LinearLayoutManager(context)
+            recyclerViewContacts.adapter = adapter
             recyclerViewContacts.setupSwipeToDelete(
                 deleteFunction = {
-                    // deleteUserWithRestore(viewModel.getPagingDataAsList().getOrNull(it)!!)
+                    deleteUserWithRestore(viewModel.contactList.value.getOrNull(it)!!)
                 },
                 isSwipeEnabled = { !viewModel.isMultiselect.value && requireContext().hasInternet() }
             )
-
-            binding.recyclerViewContacts.layoutManager = LinearLayoutManager(requireContext())
-            binding.recyclerViewContacts.adapter = adapterWithLoadState
-            (binding.recyclerViewContacts.itemAnimator as? DefaultItemAnimator)?.supportsChangeAnimations =
-                false
-
-            mainLoadStateHolder = DefaultLoadStateAdapter.Holder(binding.loadStateView)
         }
     }
 
@@ -160,11 +151,11 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
 
     private fun setObservers() {
         with(binding) {
-//            lifecycleScope.launch {
-//                viewModel.contactListFlow?.flowWithLifecycle(viewLifecycleOwner.lifecycle)?.collect {pagingData ->
-//                    adapter.submitData(pagingData.map { it.toContact() })
-//                }
-//            }
+            lifecycleScope.launch {
+                viewModel.contactList.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
+                    adapter.submitList(it)
+                }
+            }
             lifecycleScope.launch {
                 viewModel.isMultiselect.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                     recyclerViewContacts.adapter = adapter
@@ -199,23 +190,11 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                 }
             }
         }
-        // load state
-        lifecycleScope.launch {
-            adapter.loadStateFlow.debounce(200).collectLatest { state ->
-                mainLoadStateHolder.bind(state.refresh)
-            }
-        }
-
-
-//        viewModel.invalidateEvents.observeEvent(this) {
-//            adapter.refresh()
-//        }
-
     }
 
 
     fun deleteUserWithRestore(contact: Contact) {
-        val position = 0//viewModel.getPositionFromContact(contact)
+        val position = viewModel.contactList.value.indexOfFirst { it == contact }
         if (viewModel.deleteContactFromList(
                 userData.user.id,
                 userData.accessToken,
