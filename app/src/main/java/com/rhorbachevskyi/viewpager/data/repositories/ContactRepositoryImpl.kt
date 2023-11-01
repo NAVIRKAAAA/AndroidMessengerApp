@@ -1,22 +1,17 @@
 package com.rhorbachevskyi.viewpager.data.repositories
 
 import com.rhorbachevskyi.viewpager.R
-import com.rhorbachevskyi.viewpager.data.database.repository.UserDatabaseRepository
 import com.rhorbachevskyi.viewpager.data.database.repository.repositoryimpl.DatabaseImpl
 import com.rhorbachevskyi.viewpager.data.model.UserData
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.domain.network.ContactApiService
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
-import com.rhorbachevskyi.viewpager.presentation.utils.ext.log
-import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 class ContactRepositoryImpl @Inject constructor(
     private val contactService: ContactApiService,
-    private val userDatabaseRepository: UserDatabaseRepository,
-    private val databaseImpl: DatabaseImpl,
-    private val ioDispatcher: CoroutineDispatcher,
+    private val databaseImpl: DatabaseImpl
 ) {
     suspend fun getUsers(
         accessToken: String,
@@ -31,11 +26,10 @@ class ContactRepositoryImpl @Inject constructor(
             val filteredUsers = response.data.users.filter {
                 it.name != null && it.email != user.email && !serverContacts.contains(it.toContact())
             }
-            log("api $filteredUsers")
             // holder, database
             UserDataHolder.serverUsers = filteredUsers.map { it.toContact() }
 
-            databaseImpl.addUsers(filteredUsers.map { it.toContact() })
+            databaseImpl.addUsers(UserDataHolder.serverUsers) // todo: emm
             // result
             filteredUsers.let { ApiState.Success(it) }
         } catch (e: Exception) {
@@ -52,13 +46,13 @@ class ContactRepositoryImpl @Inject constructor(
                 contactService.getUserContacts(userId, "${Constants.AUTH_PREFIX} $accessToken")
             if (response.data.contacts == null) return ApiState.Error(0)
 
-            val users = response.data.contacts.map { it.toContact() }
+            val contacts = response.data.contacts.map { it.toContact() }
 
             // holder, database
-            UserDataHolder.serverContacts = response.data.contacts.map { it.toContact() }
-            databaseImpl.addContacts(users)
+            UserDataHolder.serverContacts = contacts
+            databaseImpl.addContacts(contacts)
 
-            users.let { ApiState.Success(it) }
+            contacts.let { ApiState.Success(it) }
         } catch (e: Exception) {
             ApiState.Error(R.string.invalid_request)
         }

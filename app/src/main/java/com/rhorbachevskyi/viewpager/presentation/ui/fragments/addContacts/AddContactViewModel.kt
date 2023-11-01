@@ -51,28 +51,19 @@ class AddContactViewModel @Inject constructor(
     // so that it does not always depend on the server
     val supportList: ArrayList<Contact> = arrayListOf()
 
-    val usersFlow: Flow<PagingData<Contact>>
+    var usersFlow: Flow<PagingData<Contact>> = MutableLiveData("").asFlow()
+        .debounce(500)
+        .flatMapLatest {
+            databaseImpl.getPagedUsers()
+        }
+        .cachedIn(viewModelScope)
 
-    private val searchBy = MutableLiveData("")
-
-    init {
-        usersFlow = searchBy.asFlow()
-            // if user types text too quickly -> filtering intermediate values to avoid excess loads
-            .debounce(500)
-            .flatMapLatest {
-                databaseImpl.getPagedUsers()
-            }
-            // always use cacheIn operator for flows returned by Pager. Otherwise exception may be thrown
-            // when 1) refreshing/invalidating or 2) subscribing to the flow more than once.
-            .cachedIn(viewModelScope)
-    }
-
-    fun getAllUsers(accessToken: String, user: UserData) =
+    fun getAllUsers(accessToken: String, user: UserData, hasInternet: Boolean) =
         viewModelScope.launch(Dispatchers.Main) {
             _usersStateFlow.value = ApiState.Loading
             _usersStateFlow.value = allUsersUseCase(accessToken, user)
             _users.value = UserDataHolder.serverUsers
-//            databaseImpl.addUsersToSearchList(_users.value)
+            databaseImpl.addUsersToSearchList(_users.value)
         }
 
     fun addContact(userId: Long, contact: Contact, accessToken: String) =

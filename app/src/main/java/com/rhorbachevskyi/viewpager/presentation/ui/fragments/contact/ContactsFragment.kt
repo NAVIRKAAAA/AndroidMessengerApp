@@ -7,6 +7,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.rhorbachevskyi.viewpager.R
@@ -14,26 +15,32 @@ import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
 import com.rhorbachevskyi.viewpager.databinding.FragmentContactsBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
+import com.rhorbachevskyi.viewpager.paging.DefaultLoadStateAdapter
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.adapter.ContactsAdapter
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.adapter.ContactsAdapterWithPagination
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.adapter.interfaces.ContactItemClickListener
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.adapter.interfaces.ContactItemListenerWithPagination
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.ViewPagerFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.ViewPagerFragmentDirections
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.hasInternet
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.setupSwipeToDelete
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.showSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsBinding::inflate) {
+    private lateinit var mainLoadStateHolder: DefaultLoadStateAdapter.Holder
     private val viewModel: ContactsViewModel by viewModels()
     private val userData: UserResponse.Data by lazy {
         viewModel.requestGetUser()
     }
-    private val adapter: ContactsAdapter by lazy {
+    private val adapterDefault: ContactsAdapter by lazy {
         ContactsAdapter(listener = object : ContactItemClickListener {
 
             override fun onContactClick(
@@ -74,34 +81,59 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
         })
     }
 
+    private val adapterWithPagination: ContactsAdapterWithPagination by lazy {
+        ContactsAdapterWithPagination(listener = object : ContactItemListenerWithPagination {
+            override fun onActionClick() {
+                requireContext().showSnackBar(
+                    binding.root,
+                    getString(R.string.No_internet_connection)
+                )
+            }
+        })
+    }
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initialRecyclerview()
-        setListener()
+        setContactList()
+        setListeners()
         setObservers()
     }
 
-    private fun initialRecyclerview() {
+    private fun setContactList() {
+
+        val hasInternet = requireContext().hasInternet()
+        viewModel.getContactList(userData.user.id, userData.accessToken, hasInternet)
         viewModel.deleteStates()
-        viewModel.initialContactList(
-            userData.user.id,
-            userData.accessToken,
-            requireContext().hasInternet()
-        )
-        with(binding) {
-            recyclerViewContacts.layoutManager = LinearLayoutManager(context)
-            recyclerViewContacts.adapter = adapter
-            recyclerViewContacts.setupSwipeToDelete(
+
+        binding.recyclerViewContacts.layoutManager = LinearLayoutManager(requireContext())
+
+        binding.recyclerViewContacts.adapter = if (hasInternet) {
+
+            binding.recyclerViewContacts.setupSwipeToDelete(
                 deleteFunction = {
                     deleteUserWithRestore(viewModel.contactList.value.getOrNull(it)!!)
                 },
                 isSwipeEnabled = { !viewModel.isMultiselect.value && requireContext().hasInternet() }
             )
+
+            binding.loadStateView.prgBarLoadMore.invisible()
+            adapterDefault
+        } else {
+            val footerAdapter = DefaultLoadStateAdapter()
+
+            // combined adapter which shows both the list of users + footer indicator when loading pages
+            val adapterWithLoadState = adapterWithPagination.withLoadStateFooter(footerAdapter)
+            mainLoadStateHolder = DefaultLoadStateAdapter.Holder(binding.loadStateView)
+            (binding.recyclerViewContacts.itemAnimator as? DefaultItemAnimator)?.supportsChangeAnimations =
+                false
+            adapterWithLoadState
         }
+
     }
 
-    private fun setListener() {
+    private fun setListeners() {
         with(binding) {
             textViewAddContacts.setOnClickListener { toAddContactsScreen() }
             imageViewDeleteSelectMode.setOnClickListener { deleteSelectedContacts() }
@@ -150,15 +182,32 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
     }
 
     private fun setObservers() {
+        val hasInternet = requireContext().hasInternet()
+
+        if (hasInternet) setDefaultObservers() else setPaginationObservers()
+    }
+    private fun setPaginationObservers(){
+        lifecycleScope.launch {
+            viewModel.contactsFlow.collectLatest { pagingData ->
+                adapterWithPagination.submitData(pagingData)
+            }
+        }
+        lifecycleScope.launch {
+            adapterWithPagination.loadStateFlow.collectLatest { state ->
+                mainLoadStateHolder.bind(state.refresh)
+            }
+        }
+    }
+    private fun setDefaultObservers(){
         with(binding) {
             lifecycleScope.launch {
                 viewModel.contactList.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
-                    adapter.submitList(it)
+                    adapterDefault.submitList(it)
                 }
             }
             lifecycleScope.launch {
                 viewModel.isMultiselect.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
-                    recyclerViewContacts.adapter = adapter
+                    recyclerViewContacts.adapter = adapterDefault
                     textViewAddContacts.visibility = if (it) View.GONE else View.VISIBLE
                     imageViewDeleteSelectMode.visibility = if (it) View.VISIBLE else View.GONE
                 }
@@ -166,7 +215,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
 
             lifecycleScope.launch {
                 viewModel.isSelectItem.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
-                    adapter.setMultiselectData(it)
+                    adapterDefault.setMultiselectData(it)
                 }
             }
             lifecycleScope.launch {

@@ -7,7 +7,6 @@ import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.rhorbachevskyi.viewpager.databinding.LoadMoreBinding
-import com.rhorbachevskyi.viewpager.presentation.utils.ext.log
 
 class DefaultLoadStateAdapter : LoadStateAdapter<DefaultLoadStateAdapter.Holder>() {
 

@@ -1,13 +1,11 @@
 package com.rhorbachevskyi.viewpager.paging.alt
 
-import com.rhorbachevskyi.viewpager.data.database.repository.UserDatabaseRepository
 import com.rhorbachevskyi.viewpager.data.model.UsersResponse
 import com.rhorbachevskyi.viewpager.domain.network.ContactApiService
 import javax.inject.Inject
 
 class ServiceImpl @Inject constructor(
     private val contactService: ContactApiService,
-    private val userDatabaseRepository: UserDatabaseRepository,
 ) : Service {
 
     //    override suspend fun getUsers(
