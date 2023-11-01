@@ -6,8 +6,12 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.database.repository.repositoryimpl.DatabaseImpl
 import com.rhorbachevskyi.viewpager.data.model.Contact
@@ -19,8 +23,11 @@ import com.rhorbachevskyi.viewpager.domain.usecases.ContactsUseCase
 import com.rhorbachevskyi.viewpager.domain.usecases.DeleteContactUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -50,14 +57,21 @@ class ContactsViewModel @Inject constructor(
         MutableStateFlow(ArrayList())
     val isSelectItem: StateFlow<ArrayList<Pair<Boolean, Int>>> = _isSelectItem
 
-    fun initialContactList(userId: Long, accessToken: String, hasInternet: Boolean) =
+    // pagination
+
+
+    var contactsFlow: Flow<PagingData<Contact>> = MutableLiveData("").asFlow()
+        .debounce(500)
+        .flatMapLatest {
+            databaseImpl.getPagedContacts()
+        }
+        .cachedIn(viewModelScope)
+
+    fun getContactList(userId: Long, accessToken: String, hasInternet: Boolean) =
         viewModelScope.launch(Dispatchers.IO) {
+
             _usersStateFlow.value = ApiState.Loading
-            _usersStateFlow.value = if (hasInternet) {
-                contactsUseCase(userId, accessToken)
-            } else {
-                databaseImpl.getAllContacts()
-            }
+            _usersStateFlow.value = contactsUseCase(userId, accessToken)
             _contactList.value = UserDataHolder.serverContacts
             databaseImpl.addUsersToSearchList(_contactList.value)
         }

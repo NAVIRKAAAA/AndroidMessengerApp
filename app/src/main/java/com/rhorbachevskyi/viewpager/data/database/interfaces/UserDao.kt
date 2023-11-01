@@ -23,5 +23,5 @@ interface UserDao {
     suspend fun getUsers(limit: Int, offset: Int): List<ContactEntity>
 
     @Query("DELETE FROM users")
-    suspend fun deleteAllContacts()
+    suspend fun deleteAllUsers()
 }

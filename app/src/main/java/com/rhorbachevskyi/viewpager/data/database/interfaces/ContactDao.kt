@@ -16,15 +16,14 @@ interface ContactDao {
     @Update
     suspend fun updateContacts(contacts: List<ContactEntity>)
 
-    @Query("SELECT * FROM users")
-    suspend fun getContacts(): List<ContactEntity>
-
-    @Query("DELETE FROM users")
-    suspend fun deleteAllContacts()
-
     @Query(
         "SELECT * FROM users " +
                 "LIMIT :limit OFFSET :offset"
     )
-    suspend fun getUsers(limit: Int, offset: Int): List<ContactEntity>
+    suspend fun getContacts(limit: Int, offset: Int): List<ContactEntity>
+
+
+
+    @Query("DELETE FROM users")
+    suspend fun deleteAllContacts()
 }

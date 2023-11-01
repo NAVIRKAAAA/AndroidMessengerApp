@@ -4,13 +4,12 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.ContactsFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile.UserProfile
-import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 
 class ViewPagerAdapter(
     fragment: Fragment
 ) :
     FragmentStateAdapter(fragment) {
-    override fun getItemCount(): Int = Constants.FRAGMENT_COUNT
+    override fun getItemCount(): Int = Fragments.values().size
 
     override fun createFragment(position: Int): Fragment =
         when (Fragments.values()[position]) {
