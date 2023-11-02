@@ -59,14 +59,14 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imageViewSendProfile"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/ic_send_size"
+            android:layout_height="@dimen/ic_send_size"
             android:src="@drawable/ic_send"
-            android:layout_marginBottom="@dimen/normal_margin"
-            app:layout_constraintStart_toStartOf="@id/imageViewProfileImage"
-            app:layout_constraintEnd_toEndOf="@id/imageViewProfileImage"
-            app:layout_constraintBottom_toTopOf="@id/imageViewProfileImage"/>
-
+            android:layout_marginStart="@dimen/normal_margin"
+            app:layout_constraintTop_toTopOf="@id/imageViewProfileImage"
+            app:layout_constraintStart_toEndOf="@id/imageViewProfileImage"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewProfileImage"
+/>
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageViewProfileImage"
             android:layout_width="@dimen/photo_size"
