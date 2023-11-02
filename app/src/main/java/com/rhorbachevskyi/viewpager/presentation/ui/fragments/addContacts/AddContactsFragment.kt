@@ -21,7 +21,6 @@ import com.rhorbachevskyi.viewpager.presentation.ui.pagination.adapter.DefaultLo
 import com.rhorbachevskyi.viewpager.presentation.ui.pagination.adapter.interfaces.ClickListenerWithPagination
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.hasInternet
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
-import com.rhorbachevskyi.viewpager.presentation.utils.ext.log
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 import dagger.hilt.android.AndroidEntryPoint
@@ -71,6 +70,8 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setListenersInside()
+        setObserversInside()
         setUsersList()
     }
 
@@ -95,7 +96,7 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
     }
 
 
-    override fun setObservers() {
+    private fun setObserversInside() {
         val hasInternet = requireContext().hasInternet()
 
         if (hasInternet) setDefaultObservers() else setPaginationObservers()
@@ -135,7 +136,6 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
         // list
         lifecycleScope.launch {
             viewModel.users.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
-                log("add users")
                 adapterDefault.submitList(it)
             }
         }
@@ -155,7 +155,7 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
         }
     }
 
-    override fun setListeners() {
+    private fun setListenersInside() {
         with(binding) {
             imageViewNavigationBack.setOnClickListener { navController.navigateUp() }
             imageSearchView.setOnClickListener { viewModel.showNotification(requireContext()) }
