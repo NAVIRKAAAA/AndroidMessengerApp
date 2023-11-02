@@ -82,11 +82,11 @@ class AddContactsAdapterDefault(private val listener: UserItemListenerDefault) :
         }
 
         private fun addContact(contact: Contact) {
-            listener.onClickAdd(contact)
+            listener.onAddClick(contact)
         }
         private fun detailView(contact: Contact) {
             with(binding) {
-                listener.onClickContact(
+                listener.onContactClick(
                     contact, arrayOf(
                         setTransitionName(
                             imageViewUserPhoto,

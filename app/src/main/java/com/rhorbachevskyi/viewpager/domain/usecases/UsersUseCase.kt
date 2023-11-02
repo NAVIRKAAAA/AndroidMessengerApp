@@ -1,7 +1,7 @@
 package com.rhorbachevskyi.viewpager.domain.usecases
 
 import com.rhorbachevskyi.viewpager.data.model.UserData
-import com.rhorbachevskyi.viewpager.data.repositories.ContactRepositoryImpl
+import com.rhorbachevskyi.viewpager.data.repositoriesimpl.ContactRepositoryImpl
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import javax.inject.Inject
 

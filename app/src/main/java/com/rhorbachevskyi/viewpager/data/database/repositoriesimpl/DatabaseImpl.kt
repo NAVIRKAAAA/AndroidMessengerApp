@@ -1,14 +1,14 @@
-package com.rhorbachevskyi.viewpager.data.database.repository.repositoryimpl
+package com.rhorbachevskyi.viewpager.data.database.repositoriesimpl
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.rhorbachevskyi.viewpager.data.database.interfaces.ContactDao
 import com.rhorbachevskyi.viewpager.data.database.interfaces.UserDao
-import com.rhorbachevskyi.viewpager.data.database.repository.SearchDatabaseRepository
 import com.rhorbachevskyi.viewpager.data.model.Contact
-import com.rhorbachevskyi.viewpager.paging.ContactsPagingSource
-import com.rhorbachevskyi.viewpager.paging.UsersPageLoader
+import com.rhorbachevskyi.viewpager.presentation.ui.pagination.ContactsPagingSource
+import com.rhorbachevskyi.viewpager.presentation.ui.pagination.UsersPageLoader
+import com.rhorbachevskyi.viewpager.presentation.utils.Constants.PAGINATION_LIST_RANGE
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.fromEntity
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.toContactEntity
 import kotlinx.coroutines.CoroutineDispatcher
@@ -19,10 +19,10 @@ import javax.inject.Inject
 class DatabaseImpl @Inject constructor(
     private val contactDao: ContactDao,
     private val userDao: UserDao,
-    private val searchDatabaseRepository: SearchDatabaseRepository,
+    private val searchDatabaseRepositoryImpl: SearchDatabaseRepositoryImpl,
     private val ioDispatcher: CoroutineDispatcher
 ) {
-    suspend fun getUsers(pageIndex: Int, pageSize: Int): List<Contact> =
+    private suspend fun getUsers(pageIndex: Int, pageSize: Int): List<Contact> =
         withContext(ioDispatcher) {
             val offset = pageIndex * pageSize
 
@@ -35,8 +35,8 @@ class DatabaseImpl @Inject constructor(
             getUsers(pageIndex, pageSize)
         }
         return Pager(
-            config = PagingConfig(pageSize = 10),
-            pagingSourceFactory = { ContactsPagingSource(loader, 10) }
+            config = PagingConfig(pageSize = PAGINATION_LIST_RANGE),
+            pagingSourceFactory = { ContactsPagingSource(loader, PAGINATION_LIST_RANGE) }
         ).flow
     }
 
@@ -45,8 +45,8 @@ class DatabaseImpl @Inject constructor(
             getContacts(pageIndex, pageSize)
         }
         return Pager(
-            config = PagingConfig(pageSize = 10),
-            pagingSourceFactory = { ContactsPagingSource(loader, 10) }
+            config = PagingConfig(pageSize = PAGINATION_LIST_RANGE),
+            pagingSourceFactory = { ContactsPagingSource(loader, PAGINATION_LIST_RANGE) }
         ).flow
     }
 
@@ -68,19 +68,19 @@ class DatabaseImpl @Inject constructor(
     }
 
     suspend fun getSearchList(): List<Contact> =
-        searchDatabaseRepository.getList().map { user -> user.fromEntity() }
+        searchDatabaseRepositoryImpl.getList().map { user -> user.fromEntity() }
 
 
     suspend fun addToSearchList(contact: Contact) {
-        searchDatabaseRepository.addUser(contact.toContactEntity())
+        searchDatabaseRepositoryImpl.addUser(contact.toContactEntity())
     }
 
     suspend fun deleteFromSearchList(contact: Contact) {
-        searchDatabaseRepository.deleteUser(contact.toContactEntity())
+        searchDatabaseRepositoryImpl.deleteUser(contact.toContactEntity())
     }
 
     suspend fun addUsersToSearchList(users: List<Contact>) {
-        searchDatabaseRepository.addList(users.map { user -> user.toContactEntity() })
+        searchDatabaseRepositoryImpl.addList(users.map { user -> user.toContactEntity() })
     }
 
 }

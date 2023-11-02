@@ -26,7 +26,7 @@ class ContactProfileViewModel @Inject constructor(
 
     fun addContact(userId: Long, contactId: Long, accessToken: String, hasInternet: Boolean) =
         viewModelScope.launch(Dispatchers.IO) {
-            if(!hasInternet) {
+            if (!hasInternet) {
                 _usersStateFlow.value = ApiState.Error(R.string.No_internet_connection)
                 return@launch
             }
@@ -36,11 +36,12 @@ class ContactProfileViewModel @Inject constructor(
             _usersStateFlow.value = ApiState.Loading
             _usersStateFlow.value =
                 addContactUseCase(
+                    accessToken,
                     userId,
                     contactId,
-                    accessToken
                 )
         }
+
     fun changeState() {
         _usersStateFlow.value = ApiState.Initial
     }

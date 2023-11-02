@@ -7,7 +7,6 @@ import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.databinding.FragmentViewPagerBinding
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.adapter.ViewPagerAdapter
-import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 
 class ViewPagerFragment :
     BaseFragment<FragmentViewPagerBinding>(FragmentViewPagerBinding::inflate) {
@@ -25,8 +24,8 @@ class ViewPagerFragment :
             viewPager.adapter = adapter
             TabLayoutMediator(tabLayout, viewPager) { tab, position ->
                 tab.text = when (position) {
-                    Constants.PROFILE_FRAGMENT -> getString(R.string.profile)
-                    Constants.CONTACTS_FRAGMENT -> getString(R.string.contacts)
+                    ViewPagerAdapter.Fragments.USER_PROFILE.ordinal -> getString(R.string.profile)
+                    ViewPagerAdapter.Fragments.CONTACTS.ordinal -> getString(R.string.contacts)
                     else -> throw IllegalStateException("Unknown tab!")
                 }
             }.attach()

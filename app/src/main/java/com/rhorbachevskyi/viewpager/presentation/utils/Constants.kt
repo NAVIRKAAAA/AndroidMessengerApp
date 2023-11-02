@@ -20,11 +20,6 @@ object Constants {
     // api base url
     const val BASE_URL = "http://178.63.9.114:7777/api/"
 
-    // screens in viewpager
-    const val FRAGMENT_COUNT = 2
-    const val PROFILE_FRAGMENT = 0
-    const val CONTACTS_FRAGMENT = 1
-
     // validation
     const val PASSWORD_REGEX =
         "(?=.*\\d)" +
@@ -47,5 +42,5 @@ object Constants {
     const val CHANNEL_NAME = "channel name"
 
     // pagination
-    const val PAGINATION_LIST_RANGE = 20
+    const val PAGINATION_LIST_RANGE = 10
 }

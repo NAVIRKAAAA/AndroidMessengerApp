@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.viewpager.paging
+package com.rhorbachevskyi.viewpager.presentation.ui.pagination.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

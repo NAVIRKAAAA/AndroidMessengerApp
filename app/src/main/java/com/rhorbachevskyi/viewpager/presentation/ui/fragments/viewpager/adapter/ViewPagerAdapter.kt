@@ -17,7 +17,6 @@ class ViewPagerAdapter(
             Fragments.CONTACTS -> ContactsFragment()
         }
 
-
     enum class Fragments {
         USER_PROFILE,
         CONTACTS

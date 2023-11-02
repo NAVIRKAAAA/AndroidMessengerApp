@@ -1,7 +1,5 @@
 package com.rhorbachevskyi.viewpager.presentation.ui.fragments.splashscreen
 
-import android.os.Bundle
-import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -19,11 +17,6 @@ import kotlinx.coroutines.launch
 class SplashFragment :
     BaseFragment<FragmentSplashScreenBinding>(FragmentSplashScreenBinding::inflate) {
     private val viewModel: SplashScreenViewModel by viewModels()
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        isAutologin()
-        setObserver()
-    }
 
     private fun isAutologin() {
         lifecycleScope.launch {
@@ -36,7 +29,7 @@ class SplashFragment :
         }
     }
 
-    private fun setObserver() {
+    override fun setObservers() {
         lifecycleScope.launch {
             viewModel.authorizationState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                 when (it) {
@@ -50,7 +43,7 @@ class SplashFragment :
                         binding.progressBar.visible()
                     }
 
-                    is ApiState.Initial -> {}
+                    is ApiState.Initial -> {isAutologin()}
 
                     is ApiState.Error -> {
                         binding.progressBar.invisible()

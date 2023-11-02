@@ -27,8 +27,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
 
         initialRecyclerview()
         searchView()
-        setListeners()
-        setObserver()
     }
 
     private fun initialRecyclerview() {
@@ -40,7 +38,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
         }
     }
 
-    private fun setObserver() {
+    override fun setObservers() {
         lifecycleScope.launch {
             viewModel.currentList.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                 adapter.submitList(it)
@@ -48,7 +46,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
         }
     }
 
-    private fun setListeners() {
+    override fun setListeners() {
         binding.imageViewNavigationBack.setOnClickListener { navController.navigateUp() }
     }
 

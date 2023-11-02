@@ -1,8 +1,6 @@
 package com.rhorbachevskyi.viewpager.presentation.ui.fragments.contactprofile
 
-import android.os.Bundle
 import android.transition.TransitionInflater
-import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -11,14 +9,14 @@ import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
 import com.rhorbachevskyi.viewpager.databinding.FragmentDetailViewBinding
-import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
+import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
-import com.rhorbachevskyi.viewpager.presentation.utils.ext.hasInternet
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.gone
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.hasInternet
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.loadImage
-import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.showSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -32,24 +30,11 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
         viewModel.requestGetUser()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setListeners()
-        setObserver()
-        setProfile(args.contact)
-        setSharedElementsTransition(args.contact)
-    }
-
-    private fun setListeners() {
+    override fun setListeners() {
         with(binding) {
-            imageViewNavigationBack.setOnClickListener { backToList() }
+            imageViewNavigationBack.setOnClickListener { navController.navigateUp() }
             buttonMessage.setOnClickListener { addToContacts() }
         }
-    }
-
-
-    private fun backToList() {
-        navController.navigateUp()
     }
 
     private fun addToContacts() {
@@ -63,18 +48,21 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
         }
     }
 
-    private fun setObserver() {
+    override fun setObservers() {
         with(binding) {
             lifecycleScope.launch {
                 viewModel.usersState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                     when (it) {
                         is ApiState.Error -> {
                             progressBar.invisible()
-                            root.showErrorSnackBar(requireContext(), it.error)
+                            root.showSnackBar(requireContext(), it.error)
                             viewModel.changeState()
                         }
 
-                        ApiState.Initial -> Unit
+                        ApiState.Initial -> {
+                            setProfile(args.contact)
+                            setSharedElementsTransition(args.contact)
+                        }
 
                         ApiState.Loading -> {
                             progressBar.visible()

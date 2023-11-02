@@ -11,7 +11,7 @@ import com.rhorbachevskyi.viewpager.databinding.FragmentProfileBinding
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.ViewPagerFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.ViewPagerFragmentDirections
-import com.rhorbachevskyi.viewpager.presentation.utils.Constants
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.adapter.ViewPagerAdapter
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.loadImage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -27,7 +27,6 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
         super.onViewCreated(view, savedInstanceState)
 
         initialUser()
-        setListeners()
         setUserProfile()
     }
 
@@ -35,7 +34,7 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
         userData = viewModel.getUser()
     }
 
-    private fun setListeners() {
+    override fun setListeners() {
         with(binding) {
             buttonViewContacts.setOnClickListener { toContactList() }
             textViewLogout.setOnClickListener { logoutFromAccount() }
@@ -64,7 +63,7 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
     }
 
     private fun toContactList() {
-        (parentFragment as? ViewPagerFragment)?.openFragment(Constants.CONTACTS_FRAGMENT)
+        (parentFragment as? ViewPagerFragment)?.openFragment(ViewPagerAdapter.Fragments.CONTACTS.ordinal)
     }
 
     private fun logoutFromAccount() {

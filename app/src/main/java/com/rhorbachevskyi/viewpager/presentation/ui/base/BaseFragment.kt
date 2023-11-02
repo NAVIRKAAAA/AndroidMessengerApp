@@ -25,7 +25,13 @@ abstract class BaseFragment<T : ViewBinding>(private val inflate: (LayoutInflate
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setListeners()
+        setObservers()
     }
+
+    protected open fun setListeners() {}
+    protected open fun setObservers() {}
 
     override fun onDestroyView() {
         super.onDestroyView()

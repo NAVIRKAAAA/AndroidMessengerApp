@@ -1,7 +1,5 @@
 package com.rhorbachevskyi.viewpager.presentation.ui.fragments.auth.signin
 
-import android.os.Bundle
-import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -9,7 +7,7 @@ import com.rhorbachevskyi.viewpager.databinding.FragmentSignInBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.gone
-import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.showSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -17,14 +15,8 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class SignInFragment : BaseFragment<FragmentSignInBinding>(FragmentSignInBinding::inflate) {
     private val viewModel: SignInViewModel by viewModels()
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
-        setListeners()
-        setObserver()
-    }
-
-    private fun setListeners() {
+    override fun setListeners() {
         with(binding) {
             buttonLogin.setOnClickListener { signInUser() }
             textViewSignUp.setOnClickListener { toSignUpScreen() }
@@ -46,7 +38,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(FragmentSignInBinding
     }
 
 
-    private fun setObserver() {
+    override fun setObservers() {
         with(binding) {
             lifecycleScope.launch {
                 viewModel.authorizationState.flowWithLifecycle(viewLifecycleOwner.lifecycle)
@@ -73,7 +65,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(FragmentSignInBinding
 
                             is ApiState.Error -> {
                                 progressBar.gone()
-                                root.showErrorSnackBar(requireContext(), it.error)
+                                root.showSnackBar(requireContext(), it.error)
                             }
                         }
                     }

@@ -1,12 +1,11 @@
 package com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile.editprofile
 
-import android.os.Bundle
-import android.view.View
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import com.rhorbachevskyi.viewpager.data.model.UserResponse
+import com.rhorbachevskyi.viewpager.data.model.UserData
+import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.databinding.FragmentEditProfileBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
@@ -17,7 +16,7 @@ import com.rhorbachevskyi.viewpager.presentation.utils.Parser
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.hasInternet
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.loadImage
-import com.rhorbachevskyi.viewpager.presentation.utils.ext.showErrorSnackBar
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.showSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visibleIf
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,23 +25,11 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfileBinding::inflate) {
     private val viewModel: EditTextViewModel by viewModels()
-    private val userData: UserResponse.Data by lazy {
-        viewModel.requestGetUser()
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        setListeners()
-        setObserver()
-        setInputs()
-        setCalendar()
-    }
-
-    private fun setListeners() {
+    override fun setListeners() {
         with(binding) {
             buttonSave.setOnClickListener { saveUserData() }
-            imageViewNavigationBack.setOnClickListener { toUserProfile() }
+            imageViewNavigationBack.setOnClickListener { navController.navigateUp() }
         }
     }
 
@@ -54,59 +41,55 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
                 )
             ) {
                 viewModel.requestEditUser(
-                    userData.user.id,
-                    userData.accessToken,
+                    UserDataHolder.userData.user.id,
+                    UserDataHolder.userData.accessToken,
                     textInputEditTextUserName.text.toString(),
                     textInputEditTextCareer.text.toString(),
                     textInputEditTextPhone.text.toString(),
                     textInputEditTextAddress.text.toString(),
                     Parser.getDataFromString(textInputEditTextDate.text.toString()),
                     requireContext().hasInternet(),
-                    userData.refreshToken
+                    UserDataHolder.userData.refreshToken
                 )
             }
         }
     }
 
-    private fun toUserProfile() {
-        navController.navigateUp()
-    }
 
-    private fun setObserver() {
+    override fun setObservers() {
         with(binding) {
             lifecycleScope.launch {
                 viewModel.editUserState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                     when (it) {
-                        is ApiState.Success<*> -> {
-                            navController.navigateUp()
-                        }
+                        is ApiState.Success<*> -> { navController.navigateUp() }
 
                         is ApiState.Error -> {
-                            root.showErrorSnackBar(requireContext(), it.error)
+                            root.showSnackBar(requireContext(), it.error)
                             progressBar.invisible()
                         }
 
-                        ApiState.Initial -> {}
-
-                        ApiState.Loading -> {
-                            progressBar.visible()
+                        ApiState.Initial -> {
+                            setCalendar()
+                            setInputs(UserDataHolder.userData.user)
                         }
+
+                        ApiState.Loading -> { progressBar.visible() }
                     }
                 }
             }
         }
     }
 
-    private fun setInputs() {
+    private fun setInputs(user: UserData) {
         inputsErrors()
         with(binding) {
             imageViewSignUpExtendedMockup.invisible()
-            imageViewSignUpExtendedPhoto.loadImage(userData.user.image)
-            textInputEditTextUserName.setText(userData.user.name ?: "")
-            textInputEditTextCareer.setText(userData.user.career ?: "")
-            textInputEditTextPhone.setText(userData.user.phone ?: "")
-            textInputEditTextAddress.setText(userData.user.address ?: "")
-            textInputEditTextDate.setText(userData.user.birthday?.let {
+            imageViewSignUpExtendedPhoto.loadImage(user.image)
+            textInputEditTextUserName.setText(user.name ?: "")
+            textInputEditTextCareer.setText(user.career ?: "")
+            textInputEditTextPhone.setText(user.phone ?: "")
+            textInputEditTextAddress.setText(user.address ?: "")
+            textInputEditTextDate.setText(user.birthday?.let {
                 Parser.getStringFromData(it.toString())
             } ?: "")
         }

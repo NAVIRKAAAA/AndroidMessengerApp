@@ -1,10 +1,10 @@
-package com.rhorbachevskyi.viewpager.data.database.repository
+package com.rhorbachevskyi.viewpager.data.database.repositoriesimpl
 
 import com.rhorbachevskyi.viewpager.data.database.entity.ContactEntity
 import com.rhorbachevskyi.viewpager.data.database.interfaces.SearchDao
 import javax.inject.Inject
 
-class SearchDatabaseRepository @Inject constructor(private val searchDao: SearchDao) : SearchDao {
+class SearchDatabaseRepositoryImpl @Inject constructor(private val searchDao: SearchDao) : SearchDao {
     override suspend fun addList(contacts: List<ContactEntity>) {
         deleteUsers()
         searchDao.addList(contacts)

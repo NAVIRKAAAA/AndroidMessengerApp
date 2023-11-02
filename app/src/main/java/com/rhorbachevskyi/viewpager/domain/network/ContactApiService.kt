@@ -18,20 +18,22 @@ interface ContactApiService {
 
     @GET("users/{userId}/contacts")
     suspend fun getUserContacts(
-        @Path("userId") userId: Long,
-        @Header("Authorization") accessToken: String
+        @Header("Authorization") accessToken: String,
+        @Path("userId") userId: Long
     ): ContactsResponse
 
     @FormUrlEncoded
     @PUT("users/{userId}/contacts")
     suspend fun addContact(
-        @Path("userId") userId: Long, @Header("Authorization") tokenHeader: String,
+        @Header("Authorization") tokenHeader: String,
+        @Path("userId") userId: Long,
         @Field("contactId") contactId: Long
     ): UsersResponse
 
     @DELETE("users/{userId}/contacts/{contactId}")
     suspend fun deleteContact(
-        @Path("userId") userId: Long, @Path("contactId") contactId: Long,
         @Header("Authorization") tokenHeader: String,
+        @Path("userId") userId: Long,
+        @Path("contactId") contactId: Long,
     ): UsersResponse
 }

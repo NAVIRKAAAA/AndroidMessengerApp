@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.viewpager.data.repositories
+package com.rhorbachevskyi.viewpager.data.repositoriesimpl
 
 import android.content.Context
 import com.rhorbachevskyi.viewpager.R
@@ -42,8 +42,8 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     suspend fun editUser(
-        userId: Long,
         accessToken: String,
+        userId: Long,
         name: String,
         career: String?,
         phone: String,
@@ -53,8 +53,8 @@ class UserRepositoryImpl @Inject constructor(
     ): ApiState {
         return try {
             val response = userService.editUser(
-                userId,
                 "${Constants.AUTH_PREFIX} $accessToken",
+                userId,
                 name,
                 career,
                 phone,

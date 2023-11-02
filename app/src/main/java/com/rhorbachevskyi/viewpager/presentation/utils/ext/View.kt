@@ -17,7 +17,7 @@ fun View.gone() {
 fun View.visibleIf(condition: Boolean) {
     if(condition) visible() else invisible()
 }
-fun View.showErrorSnackBar(context : Context, error: Int){
+fun View.showSnackBar(context : Context, error: Int){
     val errorString = context.getString(error)
     Snackbar.make(
         this,

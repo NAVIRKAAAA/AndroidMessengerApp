@@ -9,12 +9,12 @@ object Parser {
         Constants.OUTPUT_DATE_FORMAT,
         Locale.ENGLISH
     ).format(SimpleDateFormat(Constants.INPUT_DATE_FORMAT, Locale.ENGLISH).parse(input)!!)
-    fun getDataFromString(input: String) : Date? {
-        return if (input.isNotBlank()) SimpleDateFormat(
+    fun getDataFromString(input: String) : Date? =
+         if (input.isNotBlank()) SimpleDateFormat(
             Constants.OUTPUT_DATE_FORMAT,
             Locale.getDefault()
         ).parse(input) else null
-    }
+
     fun parsingEmail(email: String): String {
         val elements = email.split("@")[0].replace(".", " ").split(" ")
         return if (elements.size >= Constants.NUMBER_OF_HALVES_OF_NAME) {

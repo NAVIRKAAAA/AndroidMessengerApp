@@ -16,12 +16,11 @@ class AuthFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding::
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
-        setListeners()
+
         dataValidation()
     }
 
-    private fun setListeners() {
+    override fun setListeners() {
         with(binding) {
             buttonRegister.setOnClickListener { toExtendedScreen() }
             textViewSignIn.setOnClickListener { toSignInRegister() }

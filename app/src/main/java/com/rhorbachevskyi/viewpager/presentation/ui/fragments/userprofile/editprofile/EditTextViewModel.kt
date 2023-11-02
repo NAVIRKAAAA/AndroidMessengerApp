@@ -3,8 +3,6 @@ package com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile.editp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rhorbachevskyi.viewpager.R
-import com.rhorbachevskyi.viewpager.data.model.UserResponse
-import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.domain.usecases.EditUserUseCase
 import com.rhorbachevskyi.viewpager.presentation.utils.Validation
@@ -40,8 +38,8 @@ class EditTextViewModel @Inject constructor(
         }
         _editUserStateFlow.value =
             editUserUseCase(
-                userId,
                 accessToken,
+                userId,
                 name,
                 career,
                 phone,
@@ -50,8 +48,6 @@ class EditTextViewModel @Inject constructor(
                 refreshToken
             )
     }
-
-    fun requestGetUser(): UserResponse.Data = UserDataHolder.userData
 
     fun isValidInputs(name: String, phone: String): Boolean =
         Validation.isValidUserName(name) && Validation.isValidMobilePhone(phone)

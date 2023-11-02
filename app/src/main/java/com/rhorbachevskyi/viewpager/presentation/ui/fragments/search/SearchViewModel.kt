@@ -3,7 +3,7 @@ package com.rhorbachevskyi.viewpager.presentation.ui.fragments.search
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rhorbachevskyi.viewpager.data.database.repository.repositoryimpl.DatabaseImpl
+import com.rhorbachevskyi.viewpager.data.database.repositoriesimpl.DatabaseImpl
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

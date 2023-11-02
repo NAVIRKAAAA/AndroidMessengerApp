@@ -28,9 +28,12 @@ interface UserApiService {
     @FormUrlEncoded
     @PUT("users/{userId}")
     suspend fun editUser(
-        @Path("userId") id: Long, @Header("Authorization") tokenHeader: String,
-        @Field("name") name: String, @Field("career") career: String?,
-        @Field("phone") phone: String, @Field("address") address: String?,
+        @Header("Authorization") tokenHeader: String,
+        @Path("userId") id: Long,
+        @Field("name") name: String,
+        @Field("career") career: String?,
+        @Field("phone") phone: String,
+        @Field("address") address: String?,
         @Field("birthday") birthday: Date?
     ): UserResponse
 }

@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
 import com.rhorbachevskyi.viewpager.data.database.entity.ContactEntity
 
 @Dao
@@ -12,9 +11,6 @@ interface ContactDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addContacts(contacts: List<ContactEntity>)
-
-    @Update
-    suspend fun updateContacts(contacts: List<ContactEntity>)
 
     @Query(
         "SELECT * FROM users " +

@@ -13,14 +13,16 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.rhorbachevskyi.viewpager.R
-import com.rhorbachevskyi.viewpager.data.database.repository.repositoryimpl.DatabaseImpl
+import com.rhorbachevskyi.viewpager.data.database.repositoriesimpl.DatabaseImpl
 import com.rhorbachevskyi.viewpager.data.model.Contact
+import com.rhorbachevskyi.viewpager.data.model.UserData
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.domain.usecases.AddContactUseCase
 import com.rhorbachevskyi.viewpager.domain.usecases.ContactsUseCase
 import com.rhorbachevskyi.viewpager.domain.usecases.DeleteContactUseCase
+import com.rhorbachevskyi.viewpager.domain.usecases.UsersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -37,12 +39,13 @@ class ContactsViewModel @Inject constructor(
     private val addContactUseCase: AddContactUseCase,
     private val deleteContactUseCase: DeleteContactUseCase,
     private val databaseImpl: DatabaseImpl,
+    private val allUsersUseCase: UsersUseCase,
     private val notificationBuilder: NotificationCompat.Builder,
     private val notificationManager: NotificationManagerCompat
 ) : ViewModel() {
 
-    private val _usersStateFlow = MutableStateFlow<ApiState>(ApiState.Initial)
-    val usersStateFlow: StateFlow<ApiState> = _usersStateFlow
+    private val _contactsStateFlow = MutableStateFlow<ApiState>(ApiState.Initial)
+    val contactsStateFlow: StateFlow<ApiState> = _contactsStateFlow
 
     private val _contactList = MutableStateFlow(listOf<Contact>())
     val contactList: StateFlow<List<Contact>> = _contactList
@@ -59,7 +62,6 @@ class ContactsViewModel @Inject constructor(
 
     // pagination
 
-
     var contactsFlow: Flow<PagingData<Contact>> = MutableLiveData("").asFlow()
         .debounce(500)
         .flatMapLatest {
@@ -67,11 +69,14 @@ class ContactsViewModel @Inject constructor(
         }
         .cachedIn(viewModelScope)
 
-    fun getContactList(userId: Long, accessToken: String, hasInternet: Boolean) =
+    fun getContactList(user: UserData, accessToken: String, hasInternet: Boolean) =
         viewModelScope.launch(Dispatchers.IO) {
+            if (!hasInternet) return@launch
 
-            _usersStateFlow.value = ApiState.Loading
-            _usersStateFlow.value = contactsUseCase(userId, accessToken)
+            _contactsStateFlow.value = ApiState.Loading
+            _contactsStateFlow.value = contactsUseCase(accessToken, user.id)
+            allUsersUseCase(accessToken, user)
+            databaseImpl.addUsers(UserDataHolder.serverUsers)
             _contactList.value = UserDataHolder.serverContacts
             databaseImpl.addUsersToSearchList(_contactList.value)
         }
@@ -82,9 +87,8 @@ class ContactsViewModel @Inject constructor(
         accessToken: String
     ) =
         viewModelScope.launch(Dispatchers.IO) {
-            _usersStateFlow.value = ApiState.Loading
-            _usersStateFlow.value = addContactUseCase(userId, contact.id, accessToken)
-            _usersStateFlow.value = addContactUseCase(userId, contact.id, accessToken)
+            _contactsStateFlow.value = ApiState.Loading
+            _contactsStateFlow.value = addContactUseCase(accessToken, userId, contact.id)
             databaseImpl.addToSearchList(contact)
         }
 
@@ -124,7 +128,7 @@ class ContactsViewModel @Inject constructor(
         accessToken: String,
         contact: Contact,
     ) = viewModelScope.launch(Dispatchers.IO) {
-        _usersStateFlow.value = deleteContactUseCase(userId, contact.id, accessToken)
+        _contactsStateFlow.value = deleteContactUseCase(accessToken, userId, contact.id)
         databaseImpl.deleteFromSearchList(contact)
     }
 
@@ -137,7 +141,7 @@ class ContactsViewModel @Inject constructor(
         val contactList = _contactList.value.toMutableList()
 
         if (!hasInternet) {
-            _usersStateFlow.value = ApiState.Error(R.string.No_internet_connection)
+            _contactsStateFlow.value = ApiState.Error(R.string.No_internet_connection)
             return false
         }
         if (contactList.contains(contact)) {
@@ -163,7 +167,7 @@ class ContactsViewModel @Inject constructor(
 
     fun deleteSelectList(userId: Long, accessToken: String, hasInternet: Boolean): Boolean {
         if (!hasInternet) {
-            _usersStateFlow.value = ApiState.Error(R.string.No_internet_connection)
+            _contactsStateFlow.value = ApiState.Error(R.string.No_internet_connection)
             return false
         }
 
@@ -196,7 +200,7 @@ class ContactsViewModel @Inject constructor(
     }
 
     fun changeState() {
-        _usersStateFlow.value = ApiState.Initial
+        _contactsStateFlow.value = ApiState.Initial
     }
 
     fun showNotification(context: Context) {
@@ -210,4 +214,6 @@ class ContactsViewModel @Inject constructor(
     }
 
     fun requestGetUser(): UserResponse.Data = UserDataHolder.userData
+    fun getContactPosition(contact: Contact): Int =
+        contactList.value.indexOfFirst { it == contact }
 }

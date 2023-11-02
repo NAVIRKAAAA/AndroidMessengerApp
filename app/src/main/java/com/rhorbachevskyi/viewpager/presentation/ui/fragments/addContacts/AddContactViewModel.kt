@@ -12,7 +12,7 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.rhorbachevskyi.viewpager.data.database.repository.repositoryimpl.DatabaseImpl
+import com.rhorbachevskyi.viewpager.data.database.repositoriesimpl.DatabaseImpl
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserData
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
@@ -58,7 +58,7 @@ class AddContactViewModel @Inject constructor(
         }
         .cachedIn(viewModelScope)
 
-    fun getAllUsers(accessToken: String, user: UserData, hasInternet: Boolean) =
+    fun getUsers(accessToken: String, user: UserData) =
         viewModelScope.launch(Dispatchers.Main) {
             _usersStateFlow.value = ApiState.Loading
             _usersStateFlow.value = allUsersUseCase(accessToken, user)
@@ -71,7 +71,7 @@ class AddContactViewModel @Inject constructor(
             if (!supportList.contains(contact)) {
                 supportList.add(contact)
                 _states.value = arrayListOf(Pair(contact.id, ApiState.Loading))
-                addContactUseCase(userId, contact.id, accessToken)
+                addContactUseCase(accessToken, userId, contact.id)
                 _states.value = UserDataHolder.states
 //                databaseImpl.deleteFromSearchList(contact)
             }
