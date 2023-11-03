@@ -9,7 +9,7 @@ import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.databinding.FragmentEditProfileBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
-import com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile.editprofile.dialog.DialogCalendar
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile.editprofile.dialog.CalendarDialog
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile.interfaces.DialogCalendarListener
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.Parser
@@ -110,7 +110,7 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
     private fun setCalendar() {
         with(binding) {
             textInputEditTextDate.setOnClickListener {
-                val dialog = DialogCalendar()
+                val dialog = CalendarDialog()
                 dialog.setListener(listener = object : DialogCalendarListener {
                     override fun onDateSelected(date: String) {
                         textInputEditTextDate.setText(date)

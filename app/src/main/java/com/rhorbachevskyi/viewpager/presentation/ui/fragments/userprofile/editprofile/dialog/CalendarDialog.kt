@@ -10,7 +10,7 @@ import com.rhorbachevskyi.viewpager.databinding.FragmentDialogCalendarBinding
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile.interfaces.DialogCalendarListener
 import java.util.Calendar
 
-class DialogCalendar : AppCompatDialogFragment() {
+class CalendarDialog : AppCompatDialogFragment() {
     private lateinit var binding: FragmentDialogCalendarBinding
 
     private var listener: DialogCalendarListener? = null

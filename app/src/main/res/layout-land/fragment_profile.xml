@@ -110,12 +110,11 @@
             android:id="@+id/imageViewSendProfile"
             android:layout_width="@dimen/ic_send_size"
             android:layout_height="@dimen/ic_send_size"
-            android:src="@drawable/ic_send"
             android:layout_marginStart="@dimen/normal_margin"
-            app:layout_constraintTop_toTopOf="@id/imageViewProfileImage"
-            app:layout_constraintStart_toEndOf="@id/imageViewProfileImage"
+            android:src="@drawable/ic_send"
             app:layout_constraintBottom_toBottomOf="@id/imageViewProfileImage"
-            />
+            app:layout_constraintStart_toEndOf="@id/imageViewProfileImage"
+            app:layout_constraintTop_toTopOf="@id/imageViewProfileImage" />
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageViewProfileImage"
@@ -132,7 +131,21 @@
             app:layout_constraintVertical_bias="0.25"
             app:shapeAppearanceOverlay="@style/rounded" />
 
+        <include
+            android:id="@+id/bluetoothUser"
+            layout="@layout/item_add_bluetooth_user"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/item_user_height"
+            android:layout_marginHorizontal="@dimen/normal_margin"
+            android:layout_marginTop="@dimen/small_margin"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/viewBottom" />
+
+
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/icons"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:gravity="center"

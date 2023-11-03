@@ -22,6 +22,8 @@ import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.ViewPagerFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.ViewPagerFragmentDirections
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.adapter.ViewPagerAdapter
+import com.rhorbachevskyi.viewpager.presentation.utils.Constants
+import com.rhorbachevskyi.viewpager.presentation.utils.DataStore
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.loadImage
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.log
@@ -58,8 +60,6 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
     }
 
 
-
-
     private fun swipeToRefresh() {
         with(binding) {
             lifecycleScope.launch {
@@ -88,7 +88,12 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
     }
 
     private fun logoutFromAccount() {
-        viewModel.toLogout(requireContext())
+        lifecycleScope.launch {
+            DataStore.deleteDataFromDataStore(requireContext(), Constants.KEY_EMAIL)
+            DataStore.deleteDataFromDataStore(requireContext(), Constants.KEY_PASSWORD)
+            DataStore.deleteDataFromDataStore(requireContext(), Constants.KEY_REMEMBER_ME)
+        }
+
         val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToSignInFragment()
         navController.navigate(direction)
     }
@@ -118,31 +123,43 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
 
     private fun setBluetooth() {
         if (false) { // Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-            requestMultiplePermissions.launch(arrayOf(
-                Manifest.permission.BLUETOOTH_SCAN,
-                Manifest.permission.BLUETOOTH_CONNECT))
-        } else{
+            requestMultiplePermissions.launch(
+                arrayOf(
+                    Manifest.permission.BLUETOOTH_SCAN,
+                    Manifest.permission.BLUETOOTH_CONNECT
+                )
+            )
+        } else {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             requestBluetoothEnable.launch(enableBtIntent)
         }
 
     }
 
-    private val requestBluetoothEnable = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            getBluetoothData()
-        } else {
+    private val requestBluetoothEnable =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                getBluetoothData()
+            } else {
+            }
+
         }
 
-    }
     private fun getBluetoothData() {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.BLUETOOTH
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
 
-            val bluetoothManager = requireContext().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+            val bluetoothManager =
+                requireContext().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
             val bluetoothAdapter: BluetoothAdapter? = bluetoothManager.adapter
             val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter?.bondedDevices
+            pairedDevices?.toList()?.let { } // TODO: show dialog 
             pairedDevices?.forEach { device ->
                 val deviceName = device.name
+
                 val deviceHardwareAddress = device.address // MAC address
                 log(deviceName)
             }

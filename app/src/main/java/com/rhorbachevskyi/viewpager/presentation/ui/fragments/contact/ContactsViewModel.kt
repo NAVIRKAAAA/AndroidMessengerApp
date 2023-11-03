@@ -1,9 +1,7 @@
 package com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact
 
-import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.MutableLiveData
@@ -203,14 +201,9 @@ class ContactsViewModel @Inject constructor(
         _contactsStateFlow.value = ApiState.Initial
     }
 
+    @SuppressLint("MissingPermission")
     fun showNotification(context: Context) {
-        if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            notificationManager.notify(1, notificationBuilder.build())
-        }
+        notificationManager.notify(1, notificationBuilder.build())
     }
 
     fun requestGetUser(): UserResponse.Data = UserDataHolder.userData

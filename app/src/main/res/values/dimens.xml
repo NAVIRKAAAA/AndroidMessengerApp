@@ -34,4 +34,7 @@
     <dimen name="progressbar">35dp</dimen>
     <dimen name="edit_text_search_height">30dp</dimen>
     <dimen name="ic_send_size">40dp</dimen>
+    <dimen name="checkmark_size">35dp</dimen>
+    <dimen name="cancel_size">28dp</dimen>
+    <dimen name="photo_chat_size">50dp</dimen>
 </resources>

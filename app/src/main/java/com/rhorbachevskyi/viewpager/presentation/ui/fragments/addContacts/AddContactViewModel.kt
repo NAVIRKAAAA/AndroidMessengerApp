@@ -32,7 +32,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddContactViewModel @Inject constructor(
-    private val allUsersUseCase: UsersUseCase,
+    private val usersUseCase: UsersUseCase,
     private val addContactUseCase: AddContactUseCase,
     private val databaseImpl: DatabaseImpl,
     private val notificationBuilder: NotificationCompat.Builder,
@@ -61,7 +61,7 @@ class AddContactViewModel @Inject constructor(
     fun getUsers(accessToken: String, user: UserData) =
         viewModelScope.launch(Dispatchers.Main) {
             _usersStateFlow.value = ApiState.Loading
-            _usersStateFlow.value = allUsersUseCase(accessToken, user)
+            _usersStateFlow.value = usersUseCase(accessToken, user)
             _users.value = UserDataHolder.serverUsers
             databaseImpl.addUsersToSearchList(_users.value)
         }

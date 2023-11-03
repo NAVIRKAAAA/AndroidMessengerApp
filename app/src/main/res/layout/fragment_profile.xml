@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -61,12 +62,12 @@
             android:id="@+id/imageViewSendProfile"
             android:layout_width="@dimen/ic_send_size"
             android:layout_height="@dimen/ic_send_size"
-            android:src="@drawable/ic_send"
             android:layout_marginStart="@dimen/normal_margin"
-            app:layout_constraintTop_toTopOf="@id/imageViewProfileImage"
-            app:layout_constraintStart_toEndOf="@id/imageViewProfileImage"
+            android:src="@drawable/ic_send"
             app:layout_constraintBottom_toBottomOf="@id/imageViewProfileImage"
-/>
+            app:layout_constraintStart_toEndOf="@id/imageViewProfileImage"
+            app:layout_constraintTop_toTopOf="@id/imageViewProfileImage" />
+
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageViewProfileImage"
             android:layout_width="@dimen/photo_size"
@@ -107,8 +108,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textViewName"
-            app:layout_constraintVertical_chainStyle="packed"
-            />
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/textViewHomeAddress"
@@ -125,14 +125,27 @@
             app:layout_constraintTop_toBottomOf="@id/textViewCareer"
             app:layout_constraintVertical_chainStyle="packed" />
 
+        <include
+            android:id="@+id/bluetoothUser"
+            layout="@layout/item_add_bluetooth_user"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/item_user_height"
+            android:layout_marginHorizontal="@dimen/normal_margin"
+            android:layout_marginTop="@dimen/small_margin"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/viewBottom" />
+
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/icons"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:gravity="center"
             app:layout_constraintBottom_toTopOf="@id/buttonMessageTop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/viewTop">
+            app:layout_constraintTop_toBottomOf="@id/bluetoothUser">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iconFacebook"
