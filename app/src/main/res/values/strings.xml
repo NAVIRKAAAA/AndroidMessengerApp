@@ -90,4 +90,5 @@
 
     <!-- search fragment -->
     <string name="search">Search</string>
+    <string name="bluetooth_devices">Bluetooth devices</string>
 </resources>

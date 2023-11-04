@@ -1,17 +1,12 @@
 package com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile
 
-import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothManager
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.rhorbachevskyi.viewpager.R
@@ -32,6 +27,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@SuppressLint("MissingPermission")
 @AndroidEntryPoint
 class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding::inflate) {
 
@@ -43,6 +39,7 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
 
         initialUser()
         setUserProfile()
+
     }
 
     private fun initialUser() {
@@ -122,49 +119,17 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
         }
 
     private fun setBluetooth() {
-        if (false) { // Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-            requestMultiplePermissions.launch(
-                arrayOf(
-                    Manifest.permission.BLUETOOTH_SCAN,
-                    Manifest.permission.BLUETOOTH_CONNECT
-                )
-            )
-        } else {
-            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            requestBluetoothEnable.launch(enableBtIntent)
-        }
+
+        val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+        requestBluetoothEnable.launch(enableBtIntent)
 
     }
 
     private val requestBluetoothEnable =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                getBluetoothData()
-            } else {
+                val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToBluetoothDevicesFragment()
+                navController.navigate(direction)
             }
-
         }
-
-    private fun getBluetoothData() {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.BLUETOOTH
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-
-            val bluetoothManager =
-                requireContext().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-            val bluetoothAdapter: BluetoothAdapter? = bluetoothManager.adapter
-            val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter?.bondedDevices
-            pairedDevices?.toList()?.let { } // TODO: show dialog 
-            pairedDevices?.forEach { device ->
-                val deviceName = device.name
-
-                val deviceHardwareAddress = device.address // MAC address
-                log(deviceName)
-            }
-        } else {
-            log("error")
-        }
-    }
 }

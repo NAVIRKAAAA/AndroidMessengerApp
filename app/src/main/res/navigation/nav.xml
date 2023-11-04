@@ -74,6 +74,9 @@
         <action
             android:id="@+id/action_viewPagerFragment_to_signInFragment"
             app:destination="@id/signInFragment" />
+        <action
+            android:id="@+id/action_viewPagerFragment_to_bluetoothDevicesFragment"
+            app:destination="@id/bluetoothDevicesFragment" />
     </fragment>
     <fragment
         android:id="@+id/addContactsFragment"
@@ -120,4 +123,8 @@
         android:label="SearchFragment"
         tools:layout="@layout/fragment_search">
     </fragment>
+    <fragment
+        android:id="@+id/bluetoothDevicesFragment"
+        android:name="com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.BluetoothDevicesFragment"
+        android:label="BluetoothDevicesFragment" />
 </navigation>
