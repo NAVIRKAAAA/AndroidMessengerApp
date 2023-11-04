@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.rhorbachevskyi.viewpager.databinding.FragmentBluetoothDeviceListBinding
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.adapter.BluetoothDeviceAdapter
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.visibleIf
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -30,6 +31,7 @@ class BluetoothDevicesFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         viewModel.startScan()
 
         setDeviceList()
@@ -45,7 +47,8 @@ class BluetoothDevicesFragment :
     override fun setObservers() {
         lifecycleScope.launch {
             viewModel.state.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
-               adapter.submitList(it.pairedDevices)
+                adapter.submitList(it.scannedDevices)
+                binding.progressBar.visibleIf(it.isConnecting)
             }
         }
     }
