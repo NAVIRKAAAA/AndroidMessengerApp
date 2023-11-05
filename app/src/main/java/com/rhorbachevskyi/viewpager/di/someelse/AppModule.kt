@@ -2,8 +2,8 @@ package com.rhorbachevskyi.viewpager.di.someelse
 
 
 import android.content.Context
-import com.rhorbachevskyi.viewpager.bluetooth.AndroidBluetoothController
-import com.rhorbachevskyi.viewpager.bluetooth.BluetoothController
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.bluetoothimpl.AndroidBluetoothController
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.interfaces.BluetoothController
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

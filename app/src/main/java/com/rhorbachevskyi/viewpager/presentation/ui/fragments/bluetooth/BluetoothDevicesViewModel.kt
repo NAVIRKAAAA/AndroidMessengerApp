@@ -2,10 +2,10 @@ package com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rhorbachevskyi.viewpager.bluetooth.BluetoothController
-import com.rhorbachevskyi.viewpager.bluetooth.BluetoothDeviceDomain
-import com.rhorbachevskyi.viewpager.bluetooth.BluetoothUiState
-import com.rhorbachevskyi.viewpager.bluetooth.ConnectionResult
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.interfaces.BluetoothController
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.interfaces.ConnectionResult
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.model.BluetoothDeviceDomain
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.state.BluetoothUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow

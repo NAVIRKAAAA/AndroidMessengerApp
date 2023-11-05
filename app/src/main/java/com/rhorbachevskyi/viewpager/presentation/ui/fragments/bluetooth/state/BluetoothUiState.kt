@@ -1,4 +1,6 @@
-package com.rhorbachevskyi.viewpager.bluetooth
+package com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.state
+
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.model.BluetoothDevice
 
 data class BluetoothUiState(
     val scannedDevices: List<BluetoothDevice> = emptyList(),

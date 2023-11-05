@@ -1,5 +1,6 @@
-package com.rhorbachevskyi.viewpager.bluetooth
+package com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.interfaces
 
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.model.BluetoothDevice
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow

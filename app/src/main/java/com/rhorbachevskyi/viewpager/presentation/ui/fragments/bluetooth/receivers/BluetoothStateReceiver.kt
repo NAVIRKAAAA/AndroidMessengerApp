@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.viewpager.bluetooth
+package com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.receivers
 
 import android.content.BroadcastReceiver
 import android.bluetooth.BluetoothDevice
