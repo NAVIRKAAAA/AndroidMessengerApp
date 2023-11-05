@@ -1,43 +1,47 @@
 package com.rhorbachevskyi.viewpager.data.repositoriesimpl
 
 import android.content.Context
-import com.rhorbachevskyi.viewpager.R
+import com.rhorbachevskyi.viewpager.data.repositoriesimpl.HandleError.getErrorMessage
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.domain.network.UserApiService
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
-import com.rhorbachevskyi.viewpager.presentation.utils.DataStore
+import com.rhorbachevskyi.viewpager.presentation.utils.getStringFromPrefs
 import java.util.Date
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
     private val userService: UserApiService
 ) {
-     suspend fun registerUser(
+    suspend fun registerUser(
         email: String,
         password: String,
         name: String,
         phone: String
-    ) : ApiState {
+    ): ApiState {
+        val code: Int
         return try {
             val response = userService.registerUser(email, password, name, phone)
+            code = response.code
             response.data?.let { UserDataHolder.userData = it }
             response.data?.let { ApiState.Success(it) }
-                ?: ApiState.Error(R.string.invalid_request)
+                ?: ApiState.Error(getErrorMessage(code))
         } catch (e: Exception) {
-            ApiState.Error(R.string.register_error_user_exist)
+            ApiState.Error(getErrorMessage(400))
         }
     }
 
     suspend fun authorizeUser(email: String, password: String): ApiState {
+        val code: Int
         return try {
             val response = userService.authorizeUser(email, password)
+            code = response.code
             response.data?.let { UserDataHolder.userData = it }
             response.data?.let { ApiState.Success(it) }
-                ?: ApiState.Error(R.string.invalid_request)
+                ?: ApiState.Error(getErrorMessage(code))
         } catch (e: Exception) {
-            ApiState.Error(R.string.register_error_user_exist)
+            ApiState.Error(getErrorMessage(400))
         }
     }
 
@@ -51,6 +55,7 @@ class UserRepositoryImpl @Inject constructor(
         date: Date?,
         refreshToken: String
     ): ApiState {
+        val code: Int
         return try {
             val response = userService.editUser(
                 "${Constants.AUTH_PREFIX} $accessToken",
@@ -61,29 +66,31 @@ class UserRepositoryImpl @Inject constructor(
                 address,
                 date
             )
+            code = response.code
             response.data?.let {
                 UserDataHolder.userData = UserResponse.Data(it.user, accessToken, refreshToken)
             }
             response.data?.let { ApiState.Success(it) } ?: ApiState.Error(
-                R.string.invalid_request
+                getErrorMessage(code)
             )
         } catch (e: Exception) {
-            ApiState.Error(R.string.invalid_request)
+            ApiState.Error(getErrorMessage(400))
         }
     }
+
     suspend fun autoLogin(context: Context): ApiState {
+        val code: Int
         return try {
             val response = userService.authorizeUser(
-                DataStore.getDataFromKey(
-                    context,
-                    Constants.KEY_EMAIL
-                ).toString(), DataStore.getDataFromKey(context, Constants.KEY_PASSWORD).toString()
+                context.getStringFromPrefs(Constants.KEY_EMAIL),
+                context.getStringFromPrefs(Constants.KEY_PASSWORD)
             )
+            code = response.code
             response.data?.let { UserDataHolder.userData = it }
             response.data?.let { ApiState.Success(it) }
-                ?: ApiState.Error(R.string.invalid_request)
+                ?: ApiState.Error(getErrorMessage(code))
         } catch (e: Exception) {
-            ApiState.Error(R.string.automatic_login_error)
+            ApiState.Error(getErrorMessage(400))
         }
     }
 }

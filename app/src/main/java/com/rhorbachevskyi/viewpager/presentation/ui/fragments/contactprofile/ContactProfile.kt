@@ -55,7 +55,7 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
                     when (it) {
                         is ApiState.Error -> {
                             progressBar.invisible()
-                            root.showSnackBar(requireContext(), it.error)
+                            requireContext().showSnackBar(root, it.error)
                             viewModel.changeState()
                         }
 

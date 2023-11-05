@@ -10,10 +10,9 @@ object Constants {
     const val TRANSITION_NAME_CAREER = "TRANSITION_NAME_CAREER"
 
     // data store
-    const val REGISTER_DATA_STORE = "data store"
+    const val MY_PREFS_KEY = "MY_PREFS"
     const val KEY_EMAIL = "email"
     const val KEY_PASSWORD = "password"
-    const val KEY_REMEMBER_ME = "remember me"
     // ext log tag
     const val LOG_TAG = "LOG_TAG"
 

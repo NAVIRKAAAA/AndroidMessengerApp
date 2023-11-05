@@ -86,7 +86,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
             override fun onActionClick() {
                 requireContext().showSnackBar(
                     binding.root,
-                    getString(R.string.No_internet_connection)
+                    "not has internet hahaha"
                 )
             }
         })
@@ -189,7 +189,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                         }
 
                         is ApiState.Error -> {
-                            root.showSnackBar(requireContext(), it.error)
+                            requireContext().showSnackBar(root, it.error)
                             viewModel.changeState()
                         }
 

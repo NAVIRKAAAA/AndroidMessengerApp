@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.viewpager.bluetooth
+package com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.bluetoothimpl
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -10,6 +10,12 @@ import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.interfaces.BluetoothController
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.interfaces.ConnectionResult
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.model.BluetoothDeviceDomain
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.receivers.BluetoothStateReceiver
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.receivers.FoundDeviceReceiver
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -65,7 +71,7 @@ class AndroidBluetoothController(
     }
 
     private val bluetoothStateReceiver = BluetoothStateReceiver { isConnected, bluetoothDevice ->
-        if(bluetoothAdapter?.bondedDevices?.contains(bluetoothDevice) == true) {
+        if (bluetoothAdapter?.bondedDevices?.contains(bluetoothDevice) == true) {
             _isConnected.update { isConnected }
         } else {
             CoroutineScope(Dispatchers.IO).launch {
@@ -139,9 +145,9 @@ class AndroidBluetoothController(
         }.flowOn(Dispatchers.IO)
     }
 
-    override fun connectToDevice(device: com.rhorbachevskyi.viewpager.bluetooth.BluetoothDevice): Flow<ConnectionResult> {
+    override fun connectToDevice(device: com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.model.BluetoothDevice): Flow<ConnectionResult> {
         return flow {
-            if(!hasPermission(Manifest.permission.BLUETOOTH_CONNECT)) {
+            if (!hasPermission(Manifest.permission.BLUETOOTH_CONNECT)) {
                 throw SecurityException("No BLUETOOTH_CONNECT permission")
             }
 
@@ -156,7 +162,7 @@ class AndroidBluetoothController(
                 try {
                     socket.connect()
                     emit(ConnectionResult.ConnectionEstablished)
-                } catch(e: IOException) {
+                } catch (e: IOException) {
                     socket.close()
                     currentClientSocket = null
                     emit(ConnectionResult.Error("Connection was interrupted"))
@@ -181,13 +187,17 @@ class AndroidBluetoothController(
     }
 
     private fun updatePairedDevices() {
+        log("start updatePairedDevices()")
         if (!hasPermission(Manifest.permission.BLUETOOTH_CONNECT)) {
+            log("!hasPermission")
             return
         }
+        log("hasPermission updatePairedDevices()")
         bluetoothAdapter
             ?.bondedDevices
             ?.map { it.toBluetoothDeviceDomain() }
             ?.also { devices ->
+                log(devices)
                 _pairedDevices.update { devices }
             }
     }
@@ -202,6 +212,7 @@ class AndroidBluetoothController(
             address = address
         )
     }
+
     companion object {
         const val SERVICE_UUID = "27b7d1da-08c7-4505-a6d1-2459987e5e2d"
     }

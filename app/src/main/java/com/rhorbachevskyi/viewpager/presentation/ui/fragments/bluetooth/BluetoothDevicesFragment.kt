@@ -10,7 +10,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.rhorbachevskyi.viewpager.databinding.FragmentBluetoothDeviceListBinding
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.adapter.BluetoothDeviceAdapter
-import com.rhorbachevskyi.viewpager.presentation.utils.ext.visibleIf
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.adapter.interfaces.DevicesClickListener
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.model.BluetoothDeviceDomain
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.log
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.showSnackBar
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -26,7 +31,12 @@ class BluetoothDevicesFragment :
     private val bluetoothAdapter by lazy {
         bluetoothManager?.adapter
     }
-    private val adapter: BluetoothDeviceAdapter = BluetoothDeviceAdapter()
+    private val adapter: BluetoothDeviceAdapter =
+        BluetoothDeviceAdapter(listener = object : DevicesClickListener {
+            override fun onDeviceClick(device: BluetoothDeviceDomain) {
+                viewModel.connectToDevice(device)
+            }
+        })
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -35,6 +45,12 @@ class BluetoothDevicesFragment :
         viewModel.startScan()
 
         setDeviceList()
+    }
+
+    override fun setListeners() {
+        with(binding) {
+            imageViewNavigationBack.setOnClickListener { navController.navigateUp() }
+        }
     }
 
     private fun setDeviceList() {
@@ -46,9 +62,23 @@ class BluetoothDevicesFragment :
 
     override fun setObservers() {
         lifecycleScope.launch {
-            viewModel.state.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
-                adapter.submitList(it.scannedDevices)
-                binding.progressBar.visibleIf(it.isConnecting)
+            viewModel.state.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect { state ->
+                when {
+                    state.isConnecting -> {
+                        log("isConnecting")
+                        binding.progressBar.visible()
+                    }
+
+                    state.isConnected -> {
+                        log("isConnected")
+                    }
+
+                    else -> {
+                        binding.progressBar.invisible()
+                        adapter.submitList(state.pairedDevices)
+                    }
+                }
+                state.errorMessage.let { requireContext().showSnackBar(binding.root, "$it") }
             }
         }
     }

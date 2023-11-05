@@ -8,9 +8,11 @@ import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.databinding.FragmentSignUpExtendedBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
+import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
+import com.rhorbachevskyi.viewpager.presentation.utils.saveToPrefs
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -58,9 +60,12 @@ class SignUpExtendedFragment :
                     when (it) {
                         is ApiState.Success<*> -> {
                             if (args.rememberMe) {
-                                viewModel.saveUserDataToDataStore(
-                                    requireContext(),
-                                    args.email,
+                                requireContext().saveToPrefs( // email
+                                    Constants.KEY_EMAIL,
+                                    args.email
+                                )
+                                requireContext().saveToPrefs( // password
+                                    Constants.KEY_PASSWORD,
                                     args.password
                                 )
                             }
@@ -79,7 +84,7 @@ class SignUpExtendedFragment :
                         }
 
                         is ApiState.Error -> {
-                            root.showSnackBar(requireContext(), it.error)
+                            requireContext().showSnackBar(root, it.error)
                             viewModel.isLogout()
                             progressBar.invisible()
                         }

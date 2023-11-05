@@ -8,7 +8,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.databinding.FragmentUsersBinding
@@ -61,7 +60,7 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
             override fun onActionClick() {
                 requireContext().showSnackBar(
                     binding.root,
-                    getString(R.string.No_internet_connection)
+                    "not has internet hahaha"
                 )
             }
         })
@@ -122,7 +121,7 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
 
                         is ApiState.Error -> {
                             progressBar.invisible()
-                            root.showSnackBar(requireContext(), it.error)
+                            requireContext().showSnackBar(root, it.error)
                         }
                     }
                 }

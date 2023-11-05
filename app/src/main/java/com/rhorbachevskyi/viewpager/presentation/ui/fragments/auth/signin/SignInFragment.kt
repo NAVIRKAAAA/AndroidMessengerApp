@@ -6,9 +6,11 @@ import androidx.lifecycle.lifecycleScope
 import com.rhorbachevskyi.viewpager.databinding.FragmentSignInBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
+import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.gone
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.showSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
+import com.rhorbachevskyi.viewpager.presentation.utils.saveToPrefs
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -46,9 +48,12 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(FragmentSignInBinding
                         when (it) {
                             is ApiState.Success<*> -> {
                                 if (checkboxRemember.isChecked) {
-                                    viewModel.saveUserDataToDataStore(
-                                        requireContext(),
-                                        textInputEditTextEmail.text.toString(),
+                                    requireContext().saveToPrefs( // email
+                                        Constants.KEY_EMAIL,
+                                        textInputEditTextEmail.text.toString()
+                                    )
+                                    requireContext().saveToPrefs( // password
+                                        Constants.KEY_PASSWORD,
                                         textInputEditTextPassword.text.toString()
                                     )
                                 }
@@ -65,7 +70,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(FragmentSignInBinding
 
                             is ApiState.Error -> {
                                 progressBar.gone()
-                                root.showSnackBar(requireContext(), it.error)
+                                requireContext().showSnackBar(root, it.error)
                             }
                         }
                     }

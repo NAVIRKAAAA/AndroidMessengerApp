@@ -64,7 +64,7 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
                         is ApiState.Success<*> -> { navController.navigateUp() }
 
                         is ApiState.Error -> {
-                            root.showSnackBar(requireContext(), it.error)
+                            requireContext().showSnackBar(root, it.error)
                             progressBar.invisible()
                         }
 

@@ -4,11 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.rhorbachevskyi.viewpager.bluetooth.BluetoothDevice
 import com.rhorbachevskyi.viewpager.databinding.ItemBluetoothDeviceBinding
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.adapter.interfaces.DevicesClickListener
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.adapter.utils.DevicesDiffUtil
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.model.BluetoothDevice
 
-class BluetoothDeviceAdapter  :
+class BluetoothDeviceAdapter (private val listener: DevicesClickListener)  :
     ListAdapter<BluetoothDevice, BluetoothDeviceAdapter.DevicesViewHolder>(DevicesDiffUtil()) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -30,6 +31,11 @@ class BluetoothDeviceAdapter  :
                 textViewName.text = device.name
                 textViewAddress.text = device.address
             }
+            setListeners(device)
+        }
+
+        private fun setListeners(device: BluetoothDevice) {
+            binding.root.setOnClickListener { listener.onDeviceClick(device) }
         }
 
     }

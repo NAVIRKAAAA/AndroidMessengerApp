@@ -2,7 +2,7 @@ package com.rhorbachevskyi.viewpager.data.model
 
 data class UserResponse(
     val status: String? = null,
-    val code: Int? = null,
+    val code: Int = 200,
     val message: String? = null,
     val data: Data? = null
 ) {

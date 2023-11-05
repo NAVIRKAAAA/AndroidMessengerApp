@@ -8,8 +8,10 @@ import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.databinding.FragmentSplashScreenBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
+import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
+import com.rhorbachevskyi.viewpager.presentation.utils.getStringFromPrefs
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -20,7 +22,7 @@ class SplashFragment :
 
     private fun isAutologin() {
         lifecycleScope.launch {
-            if (viewModel.isAutoLogin(requireContext())) {
+            if (requireContext().getStringFromPrefs(Constants.KEY_EMAIL).isNotEmpty()) {
                 viewModel.autoLogin(requireContext())
             } else {
                 val direction = SplashFragmentDirections.actionSplashFragment2ToSignInFragment()

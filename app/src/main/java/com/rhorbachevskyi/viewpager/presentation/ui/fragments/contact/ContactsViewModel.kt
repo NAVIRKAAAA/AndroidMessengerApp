@@ -10,7 +10,6 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.database.repositoriesimpl.DatabaseImpl
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserData
@@ -139,7 +138,7 @@ class ContactsViewModel @Inject constructor(
         val contactList = _contactList.value.toMutableList()
 
         if (!hasInternet) {
-            _contactsStateFlow.value = ApiState.Error(R.string.No_internet_connection)
+            _contactsStateFlow.value = ApiState.Error("not has internet hahaha")
             return false
         }
         if (contactList.contains(contact)) {
@@ -165,7 +164,7 @@ class ContactsViewModel @Inject constructor(
 
     fun deleteSelectList(userId: Long, accessToken: String, hasInternet: Boolean): Boolean {
         if (!hasInternet) {
-            _contactsStateFlow.value = ApiState.Error(R.string.No_internet_connection)
+            _contactsStateFlow.value = ApiState.Error("not has internet hahaha")
             return false
         }
 

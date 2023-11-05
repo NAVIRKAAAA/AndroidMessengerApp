@@ -1,6 +1,6 @@
 package com.rhorbachevskyi.viewpager.data.repositoriesimpl
 
-import com.rhorbachevskyi.viewpager.R
+import com.rhorbachevskyi.viewpager.data.repositoriesimpl.HandleError.getErrorMessage
 import com.rhorbachevskyi.viewpager.data.database.repositoriesimpl.DatabaseImpl
 import com.rhorbachevskyi.viewpager.data.model.UserData
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
@@ -17,9 +17,11 @@ class ContactRepositoryImpl @Inject constructor(
         accessToken: String,
         user: UserData,
     ): ApiState {
+        val code: Int
         return try {
             val response = contactService.getUsers("${Constants.AUTH_PREFIX} $accessToken")
-            if (response.data.users == null) return ApiState.Error(0)
+            code = response.code.toInt()
+            if (response.data.users == null) return ApiState.Error(getErrorMessage(code))
 
             val serverContacts = UserDataHolder.serverContacts
 
@@ -33,7 +35,7 @@ class ContactRepositoryImpl @Inject constructor(
             // result
             filteredUsers.let { ApiState.Success(it) }
         } catch (e: Exception) {
-            ApiState.Error(R.string.invalid_request)
+            ApiState.Error(getErrorMessage(400))
         }
     }
 
@@ -41,10 +43,12 @@ class ContactRepositoryImpl @Inject constructor(
         accessToken: String,
         userId: Long
     ): ApiState {
+        val code: Int
         return try {
             val response =
                 contactService.getUserContacts("${Constants.AUTH_PREFIX} $accessToken", userId)
-            if (response.data.contacts == null) return ApiState.Error(0)
+            code = response.code.toInt()
+            if (response.data.contacts == null) return ApiState.Error(getErrorMessage(code))
 
             val contacts = response.data.contacts.map { it.toContact() }
 
@@ -54,11 +58,11 @@ class ContactRepositoryImpl @Inject constructor(
 
             contacts.let { ApiState.Success(it) }
         } catch (e: Exception) {
-            ApiState.Error(R.string.invalid_request)
+            ApiState.Error(getErrorMessage(400))
         }
     }
 
-    suspend fun addContact(accessToken: String,userId: Long, contactId: Long): ApiState {
+    suspend fun addContact(accessToken: String, userId: Long, contactId: Long): ApiState {
         return try {
             val response =
                 contactService.addContact(
@@ -69,8 +73,8 @@ class ContactRepositoryImpl @Inject constructor(
             UserDataHolder.states.add(contactId to ApiState.Success(response.data.users))
             response.data.let { ApiState.Success(it.users) }
         } catch (e: Exception) {
-            UserDataHolder.states.add(contactId to ApiState.Error(R.string.invalid_request))
-            ApiState.Error(R.string.invalid_request)
+            UserDataHolder.states.add(contactId to ApiState.Error(getErrorMessage(400)))
+            ApiState.Error(getErrorMessage(400))
         }
     }
 
@@ -83,7 +87,7 @@ class ContactRepositoryImpl @Inject constructor(
             )
             response.data.let { ApiState.Success(it.users) }
         } catch (e: java.lang.Exception) {
-            ApiState.Error(R.string.invalid_request)
+            ApiState.Error(getErrorMessage(400))
         }
     }
 }

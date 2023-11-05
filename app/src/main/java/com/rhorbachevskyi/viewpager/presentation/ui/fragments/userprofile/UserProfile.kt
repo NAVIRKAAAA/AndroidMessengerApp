@@ -1,9 +1,11 @@
 package com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,11 +20,11 @@ import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.ViewPage
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.ViewPagerFragmentDirections
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.adapter.ViewPagerAdapter
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
-import com.rhorbachevskyi.viewpager.presentation.utils.DataStore
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.loadImage
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.log
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
+import com.rhorbachevskyi.viewpager.presentation.utils.saveToPrefs
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -85,11 +87,15 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
     }
 
     private fun logoutFromAccount() {
-        lifecycleScope.launch {
-            DataStore.deleteDataFromDataStore(requireContext(), Constants.KEY_EMAIL)
-            DataStore.deleteDataFromDataStore(requireContext(), Constants.KEY_PASSWORD)
-            DataStore.deleteDataFromDataStore(requireContext(), Constants.KEY_REMEMBER_ME)
-        }
+
+        requireContext().saveToPrefs( // email
+            Constants.KEY_EMAIL,
+            ""
+        )
+        requireContext().saveToPrefs( // password
+            Constants.KEY_PASSWORD,
+            ""
+        )
 
         val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToSignInFragment()
         navController.navigate(direction)
@@ -119,16 +125,30 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
         }
 
     private fun setBluetooth() {
+        log("setBluetooth()")
+        log("${Build.VERSION.SDK_INT}")
+        log("${Build.VERSION_CODES.S}")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            requestMultiplePermissions.launch(
+                arrayOf(
+                    Manifest.permission.BLUETOOTH_SCAN,
+                    Manifest.permission.BLUETOOTH_CONNECT
+                )
+            )
+        } else {
+            log("else")
+        }
+
 
         val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
         requestBluetoothEnable.launch(enableBtIntent)
-
     }
 
     private val requestBluetoothEnable =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToBluetoothDevicesFragment()
+                val direction =
+                    ViewPagerFragmentDirections.actionViewPagerFragmentToBluetoothDevicesFragment()
                 navController.navigate(direction)
             }
         }

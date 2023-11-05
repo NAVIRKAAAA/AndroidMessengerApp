@@ -2,7 +2,6 @@ package com.rhorbachevskyi.viewpager.presentation.ui.fragments.userprofile.editp
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.domain.usecases.EditUserUseCase
 import com.rhorbachevskyi.viewpager.presentation.utils.Validation
@@ -33,7 +32,7 @@ class EditTextViewModel @Inject constructor(
     ) = viewModelScope.launch(Dispatchers.IO) {
         _editUserStateFlow.value = ApiState.Loading
         if (!hasInternet) {
-            _editUserStateFlow.value = ApiState.Error(R.string.No_internet_connection)
+            _editUserStateFlow.value =       ApiState.Error("not has internet hahaha")
             return@launch
         }
         _editUserStateFlow.value =
