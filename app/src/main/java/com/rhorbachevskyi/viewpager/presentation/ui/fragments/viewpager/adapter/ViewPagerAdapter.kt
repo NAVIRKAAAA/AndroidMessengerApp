@@ -9,10 +9,10 @@ class ViewPagerAdapter(
     fragment: Fragment
 ) :
     FragmentStateAdapter(fragment) {
-    override fun getItemCount(): Int = Fragments.values().size
+    override fun getItemCount(): Int = Fragments.entries.size
 
     override fun createFragment(position: Int): Fragment =
-        when (Fragments.values()[position]) {
+        when (Fragments.entries[position]) {
             Fragments.USER_PROFILE -> UserProfile()
             Fragments.CONTACTS -> ContactsFragment()
         }

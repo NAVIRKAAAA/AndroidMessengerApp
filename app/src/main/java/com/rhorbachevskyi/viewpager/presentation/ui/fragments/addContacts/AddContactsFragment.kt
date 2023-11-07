@@ -5,16 +5,14 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.databinding.FragmentUsersBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapters.AddContactsAdapterDefault
-import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapters.interfaces.UserItemListenerDefault
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapters.interfaces.UserItemClickListenerImpl
 import com.rhorbachevskyi.viewpager.presentation.ui.pagination.adapter.AdapterWithPagination
 import com.rhorbachevskyi.viewpager.presentation.ui.pagination.adapter.DefaultLoadStateAdapter
 import com.rhorbachevskyi.viewpager.presentation.ui.pagination.adapter.interfaces.ClickListenerWithPagination
@@ -32,27 +30,12 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
     private lateinit var mainLoadStateHolder: DefaultLoadStateAdapter.Holder
     private val viewModel: AddContactViewModel by viewModels()
     private val adapterDefault: AddContactsAdapterDefault by lazy {
-        AddContactsAdapterDefault(listener = object : UserItemListenerDefault {
-            override fun onAddClick(contact: Contact) {
-                viewModel.addContact(
-                    UserDataHolder.userData.user.id,
-                    contact,
-                    UserDataHolder.userData.accessToken
-                )
-            }
-
-            override fun onContactClick(
-                contact: Contact,
-                transitionPairs: Array<Pair<View, String>>
-            ) {
-                val extras = FragmentNavigatorExtras(*transitionPairs)
-                val direction =
-                    AddContactsFragmentDirections.actionAddContactsFragmentToContactProfile(
-                        !viewModel.supportList.contains(contact), contact
-                    )
-                navController.navigate(direction, extras)
-            }
-        })
+        AddContactsAdapterDefault(
+            UserItemClickListenerImpl(
+                viewModel = viewModel,
+                navController = navController
+            )
+        )
     }
 
     private val adapterWithPagination: AdapterWithPagination by lazy {

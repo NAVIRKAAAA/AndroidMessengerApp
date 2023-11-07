@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.databinding.ItemAddUserBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
-import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapters.interfaces.UserItemListenerDefault
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.addContacts.adapters.interfaces.UserItemClickListener
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.adapter.utils.ContactDiffUtil
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.gone
@@ -16,7 +16,7 @@ import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.loadImage
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 
-class AddContactsAdapterDefault(private val listener: UserItemListenerDefault) :
+class AddContactsAdapterDefault(private val listener: UserItemClickListener) :
     ListAdapter<Contact, AddContactsAdapterDefault.UsersViewHolder>(ContactDiffUtil()) {
     private var states: ArrayList<Pair<Long, ApiState>> = ArrayList()
     override fun onCreateViewHolder(

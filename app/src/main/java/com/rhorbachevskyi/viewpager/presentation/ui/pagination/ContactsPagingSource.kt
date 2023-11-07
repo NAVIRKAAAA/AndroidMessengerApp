@@ -15,6 +15,7 @@ class ContactsPagingSource(
         val pageIndex = params.key ?: 0
         return try {
             val users = loader.invoke(pageIndex, params.loadSize)
+
             delay(500L)
             return LoadResult.Page(
                 data = users,

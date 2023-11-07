@@ -61,7 +61,9 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
             lifecycleScope.launch {
                 viewModel.editUserState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                     when (it) {
-                        is ApiState.Success<*> -> { navController.navigateUp() }
+                        is ApiState.Success<*> -> {
+                            navController.navigateUp()
+                        }
 
                         is ApiState.Error -> {
                             requireContext().showSnackBar(root, it.error)
@@ -73,7 +75,9 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
                             setInputs(UserDataHolder.userData.user)
                         }
 
-                        ApiState.Loading -> { progressBar.visible() }
+                        ApiState.Loading -> {
+                            progressBar.visible()
+                        }
                     }
                 }
             }
@@ -98,8 +102,7 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
     private fun inputsErrors() {
         with(binding) {
             textInputEditTextUserName.doOnTextChanged { text, _, _, _ ->
-                textViewInvalidUserName.visibleIf(viewModel.isNotValidUserName(text.toString())
-                )
+                textViewInvalidUserName.visibleIf(viewModel.isNotValidUserName(text.toString()))
             }
             textInputEditTextPhone.doOnTextChanged { text, _, _, _ ->
                 textViewInvalidPhone.visibleIf(viewModel.isNotValidMobilePhone(text.toString()))

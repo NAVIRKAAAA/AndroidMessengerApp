@@ -14,7 +14,6 @@ import com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact.adapter.ut
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.gone
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.loadImage
-import com.rhorbachevskyi.viewpager.presentation.utils.ext.log
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 
 class ContactsAdapter(private val listener: ContactItemClickListener) :
@@ -56,10 +55,7 @@ class ContactsAdapter(private val listener: ContactItemClickListener) :
         }
 
         private fun deleteItem(contact: Contact) {
-            binding.imageViewDelete.setOnClickListener {
-                log("click on delete")
-                listener.onDeleteClick(contact)
-            }
+            binding.imageViewDelete.setOnClickListener { listener.onDeleteClick(contact) }
         }
 
         private fun itemClick(contact: Contact) {

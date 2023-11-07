@@ -30,13 +30,17 @@ class AdapterWithPagination(private val listener: ClickListenerWithPagination) :
     inner class UsersViewHolder(private val binding: ItemUserBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(contact: Contact) {
+
+            setItem(contact)
+            setListeners()
+        }
+        private fun setItem(contact: Contact) {
             with(binding) {
                 textViewName.text = contact.name
                 textViewCareer.text = contact.career
                 imageViewUserPhoto.loadImage(contact.photo)
                 imageViewDelete.invisible()
             }
-            setListeners()
         }
 
         private fun setListeners() {

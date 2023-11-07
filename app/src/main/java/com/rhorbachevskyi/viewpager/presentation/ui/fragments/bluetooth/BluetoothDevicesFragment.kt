@@ -11,6 +11,7 @@ import com.rhorbachevskyi.viewpager.databinding.FragmentBluetoothDeviceListBindi
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.adapter.BluetoothDeviceAdapter
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.adapter.interfaces.DevicesClickListener
+import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.model.BluetoothDevice
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.bluetooth.model.BluetoothDeviceDomain
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.log
@@ -34,6 +35,7 @@ class BluetoothDevicesFragment :
     private val adapter: BluetoothDeviceAdapter =
         BluetoothDeviceAdapter(listener = object : DevicesClickListener {
             override fun onDeviceClick(device: BluetoothDeviceDomain) {
+
                 viewModel.connectToDevice(device)
             }
         })
@@ -50,6 +52,7 @@ class BluetoothDevicesFragment :
     override fun setListeners() {
         with(binding) {
             imageViewNavigationBack.setOnClickListener { navController.navigateUp() }
+            textViewStartServer.setOnClickListener { viewModel.waitForIncomingConnections() }
         }
     }
 
@@ -67,19 +70,31 @@ class BluetoothDevicesFragment :
                     state.isConnecting -> {
                         log("isConnecting")
                         binding.progressBar.visible()
+
                     }
 
                     state.isConnected -> {
                         log("isConnected")
+
                     }
 
                     else -> {
                         binding.progressBar.invisible()
-                        adapter.submitList(state.pairedDevices)
+                        adapter.submitList(merge(state.pairedDevices, state.scannedDevices))
                     }
                 }
-                state.errorMessage.let { requireContext().showSnackBar(binding.root, "$it") }
+                state.errorMessage?.let { requireContext().showSnackBar(binding.root, it) }
             }
         }
+    }
+
+    private fun merge(
+        pairedDevices: List<BluetoothDevice>,
+        scannedDevices: List<BluetoothDevice>
+    ): List<BluetoothDevice> {
+        val mergedSet = linkedSetOf<BluetoothDevice>()
+        mergedSet.addAll(pairedDevices)
+        mergedSet.addAll(scannedDevices)
+        return mergedSet.toList()
     }
 }

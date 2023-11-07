@@ -90,5 +90,8 @@
 
     <!-- search fragment -->
     <string name="search">Search</string>
+
     <string name="bluetooth_devices">Bluetooth devices</string>
+    <string name="example_message_text">text text text</string>
+    <string name="start_server">Start server</string>
 </resources>

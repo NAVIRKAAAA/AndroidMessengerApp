@@ -10,8 +10,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.databinding.FragmentProfileBinding
@@ -20,14 +18,11 @@ import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.ViewPage
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.ViewPagerFragmentDirections
 import com.rhorbachevskyi.viewpager.presentation.ui.fragments.viewpager.adapter.ViewPagerAdapter
 import com.rhorbachevskyi.viewpager.presentation.utils.Constants
-import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.loadImage
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.log
-import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.showSnackBar
 import com.rhorbachevskyi.viewpager.presentation.utils.saveToPrefs
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @SuppressLint("MissingPermission")
 @AndroidEntryPoint
@@ -41,11 +36,11 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
 
         initialUser()
         setUserProfile()
-
     }
 
     private fun initialUser() {
         userData = viewModel.getUser()
+        requireContext().saveToPrefs(Constants.USER_ID_KEY, userData.user.id)
     }
 
     override fun setListeners() {
@@ -53,32 +48,7 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
             buttonViewContacts.setOnClickListener { toContactList() }
             textViewLogout.setOnClickListener { logoutFromAccount() }
             buttonMessageTop.setOnClickListener { toEditProfileScreen() }
-            root.setOnRefreshListener { swipeToRefresh() }
             imageViewSendProfile.setOnClickListener { setBluetooth() }
-        }
-    }
-
-
-    private fun swipeToRefresh() {
-        with(binding) {
-            lifecycleScope.launch {
-                imageViewSendProfile.invisible()
-                clearData()
-                delay(1000L)
-                initialUser()
-                setUserProfile()
-                imageViewSendProfile.visible()
-                root.isRefreshing = false
-            }
-        }
-    }
-
-    private fun clearData() {
-        with(binding) {
-            textViewName.text = ""
-            textViewCareer.text = ""
-            textViewHomeAddress.text = ""
-            imageViewProfileImage.loadImage(R.drawable.ic_user_photo)
         }
     }
 
@@ -88,14 +58,8 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
 
     private fun logoutFromAccount() {
 
-        requireContext().saveToPrefs( // email
-            Constants.KEY_EMAIL,
-            ""
-        )
-        requireContext().saveToPrefs( // password
-            Constants.KEY_PASSWORD,
-            ""
-        )
+        requireContext().saveToPrefs(Constants.KEY_EMAIL, "")
+        requireContext().saveToPrefs(Constants.KEY_PASSWORD, "")
 
         val direction = ViewPagerFragmentDirections.actionViewPagerFragmentToSignInFragment()
         navController.navigate(direction)
@@ -135,13 +99,15 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
                     Manifest.permission.BLUETOOTH_CONNECT
                 )
             )
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            requestBluetoothEnable.launch(enableBtIntent)
         } else {
+            requireContext().showSnackBar(binding.root, "Ця функція не доступна на вашому девайсі")
             log("else")
         }
 
 
-        val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-        requestBluetoothEnable.launch(enableBtIntent)
+
     }
 
     private val requestBluetoothEnable =

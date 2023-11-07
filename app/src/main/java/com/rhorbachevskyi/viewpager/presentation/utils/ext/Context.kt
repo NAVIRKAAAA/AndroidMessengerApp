@@ -6,12 +6,12 @@ import android.net.NetworkCapabilities
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
 
-fun Context.showSnackBar(view: View, text: String, actionText: Int = 0, action: () -> Unit = {}) {
+fun Context.showSnackBar(view: View, text: String, actionText: String = "", action: () -> Unit = {}) {
     Snackbar.make(
         view,
         text,
         Snackbar.LENGTH_LONG
-    ).setAction(if(actionText == 0) "" else getString(actionText)) {
+    ).setAction(actionText.ifEmpty { "" }) {
         action()
     }.show()
 }

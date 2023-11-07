@@ -45,7 +45,9 @@ class SplashFragment :
                         binding.progressBar.visible()
                     }
 
-                    is ApiState.Initial -> {isAutologin()}
+                    is ApiState.Initial -> {
+                        isAutologin()
+                    }
 
                     is ApiState.Error -> {
                         binding.progressBar.invisible()

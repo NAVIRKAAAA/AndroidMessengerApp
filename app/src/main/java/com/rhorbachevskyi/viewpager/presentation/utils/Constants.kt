@@ -13,6 +13,8 @@ object Constants {
     const val MY_PREFS_KEY = "MY_PREFS"
     const val KEY_EMAIL = "email"
     const val KEY_PASSWORD = "password"
+    const val USER_ID_KEY = "USER_ID_KEY"
+
     // ext log tag
     const val LOG_TAG = "LOG_TAG"
 

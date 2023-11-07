@@ -187,12 +187,9 @@ class AndroidBluetoothController(
     }
 
     private fun updatePairedDevices() {
-        log("start updatePairedDevices()")
         if (!hasPermission(Manifest.permission.BLUETOOTH_CONNECT)) {
-            log("!hasPermission")
             return
         }
-        log("hasPermission updatePairedDevices()")
         bluetoothAdapter
             ?.bondedDevices
             ?.map { it.toBluetoothDeviceDomain() }

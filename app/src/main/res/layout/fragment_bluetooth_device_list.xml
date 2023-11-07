@@ -12,6 +12,7 @@
         android:layout_height="match_parent"
         android:background="@color/white">
 
+
         <View
             android:id="@+id/viewBackground"
             android:layout_width="0dp"
@@ -59,6 +60,19 @@
             app:layout_constraintStart_toEndOf="@id/textViewBluetooth"
             app:layout_constraintTop_toTopOf="@id/textViewBluetooth" />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewStartServer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/normal_margin"
+            android:fontFamily="@font/noto_sans"
+            android:text="@string/start_server"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_normal_size"
+            app:layout_constraintBottom_toBottomOf="@id/viewBackground"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageViewNavigationBack"
+            app:layout_constraintVertical_bias="0.75" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewDevices"

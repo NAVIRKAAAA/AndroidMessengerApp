@@ -8,6 +8,7 @@ import androidx.navigation.fragment.navArgs
 import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserResponse
+import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.databinding.FragmentDetailViewBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
@@ -24,20 +25,18 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailViewBinding::inflate) {
 
-    private val args: ContactProfileArgs by navArgs()
     private val viewModel: ContactProfileViewModel by viewModels()
-    private val userData: UserResponse.Data by lazy {
-        viewModel.requestGetUser()
-    }
+    private val args: ContactProfileArgs by navArgs()
 
     override fun setListeners() {
         with(binding) {
             imageViewNavigationBack.setOnClickListener { navController.navigateUp() }
-            buttonMessage.setOnClickListener { addToContacts() }
+            buttonMessage.setOnClickListener { addToContacts(UserDataHolder.userData) }
+            buttonMessageTop.setOnClickListener { addToContacts(UserDataHolder.userData) }
         }
     }
 
-    private fun addToContacts() {
+    private fun addToContacts(userData: UserResponse.Data) {
         if (args.isNewUser) {
             viewModel.addContact(
                 userData.user.id,
@@ -45,6 +44,8 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
                 userData.accessToken,
                 requireContext().hasInternet()
             )
+        } else {
+            viewModel.sendMessage(args.contact.id)
         }
     }
 

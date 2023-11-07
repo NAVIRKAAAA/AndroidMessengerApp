@@ -3,6 +3,7 @@ package com.rhorbachevskyi.viewpager.presentation.utils
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.activity.ComponentActivity
+import androidx.fragment.app.Fragment
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -22,11 +23,16 @@ class SharedPreferencesDelegate(
         sharedPreferences.edit().putString(name, value).apply()
     }
 }
-fun Context.sharedPreferences(name: String) = SharedPreferencesDelegate(this, name)
+fun Fragment.sharedPreferences(name: String) = SharedPreferencesDelegate(requireContext(), name)
 private fun Context.getSharedPrefs(): SharedPreferences =
     getSharedPreferences(Constants.MY_PREFS_KEY, Context.MODE_PRIVATE)
 fun Context.saveToPrefs(key: String, value: String) {
     getSharedPrefs().edit().putString(key, value).apply()
 }
+fun Context.saveToPrefs(key: String, value: Long) {
+    getSharedPrefs().edit().putLong(key, value).apply()
+}
 fun Context.getStringFromPrefs(key: String, defaultValue: String = ""): String =
     getSharedPrefs().getString(key, defaultValue).toString()
+fun Context.getLongFromPrefs(key: String, defaultValue: Long = 0L): Long =
+    getSharedPrefs().getLong(key, defaultValue)

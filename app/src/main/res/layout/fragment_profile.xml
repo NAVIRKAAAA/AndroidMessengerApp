@@ -125,6 +125,20 @@
             app:layout_constraintTop_toBottomOf="@id/textViewCareer"
             app:layout_constraintVertical_chainStyle="packed" />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewTest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@id/icons"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/viewBottom"
+            tools:text="Hello"
+
+            />
+
         <include
             android:id="@+id/bluetoothUser"
             layout="@layout/item_add_bluetooth_user"
@@ -144,8 +158,10 @@
             android:gravity="center"
             app:layout_constraintBottom_toTopOf="@id/buttonMessageTop"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/bluetoothUser">
+            app:layout_constraintTop_toBottomOf="@id/bluetoothUser"
+            app:layout_constraintVertical_bias="1.0">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iconFacebook"

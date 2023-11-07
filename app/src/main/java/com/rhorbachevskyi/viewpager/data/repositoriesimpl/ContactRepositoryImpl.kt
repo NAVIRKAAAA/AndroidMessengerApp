@@ -1,8 +1,9 @@
 package com.rhorbachevskyi.viewpager.data.repositoriesimpl
 
-import com.rhorbachevskyi.viewpager.data.repositoriesimpl.HandleError.getErrorMessage
 import com.rhorbachevskyi.viewpager.data.database.repositoriesimpl.DatabaseImpl
+import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserData
+import com.rhorbachevskyi.viewpager.data.repositoriesimpl.HandleError.getErrorMessage
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.domain.network.ContactApiService
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
@@ -17,11 +18,9 @@ class ContactRepositoryImpl @Inject constructor(
         accessToken: String,
         user: UserData,
     ): ApiState {
-        val code: Int
         return try {
             val response = contactService.getUsers("${Constants.AUTH_PREFIX} $accessToken")
-            code = response.code.toInt()
-            if (response.data.users == null) return ApiState.Error(getErrorMessage(code))
+            if (response.data.users == null) return ApiState.Error(getErrorMessage(response.code.toInt()))
 
             val serverContacts = UserDataHolder.serverContacts
 
@@ -43,12 +42,11 @@ class ContactRepositoryImpl @Inject constructor(
         accessToken: String,
         userId: Long
     ): ApiState {
-        val code: Int
         return try {
             val response =
                 contactService.getUserContacts("${Constants.AUTH_PREFIX} $accessToken", userId)
-            code = response.code.toInt()
-            if (response.data.contacts == null) return ApiState.Error(getErrorMessage(code))
+
+            if (response.data.contacts == null) return ApiState.Error(getErrorMessage(response.code.toInt()))
 
             val contacts = response.data.contacts.map { it.toContact() }
 
@@ -89,5 +87,20 @@ class ContactRepositoryImpl @Inject constructor(
         } catch (e: java.lang.Exception) {
             ApiState.Error(getErrorMessage(400))
         }
+    }
+
+    fun getUserById(id: Long): Contact? {
+        val mergeList = merge(UserDataHolder.serverUsers, UserDataHolder.serverContacts)
+        return mergeList.find { it.id == id }
+    }
+
+    private fun merge(
+        contacts: List<Contact>,
+        users: List<Contact>
+    ): List<Contact> {
+        val mergedSet = linkedSetOf<Contact>()
+        mergedSet.addAll(contacts)
+        mergedSet.addAll(users)
+        return mergedSet.toList()
     }
 }

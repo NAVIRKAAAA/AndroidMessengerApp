@@ -23,30 +23,24 @@ class AuthFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding::
     override fun setListeners() {
         with(binding) {
             buttonRegister.setOnClickListener { toExtendedScreen() }
-            textViewSignIn.setOnClickListener { toSignInRegister() }
+            textViewSignIn.setOnClickListener { navController.navigateUp() }
         }
     }
 
     private fun toExtendedScreen() {
         with(binding) {
-            if (viewModel.isValidInputs(
-                    textInputEditTextEmail.text.toString(),
-                    textInputEditTextPassword.text.toString()
-                )
-            ) {
+            val email = textInputEditTextEmail.text.toString()
+            val password = textInputEditTextPassword.text.toString()
+            if (viewModel.isValidInputs(email, password)) {
                 val direction =
                     AuthFragmentDirections.actionAuthFragmentToSignUpExtendedFragment(
-                        textInputEditTextEmail.text.toString(),
-                        textInputEditTextPassword.text.toString(),
+                        email,
+                        password,
                         checkboxRemember.isChecked
                     )
                 navController.navigate(direction)
             }
         }
-    }
-
-    private fun toSignInRegister() {
-        navController.navigateUp()
     }
 
     private fun dataValidation() {

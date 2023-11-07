@@ -10,6 +10,18 @@ object HandleError {
             else -> "Невідома помилка (точніше не скажу яка)"
         }
     }
+    fun getErrorMessage(exception: Exception): String {
+        return when (getCodeFromString(exception.toString())) {
+            Error.BAD_REQUEST.code -> Error.BAD_REQUEST.message
+            Error.UNAUTHORIZED.code -> Error.UNAUTHORIZED.message
+            Error.FORBIDDEN.code -> Error.FORBIDDEN.message
+            Error.NOT_FOUND.code -> Error.NOT_FOUND.message
+            else -> "Невідома помилка (точніше не скажу яка)"
+        }
+    }
+    private fun getCodeFromString(input: String): Int {
+        return input.split(" ")[2].toInt()
+    }
 }
 
 enum class Error(val code: Int, val message: String) {

@@ -73,7 +73,7 @@ class AddContactViewModel @Inject constructor(
                 _states.value = arrayListOf(Pair(contact.id, ApiState.Loading))
                 addContactUseCase(accessToken, userId, contact.id)
                 _states.value = UserDataHolder.states
-//                databaseImpl.deleteFromSearchList(contact)
+                databaseImpl.deleteFromSearchList(contact)
             }
         }
 

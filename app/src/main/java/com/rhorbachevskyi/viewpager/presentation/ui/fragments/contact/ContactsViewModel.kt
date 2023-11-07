@@ -4,16 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.rhorbachevskyi.viewpager.data.database.repositoriesimpl.DatabaseImpl
 import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserData
-import com.rhorbachevskyi.viewpager.data.model.UserResponse
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.domain.usecases.AddContactUseCase
@@ -25,8 +21,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -59,12 +53,7 @@ class ContactsViewModel @Inject constructor(
 
     // pagination
 
-    var contactsFlow: Flow<PagingData<Contact>> = MutableLiveData("").asFlow()
-        .debounce(500)
-        .flatMapLatest {
-            databaseImpl.getPagedContacts()
-        }
-        .cachedIn(viewModelScope)
+    var contactsFlow: Flow<PagingData<Contact>> = databaseImpl.getPagedContacts()
 
     fun getContactList(user: UserData, accessToken: String, hasInternet: Boolean) =
         viewModelScope.launch(Dispatchers.IO) {
@@ -97,27 +86,27 @@ class ContactsViewModel @Inject constructor(
     ): Boolean {
         val contactList = _contactList.value.toMutableList()
 
-        if (!contactList.contains(contact)) {
+        return if (!contactList.contains(contact)) {
             contactList.add(position, contact)
             _contactList.value = contactList
             addContact(userId, contact, accessToken)
-            return true
+            true
+        } else {
+            false
         }
-
-        return false
     }
 
     fun addSelectContact(contact: Contact): Boolean {
         val contactList = _selectContacts.value.toMutableList()
 
-        if (!contactList.contains(contact)) {
+        return if (!contactList.contains(contact)) {
             contactList.add(contact)
             _selectContacts.value = contactList
             _isSelectItem.value.add(true to contact.id.toInt())
-            return true
+            true
+        } else {
+            false
         }
-
-        return false
     }
 
     private fun deleteContact(
@@ -135,31 +124,34 @@ class ContactsViewModel @Inject constructor(
         contact: Contact,
         hasInternet: Boolean
     ): Boolean {
-        val contactList = _contactList.value.toMutableList()
-
         if (!hasInternet) {
             _contactsStateFlow.value = ApiState.Error("not has internet hahaha")
             return false
         }
-        if (contactList.contains(contact)) {
+
+        val contactList = _contactList.value.toMutableList()
+
+        return if (contactList.contains(contact)) {
             deleteContact(userId, accessToken, contact)
             contactList.remove(contact)
             _contactList.value = contactList
             return true
+        } else {
+            false
         }
-        return false
     }
 
     fun deleteSelectContact(contact: Contact): Boolean {
         val contactList = _selectContacts.value.toMutableList()
-        if (contactList.contains(contact)) {
+
+        return if (contactList.contains(contact)) {
             contactList.remove(contact)
             _selectContacts.value = contactList
             _isSelectItem.value.removeAt(_isSelectItem.value.indexOfFirst { it.second == contact.id.toInt() })
-            return true
+            true
+        } else {
+            false
         }
-
-        return false
     }
 
     fun deleteSelectList(userId: Long, accessToken: String, hasInternet: Boolean): Boolean {
@@ -169,6 +161,7 @@ class ContactsViewModel @Inject constructor(
         }
 
         val contactList = _selectContacts.value.toMutableList()
+
         for (contact in contactList) {
             deleteContactFromList(
                 userId,
@@ -205,7 +198,6 @@ class ContactsViewModel @Inject constructor(
         notificationManager.notify(1, notificationBuilder.build())
     }
 
-    fun requestGetUser(): UserResponse.Data = UserDataHolder.userData
     fun getContactPosition(contact: Contact): Int =
         contactList.value.indexOfFirst { it == contact }
 }

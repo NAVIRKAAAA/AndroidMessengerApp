@@ -12,4 +12,5 @@ object UserDataHolder {
     var serverContacts: List<Contact> = listOf()
 
     lateinit var userData: UserResponse.Data
+
 }
