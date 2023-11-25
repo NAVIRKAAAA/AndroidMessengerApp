@@ -33,7 +33,17 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
             imageViewNavigationBack.setOnClickListener { navController.navigateUp() }
             buttonMessage.setOnClickListener { addToContacts(UserDataHolder.userData) }
             buttonMessageTop.setOnClickListener { addToContacts(UserDataHolder.userData) }
+            imageViewSendHi.setOnClickListener { sendMessage() }
         }
+    }
+
+    private fun sendMessage() {
+        viewModel.sendMessage(args.contact.id)
+        with(binding) {
+            imageViewSendHi.invisible()
+            requireContext().showSnackBar(root, "ти відправив 'привіт' (ти крутий)")
+        }
+
     }
 
     private fun addToContacts(userData: UserResponse.Data) {
@@ -44,8 +54,6 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
                 userData.accessToken,
                 requireContext().hasInternet()
             )
-        } else {
-            viewModel.sendMessage(args.contact.id)
         }
     }
 

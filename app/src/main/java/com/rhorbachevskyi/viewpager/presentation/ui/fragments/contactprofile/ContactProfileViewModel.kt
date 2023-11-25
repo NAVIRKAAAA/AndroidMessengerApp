@@ -29,7 +29,7 @@ class ContactProfileViewModel @Inject constructor(
     fun addContact(userId: Long, contactId: Long, accessToken: String, hasInternet: Boolean) =
         viewModelScope.launch(Dispatchers.IO) {
             if (!hasInternet) {
-                _usersStateFlow.value = ApiState.Error("not has internet hahaha")
+                _usersStateFlow.value = ApiState.Error("немає інету")
                 return@launch
             }
             if (alreadyAdded) return@launch
@@ -43,7 +43,7 @@ class ContactProfileViewModel @Inject constructor(
         val message = Message(
             senderId = UserDataHolder.userData.user.id,
             receiverId = receiverId,
-            text = "hello",
+            text = "привіт, йоу",
             active = true
         )
         messagesRepository.addMessage(message)

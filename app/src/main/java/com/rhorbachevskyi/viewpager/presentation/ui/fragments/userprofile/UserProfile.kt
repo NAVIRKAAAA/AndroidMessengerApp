@@ -112,10 +112,10 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
 
     private val requestBluetoothEnable =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val direction =
-                    ViewPagerFragmentDirections.actionViewPagerFragmentToBluetoothDevicesFragment()
-                navController.navigate(direction)
+            if (result.resultCode == RESULT_OK) { // TODO: inactive
+//                val direction =
+//                    ViewPagerFragmentDirections.actionViewPagerFragmentToBluetoothDevicesFragment()
+//                navController.navigate(direction)
             }
         }
 }

@@ -125,7 +125,7 @@ class ContactsViewModel @Inject constructor(
         hasInternet: Boolean
     ): Boolean {
         if (!hasInternet) {
-            _contactsStateFlow.value = ApiState.Error("not has internet hahaha")
+            _contactsStateFlow.value = ApiState.Error("немає інету")
             return false
         }
 
@@ -156,7 +156,7 @@ class ContactsViewModel @Inject constructor(
 
     fun deleteSelectList(userId: Long, accessToken: String, hasInternet: Boolean): Boolean {
         if (!hasInternet) {
-            _contactsStateFlow.value = ApiState.Error("not has internet hahaha")
+            _contactsStateFlow.value = ApiState.Error("немає інету")
             return false
         }
 

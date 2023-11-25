@@ -37,4 +37,5 @@
     <dimen name="checkmark_size">35dp</dimen>
     <dimen name="cancel_size">28dp</dimen>
     <dimen name="photo_chat_size">50dp</dimen>
+    <dimen name="send_hi_size">60dp</dimen>
 </resources>

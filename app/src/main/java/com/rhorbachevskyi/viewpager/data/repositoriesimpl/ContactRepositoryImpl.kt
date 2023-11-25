@@ -34,7 +34,7 @@ class ContactRepositoryImpl @Inject constructor(
             // result
             filteredUsers.let { ApiState.Success(it) }
         } catch (e: Exception) {
-            ApiState.Error(getErrorMessage(400))
+            ApiState.Error(getErrorMessage(e))
         }
     }
 
@@ -56,7 +56,7 @@ class ContactRepositoryImpl @Inject constructor(
 
             contacts.let { ApiState.Success(it) }
         } catch (e: Exception) {
-            ApiState.Error(getErrorMessage(400))
+            ApiState.Error(getErrorMessage(e))
         }
     }
 
@@ -71,8 +71,8 @@ class ContactRepositoryImpl @Inject constructor(
             UserDataHolder.states.add(contactId to ApiState.Success(response.data.users))
             response.data.let { ApiState.Success(it.users) }
         } catch (e: Exception) {
-            UserDataHolder.states.add(contactId to ApiState.Error(getErrorMessage(400)))
-            ApiState.Error(getErrorMessage(400))
+            UserDataHolder.states.add(contactId to ApiState.Error(getErrorMessage(e)))
+            ApiState.Error(getErrorMessage(e))
         }
     }
 
@@ -85,7 +85,7 @@ class ContactRepositoryImpl @Inject constructor(
             )
             response.data.let { ApiState.Success(it.users) }
         } catch (e: java.lang.Exception) {
-            ApiState.Error(getErrorMessage(400))
+            ApiState.Error(getErrorMessage(e))
         }
     }
 

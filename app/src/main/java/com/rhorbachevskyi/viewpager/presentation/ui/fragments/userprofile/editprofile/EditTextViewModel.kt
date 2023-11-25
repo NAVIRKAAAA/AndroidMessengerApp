@@ -32,7 +32,7 @@ class EditTextViewModel @Inject constructor(
     ) = viewModelScope.launch(Dispatchers.IO) {
         _editUserStateFlow.value = ApiState.Loading
         if (!hasInternet) {
-            _editUserStateFlow.value = ApiState.Error("not has internet hahaha")
+            _editUserStateFlow.value = ApiState.Error("немає інету")
             return@launch
         }
         _editUserStateFlow.value =

@@ -28,7 +28,7 @@ class UserRepositoryImpl @Inject constructor(
                 ApiState.Success(it)
             } ?: ApiState.Error(getErrorMessage(response.code))
         } catch (e: Exception) {
-            ApiState.Error(getErrorMessage(400))
+            ApiState.Error(getErrorMessage(e))
         }
     }
 
@@ -42,7 +42,7 @@ class UserRepositoryImpl @Inject constructor(
             }
                 ?: ApiState.Error(getErrorMessage(response.code))
         } catch (e: Exception) {
-            ApiState.Error(getErrorMessage(401))
+            ApiState.Error(getErrorMessage(e))
         }
     }
 
@@ -73,7 +73,7 @@ class UserRepositoryImpl @Inject constructor(
             }
                 ?: ApiState.Error(getErrorMessage(response.code))
         } catch (e: Exception) {
-            ApiState.Error(getErrorMessage(400))
+            ApiState.Error(getErrorMessage(e))
         }
     }
 
@@ -90,7 +90,7 @@ class UserRepositoryImpl @Inject constructor(
             }
                 ?: ApiState.Error(getErrorMessage(response.code))
         } catch (e: Exception) {
-            ApiState.Error(getErrorMessage(400))
+            ApiState.Error(getErrorMessage(e))
         }
     }
 }

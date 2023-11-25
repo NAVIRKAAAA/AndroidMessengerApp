@@ -51,6 +51,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageViewSendHi"
+        android:layout_width="@dimen/send_hi_size"
+        android:layout_height="@dimen/send_hi_size"
+        android:rotation="10"
+        android:src="@drawable/ic_send_hello"
+        app:layout_constraintBottom_toBottomOf="@id/image_view_contact_profile_photo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/image_view_contact_profile_photo"
+        app:layout_constraintTop_toTopOf="@id/image_view_contact_profile_photo" />
+
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/image_view_contact_profile_photo"
         android:layout_width="@dimen/photo_size"
@@ -176,11 +187,11 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:indeterminate="true"
-        app:layout_constraintBottom_toTopOf="@id/buttonMessage"
-        app:layout_constraintVertical_bias="0.1"
         android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/buttonMessage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/viewTop" />
+        app:layout_constraintTop_toBottomOf="@id/viewTop"
+        app:layout_constraintVertical_bias="0.1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

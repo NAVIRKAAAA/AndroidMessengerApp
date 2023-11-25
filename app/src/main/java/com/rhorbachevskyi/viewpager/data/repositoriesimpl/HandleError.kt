@@ -7,7 +7,7 @@ object HandleError {
             Error.UNAUTHORIZED.code -> Error.UNAUTHORIZED.message
             Error.FORBIDDEN.code -> Error.FORBIDDEN.message
             Error.NOT_FOUND.code -> Error.NOT_FOUND.message
-            else -> "Невідома помилка (точніше не скажу яка)"
+            else -> "Невідома помилка (точніше - не скажу яка)"
         }
     }
     fun getErrorMessage(exception: Exception): String {
@@ -16,11 +16,14 @@ object HandleError {
             Error.UNAUTHORIZED.code -> Error.UNAUTHORIZED.message
             Error.FORBIDDEN.code -> Error.FORBIDDEN.message
             Error.NOT_FOUND.code -> Error.NOT_FOUND.message
-            else -> "Невідома помилка (точніше не скажу яка)"
+            else -> "Невідома помилка (точніше - не скажу яка)"
         }
     }
     private fun getCodeFromString(input: String): Int {
-        return input.split(" ")[2].toInt()
+        val pattern = Regex("""\b(?:400|401|402|404)\b""")
+        val matchResult = pattern.find(input)
+
+        return matchResult?.value?.toIntOrNull() ?: -1
     }
 }
 

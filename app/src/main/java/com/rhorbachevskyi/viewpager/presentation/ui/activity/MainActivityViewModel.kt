@@ -45,7 +45,6 @@ class MainActivityViewModel @Inject constructor(
 
     fun isMessageToMe(userId: Long, message: Message): Boolean {
         return userId == message.receiverId
-
     }
 
     fun getContactById(userId: Long): Contact {

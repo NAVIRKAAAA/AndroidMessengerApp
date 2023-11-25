@@ -11,7 +11,7 @@ fun Context.showSnackBar(view: View, text: String, actionText: String = "", acti
         view,
         text,
         Snackbar.LENGTH_LONG
-    ).setAction(actionText.ifEmpty { "" }) {
+    ).setAction(actionText) {
         action()
     }.show()
 }
