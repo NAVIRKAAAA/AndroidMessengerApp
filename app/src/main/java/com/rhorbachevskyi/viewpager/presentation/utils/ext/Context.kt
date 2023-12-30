@@ -3,12 +3,12 @@ package com.rhorbachevskyi.viewpager.presentation.utils.ext
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.view.View
+import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 
-fun Context.showSnackBar(view: View, text: String, actionText: String = "", action: () -> Unit = {}) {
+fun Fragment.showSnackBar(text: String, actionText: String = "", action: () -> Unit = {}) {
     Snackbar.make(
-        view,
+        this.requireView(),
         text,
         Snackbar.LENGTH_LONG
     ).setAction(actionText) {

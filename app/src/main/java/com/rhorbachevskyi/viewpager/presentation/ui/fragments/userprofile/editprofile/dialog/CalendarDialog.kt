@@ -39,9 +39,7 @@ class CalendarDialog : AppCompatDialogFragment() {
                 dismiss()
             }
 
-            textViewCancel.setOnClickListener {
-                dismiss()
-            }
+            textViewCancel.setOnClickListener { dismiss() }
         }
     }
 }

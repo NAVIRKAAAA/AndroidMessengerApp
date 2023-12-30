@@ -131,19 +131,6 @@
             app:layout_constraintVertical_bias="0.25"
             app:shapeAppearanceOverlay="@style/rounded" />
 
-        <include
-            android:id="@+id/bluetoothUser"
-            layout="@layout/item_add_bluetooth_user"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/item_user_height"
-            android:layout_marginHorizontal="@dimen/normal_margin"
-            android:layout_marginTop="@dimen/small_margin"
-
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/viewBottom" />
-
-
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/icons"
             android:layout_width="0dp"

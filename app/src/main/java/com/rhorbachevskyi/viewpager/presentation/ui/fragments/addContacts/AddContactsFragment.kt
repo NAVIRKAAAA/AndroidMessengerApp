@@ -41,10 +41,7 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
     private val adapterWithPagination: AdapterWithPagination by lazy {
         AdapterWithPagination(listener = object : ClickListenerWithPagination {
             override fun onActionClick() {
-                requireContext().showSnackBar(
-                    binding.root,
-                    "not has internet hahaha"
-                )
+                showSnackBar("немає інтернету")
             }
         })
     }
@@ -104,7 +101,7 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
 
                         is ApiState.Error -> {
                             progressBar.invisible()
-                            requireContext().showSnackBar(root, it.error)
+                            showSnackBar(it.error)
                         }
                     }
                 }
@@ -140,7 +137,7 @@ class AddContactsFragment : BaseFragment<FragmentUsersBinding>(FragmentUsersBind
     private fun setListenersInside() {
         with(binding) {
             imageViewNavigationBack.setOnClickListener { navController.navigateUp() }
-            imageSearchView.setOnClickListener { viewModel.showNotification(requireContext()) }
+            imageSearchView.setOnClickListener { viewModel.showNotification() }
         }
     }
 }

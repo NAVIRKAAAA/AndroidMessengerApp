@@ -26,7 +26,7 @@ class ContactItemClickListenerImpl(
                 viewModel.changeMultiselectMode()
             }
         } else {
-            if (!viewModel.contactList.value.contains(contact)) return
+            if (!viewModel.contacts.value.contains(contact)) return
             val extras = FragmentNavigatorExtras(*transitionPairs)
             val direction =
                 ViewPagerFragmentDirections.actionViewPagerFragmentToContactProfile(

@@ -1,7 +1,6 @@
 package com.rhorbachevskyi.viewpager.presentation.ui.fragments.contact
 
 import android.annotation.SuppressLint
-import android.content.Context
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
@@ -20,7 +19,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,20 +35,20 @@ class ContactsViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _contactsStateFlow = MutableStateFlow<ApiState>(ApiState.Initial)
-    val contactsStateFlow: StateFlow<ApiState> = _contactsStateFlow
+    val contactsStateFlow = _contactsStateFlow.asStateFlow()
 
-    private val _contactList = MutableStateFlow(listOf<Contact>())
-    val contactList: StateFlow<List<Contact>> = _contactList
+    private val _contacts = MutableStateFlow(listOf<Contact>())
+    val contacts = _contacts.asStateFlow()
 
     private val _selectContacts = MutableStateFlow<List<Contact>>(listOf())
-    val selectContacts: StateFlow<List<Contact>> = _selectContacts
+    val selectContacts = _selectContacts.asStateFlow()
 
     private val _isMultiselect = MutableStateFlow(false)
-    val isMultiselect = _isMultiselect
+    val isMultiselect = _isMultiselect.asStateFlow()
 
-    private val _isSelectItem: MutableStateFlow<ArrayList<Pair<Boolean, Int>>> =
+    private val _selectedData: MutableStateFlow<ArrayList<Pair<Boolean, Int>>> =
         MutableStateFlow(ArrayList())
-    val isSelectItem: StateFlow<ArrayList<Pair<Boolean, Int>>> = _isSelectItem
+    val selectedData = _selectedData.asStateFlow()
 
     // pagination
 
@@ -63,8 +62,8 @@ class ContactsViewModel @Inject constructor(
             _contactsStateFlow.value = contactsUseCase(accessToken, user.id)
             allUsersUseCase(accessToken, user)
             databaseImpl.addUsers(UserDataHolder.serverUsers)
-            _contactList.value = UserDataHolder.serverContacts
-            databaseImpl.addUsersToSearchList(_contactList.value)
+            _contacts.value = UserDataHolder.serverContacts
+            databaseImpl.addUsersToSearchList(_contacts.value)
         }
 
     private fun addContact(
@@ -82,13 +81,13 @@ class ContactsViewModel @Inject constructor(
         userId: Long,
         contact: Contact,
         accessToken: String,
-        position: Int = _contactList.value.size,
+        position: Int = _contacts.value.size,
     ): Boolean {
-        val contactList = _contactList.value.toMutableList()
+        val contactList = _contacts.value.toMutableList()
 
         return if (!contactList.contains(contact)) {
             contactList.add(position, contact)
-            _contactList.value = contactList
+            _contacts.value = contactList
             addContact(userId, contact, accessToken)
             true
         } else {
@@ -102,7 +101,7 @@ class ContactsViewModel @Inject constructor(
         return if (!contactList.contains(contact)) {
             contactList.add(contact)
             _selectContacts.value = contactList
-            _isSelectItem.value.add(true to contact.id.toInt())
+            _selectedData.value.add(true to contact.id.toInt())
             true
         } else {
             false
@@ -129,12 +128,12 @@ class ContactsViewModel @Inject constructor(
             return false
         }
 
-        val contactList = _contactList.value.toMutableList()
+        val contactList = _contacts.value.toMutableList()
 
         return if (contactList.contains(contact)) {
             deleteContact(userId, accessToken, contact)
             contactList.remove(contact)
-            _contactList.value = contactList
+            _contacts.value = contactList
             return true
         } else {
             false
@@ -147,7 +146,7 @@ class ContactsViewModel @Inject constructor(
         return if (contactList.contains(contact)) {
             contactList.remove(contact)
             _selectContacts.value = contactList
-            _isSelectItem.value.removeAt(_isSelectItem.value.indexOfFirst { it.second == contact.id.toInt() })
+            _selectedData.value.removeAt(_selectedData.value.indexOfFirst { it.second == contact.id.toInt() })
             true
         } else {
             false
@@ -181,7 +180,7 @@ class ContactsViewModel @Inject constructor(
         _isMultiselect.value = !_isMultiselect.value
         if (!isMultiselect.value) {
             _selectContacts.value = emptyList()
-            _isSelectItem.value.clear()
+            _selectedData.value.clear()
         }
     }
 
@@ -194,10 +193,10 @@ class ContactsViewModel @Inject constructor(
     }
 
     @SuppressLint("MissingPermission")
-    fun showNotification(context: Context) {
+    fun showNotification() {
         notificationManager.notify(1, notificationBuilder.build())
     }
 
     fun getContactPosition(contact: Contact): Int =
-        contactList.value.indexOfFirst { it == contact }
+        contacts.value.indexOfFirst { it == contact }
 }

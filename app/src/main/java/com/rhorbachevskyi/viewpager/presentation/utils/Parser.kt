@@ -1,5 +1,6 @@
 package com.rhorbachevskyi.viewpager.presentation.utils
 
+import com.rhorbachevskyi.viewpager.presentation.utils.ext.capitalize
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -18,7 +19,7 @@ object Parser {
     fun parsingEmail(email: String): String {
         val elements = email.split("@")[0].replace(".", " ").split(" ")
         return if (elements.size >= Constants.NUMBER_OF_HALVES_OF_NAME) {
-            "${elements[0].replaceFirstChar { it.uppercase() }} ${elements[1].replaceFirstChar { it.titlecase() }}"
+            "${elements[0].capitalize()} ${elements[1].capitalize()}"
         } else {
             elements[0]
         }

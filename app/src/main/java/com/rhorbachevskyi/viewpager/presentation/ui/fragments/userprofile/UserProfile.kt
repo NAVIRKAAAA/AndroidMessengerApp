@@ -102,7 +102,7 @@ class UserProfile : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding:
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             requestBluetoothEnable.launch(enableBtIntent)
         } else {
-            requireContext().showSnackBar(binding.root, "Ця функція не доступна на вашому девайсі")
+            showSnackBar("Ця функція не доступна на вашому девайсі")
             log("else")
         }
 

@@ -25,13 +25,13 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initialRecyclerview()
-        searchView()
+        initSearchList()
+        setSearchView()
     }
 
-    private fun initialRecyclerview() {
+    private fun initSearchList() {
         viewModel.initSearchList()
-        viewModel.cancelSimpleNotification()
+        viewModel.cancelNotification()
         with(binding) {
             recyclerViewContacts.layoutManager = LinearLayoutManager(context)
             recyclerViewContacts.adapter = adapter
@@ -50,7 +50,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
         binding.imageViewNavigationBack.setOnClickListener { navController.navigateUp() }
     }
 
-    private fun searchView() {
+    private fun setSearchView() {
         with(binding) {
             imageSearchView.setOnCloseListener {
                 imageSearchView.layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
@@ -75,7 +75,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
     }
 
     private fun updateSearchView(newText: String?) {
-        if (newText?.isBlank() == true) initialRecyclerview()
+        if (newText?.isBlank() == true) initSearchList()
         setContactsText(newText)
     }
 

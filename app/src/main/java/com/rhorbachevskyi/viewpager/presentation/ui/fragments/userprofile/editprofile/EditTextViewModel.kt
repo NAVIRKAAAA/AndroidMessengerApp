@@ -8,7 +8,7 @@ import com.rhorbachevskyi.viewpager.presentation.utils.Validation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
@@ -17,8 +17,8 @@ import javax.inject.Inject
 class EditTextViewModel @Inject constructor(
     private val editUserUseCase: EditUserUseCase
 ) : ViewModel() {
-    private val _editUserStateFlow = MutableStateFlow<ApiState>(ApiState.Initial)
-    val editUserState: StateFlow<ApiState> = _editUserStateFlow
+    private val _editStateFlow = MutableStateFlow<ApiState>(ApiState.Initial)
+    val editState = _editStateFlow.asStateFlow()
     fun requestEditUser(
         userId: Long,
         accessToken: String,
@@ -30,12 +30,12 @@ class EditTextViewModel @Inject constructor(
         hasInternet: Boolean,
         refreshToken: String
     ) = viewModelScope.launch(Dispatchers.IO) {
-        _editUserStateFlow.value = ApiState.Loading
+        _editStateFlow.value = ApiState.Loading
         if (!hasInternet) {
-            _editUserStateFlow.value = ApiState.Error("немає інету")
+            _editStateFlow.value = ApiState.Error("немає інтернету")
             return@launch
         }
-        _editUserStateFlow.value =
+        _editStateFlow.value =
             editUserUseCase(
                 accessToken,
                 userId,
@@ -49,9 +49,9 @@ class EditTextViewModel @Inject constructor(
     }
 
     fun isValidInputs(name: String, phone: String): Boolean =
-        Validation.isValidUserName(name) && Validation.isValidMobilePhone(phone)
+        isValidUserName(name) && isValidMobilePhone(phone)
 
-    fun isNotValidUserName(name: String): Boolean = !Validation.isValidUserName(name)
+    fun isValidUserName(name: String): Boolean = Validation.isValidUserName(name)
 
-    fun isNotValidMobilePhone(phone: String): Boolean = !Validation.isValidMobilePhone(phone)
+    fun isValidMobilePhone(phone: String): Boolean = Validation.isValidMobilePhone(phone)
 }

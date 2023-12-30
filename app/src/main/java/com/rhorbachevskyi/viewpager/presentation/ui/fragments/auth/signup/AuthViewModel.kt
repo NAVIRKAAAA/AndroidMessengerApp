@@ -9,11 +9,11 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor() : ViewModel() {
 
     fun isValidInputs(email: String, password: String): Boolean =
-        Validation.isValidEmail(email) && Validation.isValidPassword(password)
+        isValidEmail(email) && isValidPassword(password)
 
-    fun isNotValidEmail(email: String): Boolean =
-        !Validation.isValidEmail(email) && email.isNotEmpty()
+    fun isValidEmail(email: String): Boolean =
+        Validation.isValidEmail(email) && email.isNotEmpty()
 
-    fun isNotValidPassword(password: String): Boolean =
-        !Validation.isValidPassword(password) && password.isNotEmpty()
+    fun isValidPassword(password: String): Boolean =
+        Validation.isValidPassword(password) && password.isNotEmpty()
 }

@@ -1,4 +1,4 @@
-package com.rhorbachevskyi.viewpager.data.repositoriesimpl
+package com.rhorbachevskyi.viewpager.data.repositoriesimpl.utils
 
 object HandleError {
     fun getErrorMessage(code: Int): String {

@@ -23,10 +23,9 @@ class ViewPagerFragment :
             viewPager.offscreenPageLimit = 1
             viewPager.adapter = adapter
             TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-                tab.text = when (position) {
-                    ViewPagerAdapter.Fragments.USER_PROFILE.ordinal -> getString(R.string.profile)
-                    ViewPagerAdapter.Fragments.CONTACTS.ordinal -> getString(R.string.contacts)
-                    else -> throw IllegalStateException("Unknown tab!")
+                tab.text = when (ViewPagerAdapter.Fragments.entries[position]) {
+                    ViewPagerAdapter.Fragments.USER_PROFILE -> getString(R.string.profile)
+                    ViewPagerAdapter.Fragments.CONTACTS -> getString(R.string.contacts)
                 }
             }.attach()
         }

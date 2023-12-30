@@ -125,29 +125,16 @@
             app:layout_constraintTop_toBottomOf="@id/textViewCareer"
             app:layout_constraintVertical_chainStyle="packed" />
 
-
-        <include
-            android:id="@+id/bluetoothUser"
-            layout="@layout/item_add_bluetooth_user"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/item_user_height"
-            android:layout_marginHorizontal="@dimen/normal_margin"
-            android:layout_marginTop="@dimen/small_margin"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/viewBottom" />
-
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/icons"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:gravity="center"
+            app:layout_constraintTop_toTopOf="@id/viewBottom"
             app:layout_constraintBottom_toTopOf="@id/buttonMessageTop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/bluetoothUser"
             app:layout_constraintVertical_bias="1.0">
 
             <androidx.appcompat.widget.AppCompatImageView

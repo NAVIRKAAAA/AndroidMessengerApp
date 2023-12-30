@@ -8,7 +8,7 @@ import com.rhorbachevskyi.viewpager.data.model.Contact
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,7 +20,7 @@ class SearchViewModel @Inject constructor(
 
 
     private val _currentList = MutableStateFlow<List<Contact>>(listOf())
-    val currentList: StateFlow<List<Contact>> = _currentList
+    val currentList = _currentList.asStateFlow()
 
     private val startedListContact: ArrayList<Contact> = arrayListOf()
 
@@ -30,7 +30,7 @@ class SearchViewModel @Inject constructor(
         startedListContact.addAll(_currentList.value)
     }
 
-    fun cancelSimpleNotification() {
+    fun cancelNotification() {
         notificationManager.cancel(1)
     }
 

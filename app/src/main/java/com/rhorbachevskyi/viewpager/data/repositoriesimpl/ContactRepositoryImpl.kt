@@ -1,13 +1,12 @@
 package com.rhorbachevskyi.viewpager.data.repositoriesimpl
 
 import com.rhorbachevskyi.viewpager.data.database.repositoriesimpl.DatabaseImpl
-import com.rhorbachevskyi.viewpager.data.model.Contact
 import com.rhorbachevskyi.viewpager.data.model.UserData
-import com.rhorbachevskyi.viewpager.data.repositoriesimpl.HandleError.getErrorMessage
+import com.rhorbachevskyi.viewpager.data.repositoriesimpl.utils.HandleError.getErrorMessage
 import com.rhorbachevskyi.viewpager.data.userdataholder.UserDataHolder
 import com.rhorbachevskyi.viewpager.domain.network.ContactApiService
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
-import com.rhorbachevskyi.viewpager.presentation.utils.Constants
+import com.rhorbachevskyi.viewpager.presentation.utils.Constants.AUTH_PREFIX
 import javax.inject.Inject
 
 class ContactRepositoryImpl @Inject constructor(
@@ -19,7 +18,7 @@ class ContactRepositoryImpl @Inject constructor(
         user: UserData,
     ): ApiState {
         return try {
-            val response = contactService.getUsers("${Constants.AUTH_PREFIX} $accessToken")
+            val response = contactService.getUsers("$AUTH_PREFIX $accessToken")
             if (response.data.users == null) return ApiState.Error(getErrorMessage(response.code.toInt()))
 
             val serverContacts = UserDataHolder.serverContacts
@@ -44,7 +43,7 @@ class ContactRepositoryImpl @Inject constructor(
     ): ApiState {
         return try {
             val response =
-                contactService.getUserContacts("${Constants.AUTH_PREFIX} $accessToken", userId)
+                contactService.getUserContacts("$AUTH_PREFIX $accessToken", userId)
 
             if (response.data.contacts == null) return ApiState.Error(getErrorMessage(response.code.toInt()))
 
@@ -64,7 +63,7 @@ class ContactRepositoryImpl @Inject constructor(
         return try {
             val response =
                 contactService.addContact(
-                    "${Constants.AUTH_PREFIX} $accessToken",
+                    "$AUTH_PREFIX $accessToken",
                     userId,
                     contactId
                 )
@@ -79,7 +78,7 @@ class ContactRepositoryImpl @Inject constructor(
     suspend fun deleteContact(accessToken: String, userId: Long, contactId: Long): ApiState {
         return try {
             val response = contactService.deleteContact(
-                "${Constants.AUTH_PREFIX} $accessToken",
+                "$AUTH_PREFIX $accessToken",
                 userId,
                 contactId
             )
@@ -87,20 +86,5 @@ class ContactRepositoryImpl @Inject constructor(
         } catch (e: java.lang.Exception) {
             ApiState.Error(getErrorMessage(e))
         }
-    }
-
-    fun getUserById(id: Long): Contact? {
-        val mergeList = merge(UserDataHolder.serverUsers, UserDataHolder.serverContacts)
-        return mergeList.find { it.id == id }
-    }
-
-    private fun merge(
-        contacts: List<Contact>,
-        users: List<Contact>
-    ): List<Contact> {
-        val mergedSet = linkedSetOf<Contact>()
-        mergedSet.addAll(contacts)
-        mergedSet.addAll(users)
-        return mergedSet.toList()
     }
 }

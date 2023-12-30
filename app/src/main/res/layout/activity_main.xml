@@ -11,16 +11,4 @@
         android:layout_height="match_parent"
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav" />
-
-    <include
-        android:id="@+id/layoutMessage"
-        layout="@layout/item_message"
-        android:layout_width="0dp"
-        android:visibility="gone"
-        app:layout_constraintWidth_percent="0.9"
-        android:layout_marginTop="@dimen/large_margin"
-        android:layout_height="@dimen/item_user_height"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

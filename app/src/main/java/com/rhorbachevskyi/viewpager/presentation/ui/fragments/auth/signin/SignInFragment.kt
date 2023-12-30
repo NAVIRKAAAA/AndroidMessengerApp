@@ -70,7 +70,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(FragmentSignInBinding
 
                             is ApiState.Error -> {
                                 progressBar.gone()
-                                requireContext().showSnackBar(root, it.error)
+                                showSnackBar(it.error)
                             }
                         }
                     }

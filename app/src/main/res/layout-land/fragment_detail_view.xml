@@ -51,16 +51,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imageViewSendHi"
-        android:layout_width="@dimen/send_hi_size"
-        android:layout_height="@dimen/send_hi_size"
-        android:rotation="10"
-        android:src="@drawable/ic_send_hello"
-        app:layout_constraintBottom_toBottomOf="@id/image_view_contact_profile_photo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/image_view_contact_profile_photo"
-        app:layout_constraintTop_toTopOf="@id/image_view_contact_profile_photo" />
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/image_view_contact_profile_photo"

@@ -59,23 +59,23 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
     override fun setObservers() {
         with(binding) {
             lifecycleScope.launch {
-                viewModel.editUserState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
+                viewModel.editState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                     when (it) {
                         is ApiState.Success<*> -> {
                             navController.navigateUp()
                         }
 
                         is ApiState.Error -> {
-                            requireContext().showSnackBar(root, it.error)
+                            showSnackBar(it.error)
                             progressBar.invisible()
                         }
 
-                        ApiState.Initial -> {
+                        is ApiState.Initial -> {
                             setCalendar()
                             setInputs(UserDataHolder.userData.user)
                         }
 
-                        ApiState.Loading -> {
+                        is ApiState.Loading -> {
                             progressBar.visible()
                         }
                     }
@@ -102,10 +102,10 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
     private fun inputsErrors() {
         with(binding) {
             textInputEditTextUserName.doOnTextChanged { text, _, _, _ ->
-                textViewInvalidUserName.visibleIf(viewModel.isNotValidUserName(text.toString()))
+                textViewInvalidUserName.visibleIf(!viewModel.isValidUserName(text.toString()))
             }
             textInputEditTextPhone.doOnTextChanged { text, _, _, _ ->
-                textViewInvalidPhone.visibleIf(viewModel.isNotValidMobilePhone(text.toString()))
+                textViewInvalidPhone.visibleIf(!viewModel.isValidMobilePhone(text.toString()))
             }
         }
     }
@@ -115,9 +115,7 @@ class EditProfile : BaseFragment<FragmentEditProfileBinding>(FragmentEditProfile
             textInputEditTextDate.setOnClickListener {
                 val dialog = CalendarDialog()
                 dialog.setListener(listener = object : DialogCalendarListener {
-                    override fun onDateSelected(date: String) {
-                        textInputEditTextDate.setText(date)
-                    }
+                    override fun onDateSelected(date: String) { textInputEditTextDate.setText(date) }
                 })
                 dialog.show(parentFragmentManager, Constants.DIALOG_TAG)
             }

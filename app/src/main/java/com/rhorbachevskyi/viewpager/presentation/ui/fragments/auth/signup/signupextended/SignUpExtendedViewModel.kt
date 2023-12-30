@@ -9,7 +9,7 @@ import com.rhorbachevskyi.viewpager.presentation.utils.Validation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,7 +18,7 @@ class SignUpExtendedViewModel @Inject constructor(
     private val registerUserUseCase: RegisterUserUseCase
 ) : ViewModel() {
     private val _registerStateFlow = MutableStateFlow<ApiState>(ApiState.Initial)
-    val registerState: StateFlow<ApiState> = _registerStateFlow
+    val registerState = _registerStateFlow.asStateFlow()
     fun isLogout() {
         _registerStateFlow.value = ApiState.Initial
     }

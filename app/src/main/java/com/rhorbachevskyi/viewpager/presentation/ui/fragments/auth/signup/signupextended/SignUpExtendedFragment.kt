@@ -84,7 +84,7 @@ class SignUpExtendedFragment :
                         }
 
                         is ApiState.Error -> {
-                            requireContext().showSnackBar(root, it.error)
+                            showSnackBar(it.error)
                             viewModel.isLogout()
                             progressBar.invisible()
                         }

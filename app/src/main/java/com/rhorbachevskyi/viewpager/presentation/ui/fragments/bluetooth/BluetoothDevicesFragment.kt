@@ -83,7 +83,7 @@ class BluetoothDevicesFragment :
                         adapter.submitList(merge(state.pairedDevices, state.scannedDevices))
                     }
                 }
-                state.errorMessage?.let { requireContext().showSnackBar(binding.root, it) }
+                state.errorMessage?.let { showSnackBar(it) }
             }
         }
     }

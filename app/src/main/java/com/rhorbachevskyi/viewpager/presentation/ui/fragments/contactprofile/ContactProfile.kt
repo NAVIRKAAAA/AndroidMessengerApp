@@ -33,17 +33,7 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
             imageViewNavigationBack.setOnClickListener { navController.navigateUp() }
             buttonMessage.setOnClickListener { addToContacts(UserDataHolder.userData) }
             buttonMessageTop.setOnClickListener { addToContacts(UserDataHolder.userData) }
-            imageViewSendHi.setOnClickListener { sendMessage() }
         }
-    }
-
-    private fun sendMessage() {
-        viewModel.sendMessage(args.contact.id)
-        with(binding) {
-            imageViewSendHi.invisible()
-            requireContext().showSnackBar(root, "ти відправив 'привіт' (ти крутий)")
-        }
-
     }
 
     private fun addToContacts(userData: UserResponse.Data) {
@@ -60,20 +50,20 @@ class ContactProfile : BaseFragment<FragmentDetailViewBinding>(FragmentDetailVie
     override fun setObservers() {
         with(binding) {
             lifecycleScope.launch {
-                viewModel.usersState.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
+                viewModel.stateFlow.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                     when (it) {
                         is ApiState.Error -> {
                             progressBar.invisible()
-                            requireContext().showSnackBar(root, it.error)
+                            showSnackBar(it.error)
                             viewModel.changeState()
                         }
 
-                        ApiState.Initial -> {
+                        is ApiState.Initial -> {
                             setProfile(args.contact)
                             setSharedElementsTransition(args.contact)
                         }
 
-                        ApiState.Loading -> {
+                        is ApiState.Loading -> {
                             progressBar.visible()
                         }
 

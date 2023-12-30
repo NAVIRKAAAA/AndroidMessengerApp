@@ -49,7 +49,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
     private val adapterWithPagination: AdapterWithPagination by lazy {
         AdapterWithPagination(listener = object : ClickListenerWithPagination {
             override fun onActionClick() {
-                requireContext().showSnackBar(binding.root, "not has internet hahaha")
+                showSnackBar("not has internet hahaha")
             }
         })
     }
@@ -76,7 +76,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
 
             recyclerViewContacts.adapter = if (hasInternet) {
                 recyclerViewContacts.setupSwipeToDelete(
-                    deleteFunction = { deleteUserWithRestore(viewModel.contactList.value[it]) },
+                    deleteFunction = { deleteUserWithRestore(viewModel.contacts.value[it]) },
                     isSwipeEnabled = { !viewModel.isMultiselect.value && requireContext().hasInternet() }
                 )
                 loadStateView.prgBarLoadMore.invisible()
@@ -98,7 +98,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
         with(binding) {
             textViewAddContacts.setOnClickListener { toAddContactsScreen() }
             imageViewDeleteSelectMode.setOnClickListener { deleteSelectedContacts(UserDataHolder.userData) }
-            imageSearchView.setOnClickListener { viewModel.showNotification(requireContext()) }
+            imageSearchView.setOnClickListener { viewModel.showNotification() }
         }
         navigationBack()
     }
@@ -143,7 +143,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
     private fun setDefaultObservers() {
         with(binding) {
             lifecycleScope.launch {
-                viewModel.contactList.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
+                viewModel.contacts.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                     adapterDefault.submitList(it)
                 }
             }
@@ -156,7 +156,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
             }
 
             lifecycleScope.launch {
-                viewModel.isSelectItem.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
+                viewModel.selectedData.flowWithLifecycle(viewLifecycleOwner.lifecycle).collect {
                     adapterDefault.setMultiselectData(it)
                 }
             }
@@ -169,7 +169,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsB
                             }
 
                             is ApiState.Error -> {
-                                requireContext().showSnackBar(root, it.error)
+                                showSnackBar(it.error)
                                 viewModel.changeState()
                             }
 

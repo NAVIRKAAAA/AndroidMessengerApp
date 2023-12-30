@@ -46,10 +46,10 @@ class AuthFragment : BaseFragment<FragmentSignUpBinding>(FragmentSignUpBinding::
     private fun dataValidation() {
         with(binding) {
             textInputEditTextEmail.doOnTextChanged { text, _, _, _ ->
-                textViewInvalidEmail.visibleIf(viewModel.isNotValidEmail(text.toString()))
+                textViewInvalidEmail.visibleIf(!viewModel.isValidEmail(text.toString()))
             }
             textInputEditTextPassword.doOnTextChanged { text, _, _, _ ->
-                textViewInvalidPassword.visibleIf(viewModel.isNotValidPassword(text.toString()))
+                textViewInvalidPassword.visibleIf(!viewModel.isValidPassword(text.toString()))
             }
         }
     }

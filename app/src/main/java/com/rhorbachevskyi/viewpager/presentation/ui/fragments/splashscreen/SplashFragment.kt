@@ -8,7 +8,8 @@ import com.rhorbachevskyi.viewpager.R
 import com.rhorbachevskyi.viewpager.databinding.FragmentSplashScreenBinding
 import com.rhorbachevskyi.viewpager.domain.states.ApiState
 import com.rhorbachevskyi.viewpager.presentation.ui.base.BaseFragment
-import com.rhorbachevskyi.viewpager.presentation.utils.Constants
+import com.rhorbachevskyi.viewpager.presentation.utils.Constants.KEY_EMAIL
+import com.rhorbachevskyi.viewpager.presentation.utils.Constants.KEY_PASSWORD
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.invisible
 import com.rhorbachevskyi.viewpager.presentation.utils.ext.visible
 import com.rhorbachevskyi.viewpager.presentation.utils.getStringFromPrefs
@@ -22,8 +23,11 @@ class SplashFragment :
 
     private fun isAutologin() {
         lifecycleScope.launch {
-            if (requireContext().getStringFromPrefs(Constants.KEY_EMAIL).isNotEmpty()) {
-                viewModel.autoLogin(requireContext())
+            if (requireContext().getStringFromPrefs(KEY_EMAIL).isNotEmpty()) {
+                viewModel.autoLogin(
+                    requireContext().getStringFromPrefs(KEY_EMAIL),
+                    requireContext().getStringFromPrefs(KEY_PASSWORD),
+                )
             } else {
                 val direction = SplashFragmentDirections.actionSplashFragment2ToSignInFragment()
                 navController.navigate(direction)
@@ -41,11 +45,11 @@ class SplashFragment :
                         navController.navigate(direction)
                     }
 
-                    is ApiState.Loading -> {
+                    ApiState.Loading -> {
                         binding.progressBar.visible()
                     }
 
-                    is ApiState.Initial -> {
+                    ApiState.Initial -> {
                         isAutologin()
                     }
 
@@ -56,7 +60,10 @@ class SplashFragment :
                             R.string.No_internet_connection,
                             Snackbar.LENGTH_INDEFINITE
                         ).setAction(R.string.repeat) {
-                            viewModel.autoLogin(requireContext())
+                            viewModel.autoLogin(
+                                requireContext().getStringFromPrefs(KEY_EMAIL),
+                                requireContext().getStringFromPrefs(KEY_PASSWORD),
+                            )
                         }.show()
                     }
                 }
